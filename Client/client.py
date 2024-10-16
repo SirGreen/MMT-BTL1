@@ -12,6 +12,7 @@ DEFAULT_TRACKER = "http://hello.com"
 def welcome():
     print("Welcome to a BitTorrent program by ***, press Help to see how to use")
 
+
 # Function to display help overview
 
 
@@ -26,6 +27,7 @@ def display_help_overview():
     + Exit: Exit the program
     """
     print(help_overview)
+
 
 # Function to display detailed explanation of a specific command
 
@@ -60,7 +62,7 @@ def display_command_help(command):
         """,
         "Exit": """
         Description: Exit the program
-        """
+        """,
     }
 
     if command in detailed_help:
@@ -71,8 +73,8 @@ def display_command_help(command):
 
 def generate_piece_hashes(file_path, piece_length):
     """Generates SHA-1 hashes for each piece of the file."""
-    piece_hashes = b''
-    with open(file_path, 'rb') as f:
+    piece_hashes = b""
+    with open(file_path, "rb") as f:
         while True:
             piece = f.read(piece_length)
             if not piece:
@@ -99,29 +101,27 @@ def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):
 
     # Create the .torrent metadata structure
     torrent_data = {
-        'announce': tracker_url,  # Tracker URL
-        'info': {
-            'name': file_name,
-            'piece length': piece_length,
-            'pieces': piece_hashes,
-            'length': file_size,  # File size
-        }
+        "announce": tracker_url,  # Tracker URL
+        "info": {
+            "name": file_name,
+            "piece length": piece_length,
+            "pieces": piece_hashes,
+            "length": file_size,  # File size
+        },
     }
 
-    print(torrent_data)
-    
     # Bencode the data
     bencoded_data = bencodepy.encode(torrent_data)
 
     # Save to output folder or current directory
     torrent_name = f"{file_name}.torrent"
-    output_path = os.path.join(
-        output_folder if output_folder else '', torrent_name)
+    output_path = os.path.join(output_folder if output_folder else "", torrent_name)
 
-    with open(output_path, 'wb') as torrent_file:
+    with open(output_path, "wb") as torrent_file:
         torrent_file.write(bencoded_data)
 
     print(f"Torrent file created: {output_path}")
+
 
 # Main program loop
 
@@ -151,8 +151,7 @@ def main():
 
             # Parse the command
             if len(parts) < 1:
-                raise ValueError(
-                    "Invalid input. Please provide at least the file path")
+                raise ValueError("Invalid input. Please provide at least the file path")
 
             # The first part is the command
             command = parts[0]
