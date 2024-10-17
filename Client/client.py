@@ -6,6 +6,7 @@ import socket
 from threading import Thread
 import random
 import tqdm
+import requests
 
 DEFAULT_TRACKER = "http://hello.com"
 Flag = False
@@ -15,6 +16,7 @@ SERVER_HOST = "localhost"
 BLOCK_SZ = 512
 BLOCK = 128 << 10  # 128KB
 BLOCK1 = 1 << 20  # 1024KB
+peer_id = "BKU-Torrent-" + "".join([str(random.randint(0, 9)) for _ in range(12)])
 
 
 def welcome():
@@ -26,7 +28,7 @@ def display_help_overview():
     Available commands:
     + Help (Command name): View detailed explanation of a command
     + MakeTor [F] (Fo) (IPT): Create a torrent file from the input file, saves to destination folder (optional).
-    + Have [FTor] (Fo) (IPT): Send the torrent file to a tracker at the specified IP, uses default if IP not provided.
+    + Have [FTor] (IPT): Send torrent file(s) to a tracker at the specified IP, uses default if IP not provided.
     + Down [FTor] (Fo): Download a file using the torrent, communicates with tracker at default or specified IP.
     + Preview [FTor]: View the contents of a torrent file in a human-readable format.
     + Exit: Exit the program
@@ -36,28 +38,29 @@ def display_help_overview():
 
 def display_command_help(command):
     detailed_help = {
-        "Help": """
+        "help": """
         Command: Help (Command name)
         Description: Use 'Help' followed by the command name to get detailed usage instructions for that specific command.
         Example: Help MakeTor
         """,
-        "MakeTor": """
+        "maketor": """
         Command: MakeTor [F] (Fo) (IPT)
-        Description: Creates a torrent file from the input file path [F]. If a folder (Fo) is provided, it saves the torrent in the specified folder. Otherwise, the default folder will be used. You can provide a folder (Fo) and an optional tracker IP (IPT). If no IP is provided, the default tracker IP will be used.
+        Description: Creates a torrent file from the input file path (or folder) [F]. If a folder (Fo) is provided, it saves the torrent in the specified folder. Otherwise, the default folder will be used. You can provide a folder (Fo) and an optional tracker IP (IPT). If no IP is provided, the default tracker IP will be used.
         Example: MakeTor myfile.txt /myfolder
         If no folder is specified, the torrent will be saved in the current directory.
         """,
-        "Have": """
-        Command: Have [FTor] (Fo) (IPT)
-        Description: Sends the specified torrent file to a tracker. You can provide a folder (Fo) and an optional tracker IP (IPT). If no IP is provided, the default tracker IP will be used.
-        Example: Have mytorrent.torrent /myfolder 192.168.1.1
+        "have": """
+        Command: Have [FTor] (IPT)
+        Description: Sends the specified torrent file (or multiple files if [FTor] is a folder) to a tracker. You can provide an optional tracker IP (IPT). If no IP is provided, the default tracker IP will be used.
+        Example 1: Have mytorrent.torrent 192.168.1.1
+        Example 2: Have torrentFolder/ 192.168.1.1
         """,
-        "Down": """
+        "down": """
         Command: Down [FTor] (Fo)
         Description: Downloads the file using the specified torrent. You can provide a folder (Fo) to store the file. If no tracker IP is provided, the default IP is used.
         Example: Down mytorrent.torrent /downloads 192.168.1.1
         """,
-        "Preview": """
+        "preview": """
         Command: Preview [FTor]
         Description: Displays the contents of the given torrent file in a readable format. Useful for checking torrent details before downloading.
         Example: Preview mytorrent.torrent
@@ -84,6 +87,7 @@ def generate_piece_hashes(file_path, piece_length):
             piece_hashes += hashlib.sha1(piece).digest()
     return piece_hashes
 
+
 def get_piece_length(total_size):
     """Determines the appropriate piece length based on total file size."""
     if total_size < 100 * 1024 * 1024:  # Less than 100 MB
@@ -95,6 +99,7 @@ def get_piece_length(total_size):
     else:
         return 1 * 1024 * 1024  # 1 MB
 
+
 def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):
     if tracker_url is None:
         tracker_url = DEFAULT_TRACKER
@@ -103,47 +108,63 @@ def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):
         # If it's a directory, gather all files
         files = []
         total_size = 0
-        
+
         for root, _, filenames in os.walk(file_path):
             for filename in filenames:
                 full_path = os.path.join(root, filename)
                 file_size = os.path.getsize(full_path)
                 total_size += file_size
                 relative_path = os.path.relpath(full_path, file_path)
-                files.append({"length": file_size, "path": [relative_path]})  # Use list for path
+                files.append(
+                    {"length": file_size, "path": [relative_path]}
+                )  # Use list for path
 
-        piece_length = get_piece_length(total_size)  # Determine piece length based on total size
+        piece_length = get_piece_length(
+            total_size
+        )  # Determine piece length based on total size
     elif os.path.isfile(file_path):
         # Single file case
         files = []
         total_size = os.path.getsize(file_path)
         relative_path = os.path.basename(file_path)
-        files.append({"length": total_size, "path": [relative_path]})  # Use list for path
-        piece_length = get_piece_length(total_size)  # Determine piece length based on file size
+        files.append(
+            {"length": total_size, "path": [relative_path]}
+        )  # Use list for path
+        piece_length = get_piece_length(
+            total_size
+        )  # Determine piece length based on file size
     else:
         raise FileNotFoundError("The specified path does not exist.")
 
     # Generate piece hashes for all files
     piece_hashes = bytearray()
-    if len(files)>1:
+    if len(files) > 1:
         for file_info in files:
-            piece_hashes.extend(generate_piece_hashes(os.path.join(file_path, file_info["path"][0]), piece_length))
+            piece_hashes.extend(
+                generate_piece_hashes(
+                    os.path.join(file_path, file_info["path"][0]), piece_length
+                )
+            )
     else:
         piece_hashes.extend(generate_piece_hashes(file_path, piece_length))
     # Create the .torrent metadata structure
     torrent_data = {
         "announce": tracker_url,  # Tracker URL
         "info": {
-            "name": os.path.basename(file_path) if os.path.isfile(file_path) else os.path.basename(os.path.normpath(file_path)),
+            "name": os.path.basename(file_path)
+            if os.path.isfile(file_path)
+            else os.path.basename(os.path.normpath(file_path)),
             "piece length": piece_length,
             "pieces": bytes(piece_hashes),
             "files": files if len(files) > 1 else 1,  # Include files only if multiple
-            "length": total_size if len(files) == 1 else "Not used for multiple files",  # Single file length
+            "length": total_size
+            if len(files) == 1
+            else "Not used for multiple files",  # Single file length
         },
     }
 
     # print(torrent_data)
-    
+
     # Bencode the data
     bencoded_data = bencodepy.encode(torrent_data)
 
@@ -189,10 +210,10 @@ def preview_torrent(torrent_file_path):
                         print(f"  {sub_key.decode('utf-8')}:")
                         for i, file_info in enumerate(sub_value, 1):
                             # Get length
-                            length = file_info[b'length']
-                            
+                            length = file_info[b"length"]
+
                             # Get path and decode from bytes to string
-                            path = file_info[b'path'][0].decode('utf-8')
+                            path = file_info[b"path"][0].decode("utf-8")
 
                             # Print the formatted result
                             print(f"File {i}:")
@@ -203,7 +224,9 @@ def preview_torrent(torrent_file_path):
                             f"  {sub_key.decode('utf-8')}: {sub_value.decode('utf-8', errors='ignore')}"
                         )
             else:
-                print(f"{key.decode('utf-8')}: {value.decode('utf-8', errors='ignore')}")
+                print(
+                    f"{key.decode('utf-8')}: {value.decode('utf-8', errors='ignore')}"
+                )
         print("\n=============================\n")
 
     except Exception as e:
@@ -238,6 +261,51 @@ def get_piece_hashes(torrent_file_path):
         print(f"Error reading or decoding the torrent file: {e}")
         return []
 
+
+def send_torrent_tracker(torrent_file_path, tracker_url):
+    if not os.path.exists(torrent_file_path):
+        raise FileNotFoundError(
+            f"The torrent file '{torrent_file_path}' does not exist."
+        )
+
+    with open(torrent_file_path, "rb") as f:
+        torrent_hash = hashlib.sha1(f).digest
+
+    announce_url = tracker_url + "?have=" + torrent_hash.hex()
+    port = 6881
+
+    params = {
+        "info_hash": torrent_hash.hex(),
+        "peer_id": peer_id,
+        "port": port,
+        "event": "seeding",
+    }
+
+    print(f"Sending announce to tracker: {announce_url}")
+    response = requests.get(tracker_url, params=params)
+    
+    if response.status_code == 200:
+        print("Successfully sent to tracker.")
+        print("Tracker response:", response.content)
+    else:
+        print(f"Error: Tracker responded with status code {response.status_code}")
+
+def have(file_path,tracker_url=None):
+    tracker_url = tracker_url if tracker_url else DEFAULT_TRACKER
+    
+    if os.path.isdir(file_path):
+        # Walk through the directory and its subdirectories
+        for root, dirs, files in os.walk(file_path):
+            for file in files:
+                # If the file ends with .torrent, process it
+                if file.endswith(".torrent"):
+                    full_path = os.path.join(root, file)
+                    send_torrent_tracker(full_path,tracker_url)  # Call the hypothetical send_to_tracker function
+    elif file_path.endswith(".torrent"):
+        # If it's a single .torrent file, process it directly
+        send_torrent_tracker(full_path,tracker_url) 
+    else:
+        print(f"No .torrent file found at: {file_path}")
 
 def send_requests(msg: str, server_host, server_port):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -347,13 +415,13 @@ def main():
     # ping_thread.daemon = True
     # ping_thread.start()
 
-    hostname = input("Input your hostname: ")
+    hostname = peer_id
+    print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {hostname} (OwO)")
     add(hostname)
 
     while True:
         user_input = input("Enter a command: ").strip().lower()
         command_split = user_input.split()
-
         if user_input.startswith("fetch"):
             if len(command_split) != 2:
                 print("Note : fetch only accept 1 argument")
@@ -377,6 +445,8 @@ def main():
             display_command_help(command)
         elif user_input.startswith("preview"):
             preview_torrent(command_split[1])
+        elif user_input.startswith("have"):
+            have(command_split[1], command_split[2])
         elif user_input.startswith("test-get_piece_hash "):
             # test getHash <file torrent> <coi hash của piece số mấy>
             print(get_piece_hashes(command_split[1])[int(command_split[2])])
