@@ -7,22 +7,18 @@ from threading import Thread
 import random
 import tqdm
 
-BLOCK_SZ = 512
 DEFAULT_TRACKER = "http://hello.com"
 Flag = False
 peer_repo = []
 SERVER_PORT = 7775
 SERVER_HOST = "localhost"
+BLOCK_SZ = 512
 BLOCK = 128 << 10  # 128KB
 BLOCK1 = 1 << 20  # 1024KB
-# Function to show welcome message
 
 
 def welcome():
     print("Welcome to a BitTorrent program by ***, press Help to see how to use")
-
-
-# Function to display help overview
 
 
 def display_help_overview():
@@ -36,9 +32,6 @@ def display_help_overview():
     + Exit: Exit the program
     """
     print(help_overview)
-
-
-# Function to display detailed explanation of a specific command
 
 
 def display_command_help(command):
@@ -91,45 +84,159 @@ def generate_piece_hashes(file_path, piece_length):
             piece_hashes += hashlib.sha1(piece).digest()
     return piece_hashes
 
+def get_piece_length(total_size):
+    """Determines the appropriate piece length based on total file size."""
+    if total_size < 100 * 1024 * 1024:  # Less than 100 MB
+        return 128 * 1024  # 128 KB
+    elif total_size < 1 * 1024 * 1024 * 1024:  # Less than 1 GB
+        return 256 * 1024  # 256 KB
+    elif total_size < 5 * 1024 * 1024 * 1024:  # Less than 5 GB
+        return 512 * 1024  # 512 KB
+    else:
+        return 1 * 1024 * 1024  # 1 MB
 
 def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):
-    """Creates a .torrent file from the given file."""
-    if not os.path.exists(file_path):
-        raise FileNotFoundError("The file does not exist.")
+    if tracker_url is None:
+        tracker_url = DEFAULT_TRACKER
+    """Creates a .torrent file from the given file or directory."""
+    if os.path.isdir(file_path):
+        # If it's a directory, gather all files
+        files = []
+        total_size = 0
+        
+        for root, _, filenames in os.walk(file_path):
+            for filename in filenames:
+                full_path = os.path.join(root, filename)
+                file_size = os.path.getsize(full_path)
+                total_size += file_size
+                relative_path = os.path.relpath(full_path, file_path)
+                files.append({"length": file_size, "path": [relative_path]})  # Use list for path
 
-    piece_length = BLOCK_SZ * 1024  # 256 KB pieces, typical size for torrent files
-    file_size = os.path.getsize(file_path)
-    file_name = os.path.basename(file_path)
+        piece_length = get_piece_length(total_size)  # Determine piece length based on total size
+    elif os.path.isfile(file_path):
+        # Single file case
+        files = []
+        total_size = os.path.getsize(file_path)
+        relative_path = os.path.basename(file_path)
+        files.append({"length": total_size, "path": [relative_path]})  # Use list for path
+        piece_length = get_piece_length(total_size)  # Determine piece length based on file size
+    else:
+        raise FileNotFoundError("The specified path does not exist.")
 
-    # Generate piece hashes
-    piece_hashes = generate_piece_hashes(file_path, piece_length)
-
-    tracker_url = DEFAULT_TRACKER
-    print(tracker_url)
-    print(DEFAULT_TRACKER)
-
+    # Generate piece hashes for all files
+    piece_hashes = bytearray()
+    if len(files)>1:
+        for file_info in files:
+            piece_hashes.extend(generate_piece_hashes(os.path.join(file_path, file_info["path"][0]), piece_length))
+    else:
+        piece_hashes.extend(generate_piece_hashes(file_path, piece_length))
     # Create the .torrent metadata structure
     torrent_data = {
         "announce": tracker_url,  # Tracker URL
         "info": {
-            "name": file_name,
+            "name": os.path.basename(file_path) if os.path.isfile(file_path) else os.path.basename(os.path.normpath(file_path)),
             "piece length": piece_length,
-            "pieces": piece_hashes,
-            "length": file_size,  # File size
+            "pieces": bytes(piece_hashes),
+            "files": files if len(files) > 1 else 1,  # Include files only if multiple
+            "length": total_size if len(files) == 1 else "Not used for multiple files",  # Single file length
         },
     }
 
+    # print(torrent_data)
+    
     # Bencode the data
     bencoded_data = bencodepy.encode(torrent_data)
 
     # Save to output folder or current directory
-    torrent_name = f"{file_name}.torrent"
+    torrent_name = f"{os.path.basename(file_path)}.torrent"
     output_path = os.path.join(output_folder if output_folder else "", torrent_name)
 
     with open(output_path, "wb") as torrent_file:
         torrent_file.write(bencoded_data)
 
     print(f"Torrent file created: {output_path}")
+
+
+def preview_torrent(torrent_file_path):
+    """
+    Parses and displays the contents of a .torrent file in a human-readable format.
+    """
+    if not os.path.exists(torrent_file_path):
+        print(f"Error: The torrent file '{torrent_file_path}' does not exist.")
+        return
+
+    # Read and decode the torrent file
+    try:
+        with open(torrent_file_path, "rb") as f:
+            torrent_data = bencodepy.decode(f.read())
+
+        # Display the torrent contents in a readable format
+        print("\n=== Torrent File Contents ===")
+        for key, value in torrent_data.items():
+            if isinstance(
+                value, dict
+            ):  # If it's a dictionary, print each key-value pair
+                print(f"{key.decode('utf-8')}:")
+                for sub_key, sub_value in value.items():
+                    if isinstance(sub_value, int):
+                        print(f"  {sub_key.decode('utf-8')}: {sub_value}")
+                    elif sub_key.decode("utf-8") == "pieces":
+                        print(
+                            f"  {sub_key.decode('utf-8')}: {sub_value[:20].hex()}"
+                            + ("..." if len(sub_value) > 20 else "")
+                        )
+                    elif isinstance(sub_value, list):
+                        print(f"  {sub_key.decode('utf-8')}:")
+                        for i, file_info in enumerate(sub_value, 1):
+                            # Get length
+                            length = file_info[b'length']
+                            
+                            # Get path and decode from bytes to string
+                            path = file_info[b'path'][0].decode('utf-8')
+
+                            # Print the formatted result
+                            print(f"File {i}:")
+                            print(f"  Path: {path}")
+                            print(f"  Length: {length} bytes\n")
+                    else:
+                        print(
+                            f"  {sub_key.decode('utf-8')}: {sub_value.decode('utf-8', errors='ignore')}"
+                        )
+            else:
+                print(f"{key.decode('utf-8')}: {value.decode('utf-8', errors='ignore')}")
+        print("\n=============================\n")
+
+    except Exception as e:
+        print(f"Error reading or decoding the torrent file: {e}")
+
+
+def get_piece_hashes(torrent_file_path):
+    """
+    Returns a list of SHA-1 hashes of the pieces (chunks) stored in the .torrent file.
+
+    :param torrent_file_path: Path to the .torrent file
+    :return: List of SHA-1 hashes
+    """
+    if not os.path.exists(torrent_file_path):
+        print(f"Error: The torrent file '{torrent_file_path}' does not exist.")
+        return []
+
+    try:
+        with open(torrent_file_path, "rb") as f:
+            torrent_data = bencodepy.decode(f.read())
+
+        # Extract the 'pieces' field from the 'info' dictionary
+        pieces = torrent_data[b"info"][b"pieces"]
+
+        # Each SHA-1 hash is 20 bytes long, so we split the 'pieces' string accordingly
+        hash_list = [pieces[i : i + 20] for i in range(0, len(pieces), 20)]
+
+        # Return the list of hashes (in hexadecimal format for readability)
+        return [hash.hex() for hash in hash_list]
+
+    except Exception as e:
+        print(f"Error reading or decoding the torrent file: {e}")
+        return []
 
 
 def send_requests(msg: str, server_host, server_port):
@@ -228,9 +335,6 @@ def publish(host, title, filename):
     send_requests(msg, "localhost", SERVER_PORT)
 
 
-# Main program loop
-
-
 def main():
     welcome()  # Display the welcome message
 
@@ -247,15 +351,15 @@ def main():
     add(hostname)
 
     while True:
-        user_input = input("Enter a command: ").strip()
+        user_input = input("Enter a command: ").strip().lower()
         command_split = user_input.split()
 
-        if command_split[0] == "fetch":
+        if user_input.startswith("fetch"):
             if len(command_split) != 2:
                 print("Note : fetch only accept 1 argument")
             else:
                 download(command_split[1])
-        elif command_split[0] == "publish":
+        elif user_input.startswith("publish"):
             if len(command_split) != 3:
                 print("Note : publish only accept 2 argument")
             else:
@@ -265,13 +369,18 @@ def main():
         #         print("Note : publish only accept 1 argument")
         #     else:
         #         find(command_split[1])
-        elif user_input.lower() == "help":
+        elif user_input == "help":
             display_help_overview()  # Show concise help overview
-        elif user_input.lower().startswith("help "):
+        elif user_input.startswith("help "):
             command = user_input.split()[1]
             # Show detailed help for the specific command
             display_command_help(command)
-        elif user_input.lower().startswith("maketor "):
+        elif user_input.startswith("preview"):
+            preview_torrent(command_split[1])
+        elif user_input.startswith("test-get_piece_hash "):
+            # test getHash <file torrent> <coi hash của piece số mấy>
+            print(get_piece_hashes(command_split[1])[int(command_split[2])])
+        elif user_input.startswith("maketor "):
             # Split the input by spaces
             parts = user_input.split()
             # Initialize variables
@@ -291,7 +400,7 @@ def main():
             if not file_path:
                 raise ValueError("File path is required.")
             make_torrent(file_path, output_folder, tracker_url)
-        elif user_input.lower() == "exit":
+        elif user_input == "exit":
             exit(hostname)
             break
 
