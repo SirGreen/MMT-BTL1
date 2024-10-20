@@ -1,9 +1,10 @@
 # Bittorrent Program Simulation
+import mmap
 import os
 import hashlib
 import bencodepy  # For Bencoding (install using pip install bencodepy)
 import socket
-from threading import Thread
+from threading import Lock, Thread
 import random
 import tqdm
 import requests
@@ -18,7 +19,7 @@ BLOCK = 128 << 10  # 128KB
 BLOCK1 = 1 << 20  # 1024KB
 peer_id = "BKU-Torrent-" + "".join([str(random.randint(0, 9)) for _ in range(12)])
 
-
+write_lock = Lock()
 def welcome():
     print("Welcome to a BitTorrent program by ***, press Help to see how to use")
 
@@ -176,6 +177,8 @@ def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):
         torrent_file.write(bencoded_data)
 
     print(f"Torrent file created: {output_path}")
+    
+    return output_path
 
 
 def preview_torrent(torrent_file_path):
@@ -255,7 +258,7 @@ def get_piece_hashes(torrent_file_path):
         hash_list = [pieces[i : i + 20] for i in range(0, len(pieces), 20)]
 
         # Return the list of hashes (in hexadecimal format for readability)
-        return [hash.hex() for hash in hash_list]
+        return [hash for hash in hash_list]
 
     except Exception as e:
         print(f"Error reading or decoding the torrent file: {e}")
@@ -324,13 +327,22 @@ def peer_connect(client_socket):
         if repo["reponame"] == reponame:
             filename = repo["filename"]
     file_size = os.path.getsize(filename)
+    piece_length=get_piece_length(file_size)
     # Print for another pear
     client_socket.send(("recievied_" + filename).encode())
     client_socket.send(str(file_size).encode())
     with client_socket, client_socket.makefile("wb") as wfile:
         with open(filename, "rb") as f1:
-            while data := f1.read(BLOCK):
-                wfile.write(data)
+            mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
+            a=client_socket.recv(4)
+            offset = int.from_bytes(a, 'big')
+            mm.seek(offset*piece_length)
+            # data= mm.read(offset,piece_length)
+            data = mm.read(piece_length)
+            ressu=hashlib.sha1(data).digest()
+            print(ressu)
+            print(offset)
+            wfile.write(data)
         wfile.flush()
         f1.close()
     wfile.close()
@@ -350,34 +362,194 @@ def upload():
 
     upload_socket.close()
 
+# def download(reponame):
+#     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#     upload_host1 = socket.gethostbyname(socket.gethostname())
+#     msg = "FIND P2P-CI/1.0\nREPONAME:" + reponame
+#     port_list = send_requests(msg, "localhost", SERVER_PORT).split("\n")
+#     #####
+#     # port1 = int(input("Input peer port from list above: "))
+#     file_path = os.path.abspath("LA_form_TA.pdf")
+#     key_value=get_piece_hashes(make_torrent(file_path))
+#     total_size = os.path.getsize(file_path)
+#     piece_length=get_piece_length(total_size)
+        
+#     for port in port_list:  
+#         thread = Thread()
+#         client.connect((upload_host1, port))
+#         client.send(reponame.encode())
+#         if port==port_list[0]:
+#             file_name = client.recv(1024).decode()
+#             file_size = client.recv(1024).decode()
+#             print(file_name + " " + file_size)  
 
+#         progress = tqdm.tqdm(
+#             unit="B", unit_scale=True, unit_divisor=1000, total=int(file_size)
+#         )
+#         with client.makefile("rb") as rfile:
+#             with open(file_name, "wb") as f:
+#                 f.write(b'\x00' * int(file_size))
+#                 with open(file_name, "r+b") as f:
+#                     # Memory-map the file
+#                     mm = mmap.mmap(f.fileno(), 0)
+#                     remaining = int(file_size)        
+#                     offset=0
+#                     while remaining != 0:
+#                         client.send(offset.encode())                 
+#                         data = rfile.read(piece_length if remaining > piece_length else remaining)
+#                         ressu=hashlib.sha1(data).digest()
+#                         if ressu == key_value[offset]:
+#                             mm[offset * piece_length : (offset + 1) * piece_length] = data
+#                             offset+=1
+#                             # f.write(data)
+#                             progress.update(len(data))
+#                             remaining -= len(data)
+#                         else:
+#                             print("meo")
+#                             break
+#                     mm.close()
+#             f.close()
+#         rfile.close()
+#         client.close()
+    
+#     # with client.makefile("rb") as rfile:
+#     #     with open(file_name, "wb") as f:
+#     #         remaining = int(file_size)
+#     #         while remaining != 0:
+#     #             data = rfile.read(BLOCK1 if remaining > BLOCK1 else remaining)
+#     #             f.write(data)
+#     #             progress.update(len(data))
+#     #             remaining -= len(data)
+#     #     f.close()
+#     # rfile.close()
+#     # client.close()
+
+def download_chunk(port_list,reponame, port, offset, piece_length, file_resu, key_value,total_size):
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    upload_host1 = socket.gethostbyname(socket.gethostname())
+    
+    client.connect((upload_host1, port))
+    client.send(reponame.encode())
+    file_name = client.recv(1024).decode()
+    file_size = client.recv(1024).decode()
+    if port==port_list[0]:  
+        print(file_name + " " + file_size)  
+
+    # remaining = total_size - (offset * piece_length)
+
+    progress = tqdm.tqdm(
+        unit="B", unit_scale=True, unit_divisor=1000, total=int(piece_length if total_size > piece_length else total_size)
+    )
+    with client.makefile("rb") as rfile:
+        with open(file_resu, "r+b") as f:
+            # Memory-map the file
+            mm = mmap.mmap(f.fileno(), 0)
+            # while remaining != 0:
+            byte_data = offset.to_bytes(4, 'big')
+            client.send(byte_data) 
+            print(offset)                
+            data = rfile.read(piece_length if total_size > piece_length else total_size)
+            ressu=hashlib.sha1(data).digest()
+            print(ressu)
+            print(key_value[offset])
+            if ressu == key_value[offset]:
+                with write_lock:
+                    mm[offset * piece_length : (offset + 1) * piece_length] = data
+                    progress.update(len(data))
+                    total_size -= len(data)
+            else:
+                print("meo")
+            mm.close()
+            f.close()
+    rfile.close()
+    client.close()
+        
 def download(reponame):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     upload_host1 = socket.gethostbyname(socket.gethostname())
     msg = "FIND P2P-CI/1.0\nREPONAME:" + reponame
-    send_requests(msg, "localhost", SERVER_PORT)
+    port_list = send_requests(msg, "localhost", SERVER_PORT).split("\n")
     #####
-    port1 = int(input("Input peer port from list above: "))
-    client.connect((upload_host1, port1))
-    client.send(reponame.encode())
-    file_name = client.recv(1024).decode()
-    file_size = client.recv(1024).decode()
-    print(file_name + " " + file_size)
+    # port1 = int(input("Input peer port from list above: "))
+    file_path = os.path.abspath("LA_form_TA.pdf")
+    key_value=get_piece_hashes(make_torrent(file_path))
+    total_size = os.path.getsize(file_path)
+    piece_length=get_piece_length(total_size)
+    
+    offset=0
+    port_index=0
 
-    progress = tqdm.tqdm(
-        unit="B", unit_scale=True, unit_divisor=1000, total=int(file_size)
-    )
-    with client.makefile("rb") as rfile:
-        with open(file_name, "wb") as f:
-            remaining = int(file_size)
-            while remaining != 0:
-                data = rfile.read(BLOCK1 if remaining > BLOCK1 else remaining)
-                f.write(data)
-                progress.update(len(data))
-                remaining -= len(data)
-        f.close()
-    rfile.close()
+    file_resu= "received_LA_formed_TA.pdf"  
+    with open(file_resu, "wb") as f:
+        f.write(b'\x00' * total_size)
+    
+    threads = []
+        
+    while offset<len(key_value):
+        port = port_list[port_index]
+    
+        thread = Thread(target=download_chunk, args=(port_list,reponame, int(port), offset, piece_length, file_resu, key_value, total_size))
+        thread.daemon = True
+        threads.append(thread)
+        
+        thread.start()
+        
+        offset += 1
+        port_index += 1
+        
+        if port_index >= len(port_list):
+            port_index = 0
+            
+    for thread in threads:
+        thread.join()  
+        
     client.close()
+          
+        # client.connect((upload_host1, port))
+        # client.send(reponame.encode())
+        # if port==port_list[0]:
+        #     file_name = client.recv(1024).decode()
+        #     file_size = client.recv(1024).decode()
+        #     print(file_name + " " + file_size)  
+
+        # progress = tqdm.tqdm(
+        #     unit="B", unit_scale=True, unit_divisor=1000, total=int(file_size)
+        # )
+        # with client.makefile("rb") as rfile:
+        #     with open(file_name, "wb") as f:
+        #         f.write(b'\x00' * int(file_size))
+        #         with open(file_name, "r+b") as f:
+        #             # Memory-map the file
+        #             mm = mmap.mmap(f.fileno(), 0)
+        #             # while remaining != 0:
+        #             client.send(offset.encode())                 
+        #             data = rfile.read(piece_length if remaining > piece_length else remaining)
+        #             ressu=hashlib.sha1(data).digest()
+        #             if ressu == key_value[offset]:
+        #                     mm[offset * piece_length : (offset + 1) * piece_length] = data
+        #                     offset+=1
+        #                     # f.write(data)
+        #                     progress.update(len(data))
+        #                     remaining -= len(data)
+        #             else:
+        #                     print("meo")
+        #                     break
+        #             mm.close()
+        #     f.close()
+        # rfile.close()
+        # client.close()
+    
+    # with client.makefile("rb") as rfile:
+    #     with open(file_name, "wb") as f:
+    #         remaining = int(file_size)
+    #         while remaining != 0:
+    #             data = rfile.read(BLOCK1 if remaining > BLOCK1 else remaining)
+    #             f.write(data)
+    #             progress.update(len(data))
+    #             remaining -= len(data)
+    #     f.close()
+    # rfile.close()
+    # client.close()
 
 
 def add(host):

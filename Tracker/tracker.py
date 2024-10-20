@@ -17,13 +17,17 @@ def add_client(data_list, client_socket):
     print(f'Welcome client : {host}')
     
 def find_peer(data_list, client_socket):
+    port_list = []
     filename = data_list[1].split(':')[1]
-    tmp_msg = f"\nList of clients that have file : {filename}\n"
+    # tmp_msg = f"\nList of clients that have file : {filename}\n"
     for rfc in rfc_index:
         if rfc['reponame'] == filename:
-            tmp_str = str(rfc['host']) + " " + str(rfc['port']) + '\n'
-            tmp_msg += tmp_str
-    client_socket.send(tmp_msg.encode())
+            # tmp_str = str(rfc['host']) + " " + str(rfc['port']) + '\n'
+            # tmp_msg += tmp_str
+            port_list.append(rfc['port'])
+    
+    port_string = '\n'.join(map(str, port_list))
+    client_socket.send(port_string.encode())
 
 def add_repo_client(data_list, client_socket):
     host = data_list[1].split(':')[1]
