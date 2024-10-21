@@ -41,6 +41,10 @@ def add_repo_client(data_list, client_socket):
     response = "PUBLISH P2P-CI/1.0 200 OK"
     client_socket.send(response.encode())
 
+def client_exit(data_list, client_socket):
+    print(data_list)
+    print(client_socket)
+
 def new_client_connect(client_socket):
     data = client_socket.recv(1024).decode()
     data_list  = data.split('\n')
