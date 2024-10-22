@@ -11,7 +11,7 @@ BLOCK_SZ = 512
 DEFAULT_TRACKER = "http://hello.com"
 Flag = False
 peer_repo = []
-SERVER_PORT = 7775
+SERVER_PORT = 8080
 SERVER_HOST = "localhost"
 BLOCK = 128 << 10  # 128KB
 BLOCK1 = 1 << 20  # 1024KB
@@ -134,12 +134,17 @@ def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):
 
 def send_requests(msg: str, server_host, server_port):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((server_host, server_port))
-    client_socket.send(msg.encode())
-    response = client_socket.recv(1024).decode()
-    print(response)
-    client_socket.close()
-    return response
+    try:
+        client_socket.connect((server_host, server_port))
+        client_socket.send(msg.encode('utf-8'))
+        # print("test message")
+        response = client_socket.recv(1024).decode('utf-8')
+        print(response)
+        client_socket.close()
+        return response
+    except ConnectionRefusedError:
+        print("Connection to the server failed.")
+        return None
 
 
 def peer_connect(client_socket):
@@ -207,6 +212,7 @@ def download(reponame):
 
 def add(host):
     msg = "JOIN P2P-CI/1.0\nHost:" + host + "\n" + "Port:" + str(port)
+    # print("Test nữa")
     send_requests(msg, "localhost", SERVER_PORT)
 
 
@@ -228,6 +234,11 @@ def publish(host, title, filename):
     send_requests(msg, "localhost", SERVER_PORT)
 
 
+def client_exit(host):
+    msg = "EXIT Client with hostname: "+ host + " " + ",port: " + str(port)
+    send_requests(msg, "localhost", SERVER_PORT)
+
+
 # Main program loop
 
 
@@ -245,7 +256,6 @@ def main():
 
     hostname = input("Input your hostname: ")
     add(hostname)
-
     while True:
         user_input = input("Enter a command: ").strip()
         command_split = user_input.split()
@@ -292,7 +302,7 @@ def main():
                 raise ValueError("File path is required.")
             make_torrent(file_path, output_folder, tracker_url)
         elif user_input.lower() == "exit":
-            exit(hostname)
+            client_exit(hostname)
             break
 
         else:
