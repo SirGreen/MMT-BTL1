@@ -135,7 +135,7 @@ class Server:
         finally:
             client_socket.close()
 
-
+# cmt
     def client_exit(self, addr):
         ip, port = addr
         ip_port = (ip, port)  # Thay đổi từ list sang tuple
