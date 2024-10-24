@@ -11,7 +11,7 @@ import requests
 DEFAULT_TRACKER = "http://hello.com"
 Flag = False
 peer_repo = []
-SERVER_PORT = 7775
+SERVER_PORT = 8080
 SERVER_HOST = "localhost"
 BLOCK_SZ = 512
 BLOCK = 128 << 10  # 128KB
@@ -309,12 +309,17 @@ def have(file_path,tracker_url=None):
 
 def send_requests(msg: str, server_host, server_port):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((server_host, server_port))
-    client_socket.send(msg.encode())
-    response = client_socket.recv(1024).decode()
-    print(response)
-    client_socket.close()
-    return response
+    try:
+        client_socket.connect((server_host, server_port))
+        client_socket.send(msg.encode('utf-8'))
+        # print("test message")
+        response = client_socket.recv(1024).decode('utf-8')
+        print(response)
+        client_socket.close()
+        return response
+    except ConnectionRefusedError:
+        print("Connection to the server failed.")
+        return None
 
 
 def peer_connect(client_socket):
@@ -382,6 +387,7 @@ def download(reponame):
 
 def add(host):
     msg = "JOIN P2P-CI/1.0\nHost:" + host + "\n" + "Port:" + str(port)
+    # print("Test nữa")
     send_requests(msg, "localhost", SERVER_PORT)
 
 
@@ -402,6 +408,9 @@ def publish(host, title, filename):
     )
     send_requests(msg, "localhost", SERVER_PORT)
 
+def client_exit(host):
+    msg = "EXIT Client with hostname: "+ host + " " + ",port: " + str(port)
+    send_requests(msg, "localhost", SERVER_PORT)
 
 def main():
     welcome()  # Display the welcome message
@@ -418,7 +427,6 @@ def main():
     hostname = peer_id
     print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {hostname} (OwO)")
     add(hostname)
-
     while True:
         user_input = input("Enter a command: ").strip().lower()
         command_split = user_input.split()
@@ -470,8 +478,8 @@ def main():
             if not file_path:
                 raise ValueError("File path is required.")
             make_torrent(file_path, output_folder, tracker_url)
-        elif user_input == "exit":
-            exit(hostname)
+        elif user_input.lower() == "exit":
+            client_exit(hostname)
             break
 
         else:
