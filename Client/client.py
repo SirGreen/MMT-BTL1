@@ -170,7 +170,7 @@ def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):
     bencoded_data = bencodepy.encode(torrent_data)
 
     # Save to output folder or current directory
-    torrent_name = f"{os.path.basename(file_path)}.torrent"
+    torrent_name = f"{os.path.splitext(os.path.basename(file_path))[0]}.torrent"
     output_path = os.path.join(output_folder if output_folder else "", torrent_name)
 
     with open(output_path, "wb") as torrent_file:
@@ -266,6 +266,8 @@ def get_piece_hashes(torrent_file_path):
 
 
 def send_torrent_tracker(torrent_file_path, tracker_url):
+    # print(tracker_url)
+    
     if not os.path.exists(torrent_file_path):
         raise FileNotFoundError(
             f"The torrent file '{torrent_file_path}' does not exist."
@@ -295,7 +297,7 @@ def send_torrent_tracker(torrent_file_path, tracker_url):
 
 def have(file_path,tracker_url=None):
     tracker_url = tracker_url if tracker_url else DEFAULT_TRACKER
-    
+    full_path = ""
     if os.path.isdir(file_path):
         # Walk through the directory and its subdirectories
         for root, dirs, files in os.walk(file_path):
@@ -306,7 +308,7 @@ def have(file_path,tracker_url=None):
                     send_torrent_tracker(full_path,tracker_url)  # Call the hypothetical send_to_tracker function
     elif file_path.endswith(".torrent"):
         # If it's a single .torrent file, process it directly
-        send_torrent_tracker(full_path,tracker_url) 
+        send_torrent_tracker(file_path,tracker_url) 
     else:
         print(f"No .torrent file found at: {file_path}")
 
@@ -600,62 +602,68 @@ def main():
     print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {hostname} (OwO)")
     add(hostname)
     while True:
-        user_input = input("Enter a command: ").strip().lower()
-        command_split = user_input.split()
-        if user_input.startswith("fetch"):
-            if len(command_split) != 2:
-                print("Note : fetch only accept 1 argument")
-            else:
-                download(command_split[1])
-        elif user_input.startswith("publish"):
-            if len(command_split) != 3:
-                print("Note : publish only accept 2 argument")
-            else:
-                publish(hostname, command_split[1], command_split[2])
-        # elif command_split[0] == 'find':
-        #     if len(command_split) != 2:
-        #         print("Note : publish only accept 1 argument")
-        #     else:
-        #         find(command_split[1])
-        elif user_input == "help":
-            display_help_overview()  # Show concise help overview
-        elif user_input.startswith("help "):
-            command = user_input.split()[1]
-            # Show detailed help for the specific command
-            display_command_help(command)
-        elif user_input.startswith("preview"):
-            preview_torrent(command_split[1])
-        elif user_input.startswith("have"):
-            have(command_split[1], command_split[2])
-        elif user_input.startswith("test-get_piece_hash "):
-            # test getHash <file torrent> <coi hash của piece số mấy>
-            print(get_piece_hashes(command_split[1])[int(command_split[2])])
-        elif user_input.startswith("maketor "):
-            # Split the input by spaces
-            parts = user_input.split()
-            # Initialize variables
-            file_path = None
-            tracker_url = None
-            output_folder = None
-            # Parse the command
-            if len(parts) < 1:
-                raise ValueError("Invalid input. Please provide at least the file path")
-            # The first part is the command
-            command = parts[0]
-            # Expected parts: [command, file_path, output_folder (optional), tracker_url (optional)]
-            file_path = parts[1]  # The second part is the file path
-            output_folder = parts[2] if len(parts) > 2 else None
-            tracker_url = parts[3] if len(parts) > 3 else None
-            # Validate required parameters
-            if not file_path:
-                raise ValueError("File path is required.")
-            make_torrent(file_path, output_folder, tracker_url)
-        elif user_input.lower() == "exit":
-            client_exit(hostname)
-            break
+        try: 
+            user_input = input("Enter a command: ").strip().lower()
+            command_split = user_input.split()
+            if user_input.startswith("fetch"):
+                if len(command_split) != 2:
+                    print("Note : fetch only accept 1 argument")
+                else:
+                    download(command_split[1])
+            elif user_input.startswith("publish"):
+                if len(command_split) != 3:
+                    print("Note : publish only accept 2 argument")
+                else:
+                    publish(hostname, command_split[1], command_split[2])
+            # elif command_split[0] == 'find':
+            #     if len(command_split) != 2:
+            #         print("Note : publish only accept 1 argument")
+            #     else:
+            #         find(command_split[1])
+            elif user_input == "help":
+                display_help_overview()  # Show concise help overview
+            elif user_input.startswith("help "):
+                command = user_input.split()[1]
+                # Show detailed help for the specific command
+                display_command_help(command)
+            elif user_input.startswith("preview"):
+                preview_torrent(command_split[1])
+            elif user_input.startswith("have"):
+                if (len(command_split)>2):
+                    have(command_split[1], command_split[2])
+                else: 
+                    have(command_split[1])
+            elif user_input.startswith("test-get_piece_hash "):
+                # test getHash <file torrent> <coi hash của piece số mấy>
+                print(get_piece_hashes(command_split[1])[int(command_split[2])])
+            elif user_input.startswith("maketor "):
+                # Split the input by spaces
+                parts = user_input.split()
+                # Initialize variables
+                file_path = None
+                tracker_url = None
+                output_folder = None
+                # Parse the command
+                if len(parts) < 1:
+                    raise ValueError("Invalid input. Please provide at least the file path")
+                # The first part is the command
+                command = parts[0]
+                # Expected parts: [command, file_path, output_folder (optional), tracker_url (optional)]
+                file_path = parts[1]  # The second part is the file path
+                output_folder = parts[2] if len(parts) > 2 else None
+                tracker_url = parts[3] if len(parts) > 3 else None
+                # Validate required parameters
+                if not file_path:
+                    raise ValueError("File path is required.")
+                make_torrent(file_path, output_folder, tracker_url)
+            elif user_input.lower() == "exit":
+                client_exit(hostname)
+                break
 
-        else:
-            print("Unknown command. Type 'Help' to see the list of available commands.")
+            else:
+                print("Unknown command. Type 'Help' to see the list of available commands.")
+        except Exception as e:
+            print("Error: ",e)
 
 
 # Run the program
