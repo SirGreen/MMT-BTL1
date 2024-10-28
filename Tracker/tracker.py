@@ -25,55 +25,22 @@ class Server:
         self.owner_file = {}
         self.lock = Lock()
 
-def find_peer(data_list, client_socket):
-    port_list = []
-    filename = data_list[1].split(':')[1]
-    # tmp_msg = f"\nList of clients that have file : {filename}\n"
-    for rfc in rfc_index:
-        if rfc['reponame'] == filename:
-            # tmp_str = str(rfc['host']) + " " + str(rfc['port']) + '\n'
-            # tmp_msg += tmp_str
-            port_list.append(rfc['port'])
-    
-    port_string = '\n'.join(map(str, port_list))
-    client_socket.send(port_string.encode())
+    def find_peer(data_list, client_socket):
+        port_list = []
+        filename = data_list[1].split(':')[1]
+        # tmp_msg = f"\nList of clients that have file : {filename}\n"
+        for rfc in rfc_index:
+            if rfc['reponame'] == filename:
+                # tmp_str = str(rfc['host']) + " " + str(rfc['port']) + '\n'
+                # tmp_msg += tmp_str
+                port_list.append(rfc['port'])
+        
+        port_string = '\n'.join(map(str, port_list))
+        client_socket.send(port_string.encode())
 
-def add_repo_client(data_list, client_socket):
-    host = data_list[1].split(':')[1]
-    filename = data_list[3].split(':')[1]
-    port = data_list[2].split(':')[1]
-    repo_name = data_list[4].split(':')[1]
-    rfc_index.append({"host" : host, 
-                      "port" : port, 
-                      "filename" : filename, 
-                      "reponame" : repo_name})
-    response = "PUBLISH P2P-CI/1.0 200 OK"
-    client_socket.send(response.encode())
-
-def client_exit(data_list, client_socket):
-    print(data_list)
-    print(client_socket)
-
-def new_client_connect(client_socket):
-    data = client_socket.recv(1024).decode()
-    data_list  = data.split('\n')
-    if data_list[0].split(' ')[0] == 'JOIN':
-        add_client(data_list,client_socket)
-    elif data_list[0].split(' ')[0] == 'PUBLISH':
-        add_repo_client(data_list,client_socket)
-    elif data_list[0].split(' ')[0] == 'FIND':
-        find_peer(data_list,client_socket)
-    elif data_list[0].split(' ')[0] == 'EXIT':
-        client_exit(data_list,client_socket)
-        return
-
-def handle_process(client_socket):
-    thread1 = Thread(target=new_client_connect, args=(client_socket,))
-    thread1.daemon = True
-    thread1.start()
-
-    # while True:
-    #     command_line()
+        # while True:
+        #     command_line()
+        
     def client_join(self, client_socket, addr):
         ip, port = addr  # Lấy IP và port từ addr
 

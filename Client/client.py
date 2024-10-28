@@ -433,6 +433,9 @@ def download_chunk(port_list,reponame, port, offset, piece_length, file_resu, ke
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     upload_host1 = socket.gethostbyname(socket.gethostname())
     
+    print(upload_host1)
+    print(port)
+
     client.connect((upload_host1, port))
     client.send(reponame.encode())
     file_name = client.recv(1024).decode()
