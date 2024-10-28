@@ -24,6 +24,7 @@ class Server:
         self.rfc_index = {}
         self.owner_file = {}
         self.lock = Lock()
+
     
     def client_join(self, client_socket, addr):
         ip, port = addr  # Lấy IP và port từ addr
@@ -111,6 +112,29 @@ class Server:
         finally:
             client_socket.close()
 
+
+    def new_client_connect(self, client_socket, addr):
+        try:
+            data = client_socket.recv(RECEIVE_SIZE).decode(CODE)
+            print(f"Received data: {data}")
+            data_list = data.split(' ')
+            if data_list[0] == 'JOIN':
+                self.client_join(client_socket, addr)
+            elif data_list[0] == 'HAVE':
+                self.have_add_repo_client(data_list, client_socket, addr)
+            elif data_list[0] == 'DOWN':
+                self.down_find_peer(data_list, client_socket)
+            elif data_list[0] == 'EXIT':
+                self.client_exit(addr)
+        except ConnectionResetError:
+            print("Connection reset by client")
+        except ConnectionAbortedError:
+            print("Connection aborted by client.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        finally:
+            client_socket.close()
+
 # cmt
     def client_exit(self, addr):
         ip, port = addr
@@ -131,6 +155,9 @@ class Server:
                 print(f"Client {ip}:{port} exited and files removed.")
             else:
                 print(f"No files found for client {ip}:{port}.")
+
+
+        
 
     def handle_process(self, client_socket, addr):
         thread = Thread(target=self.new_client_connect, args=(client_socket, addr))

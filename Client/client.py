@@ -7,7 +7,7 @@ import socket
 from threading import Lock, Thread
 import random
 import tqdm
-import requests
+# import requests
 
 DEFAULT_TRACKER = "http://hello.com"
 Flag = False
