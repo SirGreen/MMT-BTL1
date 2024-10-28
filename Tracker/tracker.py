@@ -25,9 +25,9 @@ class Server:
         self.owner_file = {}
         self.lock = Lock()
     
-    def client_join(self, client_socket, addr):
+    def client_join(self, client_socket, datalist, addr):
         ip, port = addr  # Lấy IP và port từ addr
-
+        port = datalist[1]
         # Thêm client vào danh sách active_client
         with self.lock:  # Bảo vệ truy cập đến active_client
             self.active_client.append([ip, port])
@@ -58,7 +58,8 @@ class Server:
 
     def have_add_repo_client(self, data_list, client_socket, addr):
         host, port = addr
-        filename = data_list[1]
+        filename = data_list[2]
+        port = data_list[1]
     
         # Chuyển ip_port thành tuple
         ip_port = (host, port)  
@@ -87,9 +88,9 @@ class Server:
             command = data_list[0]
         
             if command == 'JOIN':
-                self.client_join(client_socket, addr)
+                self.client_join(client_socket, data_list, addr)
             elif command == 'HAVE':
-                if len(data_list) == 2:  # Kiểm tra số lượng tham số
+                if len(data_list) == 3:  # Kiểm tra số lượng tham số
                     self.have_add_repo_client(data_list, client_socket, addr)
                 else:
                     print("Invalid HAVE command format.")

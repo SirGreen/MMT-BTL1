@@ -474,11 +474,11 @@ def download_chunk(port_list,reponame, port, offset, piece_length, file_resu, ke
 def download(reponame):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     upload_host1 = socket.gethostbyname(socket.gethostname())
-    msg = "FIND P2P-CI/1.0\nREPONAME:" + reponame
+    msg = "DOWN " + reponame
     port_list = send_requests(msg, "localhost", SERVER_PORT).split("\n")
     #####
     # port1 = int(input("Input peer port from list above: "))
-    file_path = os.path.abspath("LA_form_TA.pdf")
+    file_path = os.path.abspath(reponame)
     key_value=get_piece_hashes(make_torrent(file_path))
     total_size = os.path.getsize(file_path)
     piece_length=get_piece_length(total_size)
@@ -486,12 +486,12 @@ def download(reponame):
     offset=0
     port_index=0
 
-    file_resu= "received_LA_formed_TA.pdf"  
+    file_resu= reponame 
     with open(file_resu, "wb") as f:
         f.write(b'\x00' * total_size)
     
     threads = []
-        
+    print(port_index)
     while offset<len(key_value):
         port = port_list[port_index]
     
@@ -560,7 +560,7 @@ def download(reponame):
 
 
 def add(host):
-    msg = "JOIN P2P-CI/1.0\nHost:" + host + "\n" + "Port:" + str(port)
+    msg = "JOIN " + str(port)
     # print("Test nữa")
     send_requests(msg, "localhost", SERVER_PORT)
 
@@ -568,17 +568,7 @@ def add(host):
 def publish(host, title, filename):
     peer_repo.append({"filename": title, "reponame": filename})
     msg = (
-        "PUBLISH RFC P2P-CI/1.0\nHost:"
-        + host
-        + "\n"
-        + "Port:"
-        + str(port)
-        + "\n"
-        + "File:"
-        + title
-        + "\n"
-        + "Repo:"
-        + filename
+        "HAVE "+str(port)+" "+filename
     )
     send_requests(msg, "localhost", SERVER_PORT)
 
