@@ -5,78 +5,14 @@ import hashlib
 import bencodepy  # For Bencoding (install using pip install bencodepy)
 import socket
 from threading import Lock, Thread
-import random
 import tqdm
-import requests
-
-DEFAULT_TRACKER = "http://hello.com"
-Flag = False
-peer_repo = []
-SERVER_PORT = 8080
-SERVER_HOST = "localhost"
-BLOCK_SZ = 512
-BLOCK = 128 << 10  # 128KB
-BLOCK1 = 1 << 20  # 1024KB
-peer_id = "BKU-Torrent-" + "".join([str(random.randint(0, 9)) for _ in range(12)])
+import help
+import trComController as trCom
+import random
+from config import peer_id, DEFAULT_TRACKER, peer_repo, Flag
 
 write_lock = Lock()
-def welcome():
-    print("Welcome to a BitTorrent program by ***, press Help to see how to use")
-
-
-def display_help_overview():
-    help_overview = """
-    Available commands:
-    + Help (Command name): View detailed explanation of a command
-    + MakeTor [F] (Fo) (IPT): Create a torrent file from the input file, saves to destination folder (optional).
-    + Have [FTor] (IPT): Send torrent file(s) to a tracker at the specified IP, uses default if IP not provided.
-    + Down [FTor] (Fo): Download a file using the torrent, communicates with tracker at default or specified IP.
-    + Preview [FTor]: View the contents of a torrent file in a human-readable format.
-    + Exit: Exit the program
-    """
-    print(help_overview)
-
-
-def display_command_help(command):
-    detailed_help = {
-        "help": """
-        Command: Help (Command name)
-        Description: Use 'Help' followed by the command name to get detailed usage instructions for that specific command.
-        Example: Help MakeTor
-        """,
-        "maketor": """
-        Command: MakeTor [F] (Fo) (IPT)
-        Description: Creates a torrent file from the input file path (or folder) [F]. If a folder (Fo) is provided, it saves the torrent in the specified folder. Otherwise, the default folder will be used. You can provide a folder (Fo) and an optional tracker IP (IPT). If no IP is provided, the default tracker IP will be used.
-        Example: MakeTor myfile.txt /myfolder
-        If no folder is specified, the torrent will be saved in the current directory.
-        """,
-        "have": """
-        Command: Have [FTor] (IPT)
-        Description: Sends the specified torrent file (or multiple files if [FTor] is a folder) to a tracker. You can provide an optional tracker IP (IPT). If no IP is provided, the default tracker IP will be used.
-        Example 1: Have mytorrent.torrent 192.168.1.1
-        Example 2: Have torrentFolder/ 192.168.1.1
-        """,
-        "down": """
-        Command: Down [FTor] (Fo)
-        Description: Downloads the file using the specified torrent. You can provide a folder (Fo) to store the file. If no tracker IP is provided, the default IP is used.
-        Example: Down mytorrent.torrent /downloads 192.168.1.1
-        """,
-        "preview": """
-        Command: Preview [FTor]
-        Description: Displays the contents of the given torrent file in a readable format. Useful for checking torrent details before downloading.
-        Example: Preview mytorrent.torrent
-        """,
-        "Exit": """
-        Description: Exit the program
-        """,
-    }
-
-    if command in detailed_help:
-        print(detailed_help[command])
-    else:
-        print("Command not found. Use 'Help' for a list of commands.")
-
-
+# region Piece&Torrent
 def generate_piece_hashes(file_path, piece_length):
     """Generates SHA-1 hashes for each piece of the file."""
     piece_hashes = b""
@@ -177,7 +113,7 @@ def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):
         torrent_file.write(bencoded_data)
 
     print(f"Torrent file created: {output_path}")
-    
+
     return output_path
 
 
@@ -264,38 +200,42 @@ def get_piece_hashes(torrent_file_path):
         print(f"Error reading or decoding the torrent file: {e}")
         return []
 
+# endregion
+def get_file_object(filename, mode='r'):
+    """Open a file and return the file object."""
+    try:
+        file_object = open(filename, mode)
+        return file_object
+    except FileNotFoundError:
+        print(f"Error: The file '{filename}' was not found.")
+        return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
-def send_torrent_tracker(torrent_file_path, tracker_url):
-    # print(tracker_url)
-    
+
+def get_torrent_hash(torrent_file_path):
     if not os.path.exists(torrent_file_path):
         raise FileNotFoundError(
             f"The torrent file '{torrent_file_path}' does not exist."
         )
 
+    hasher = hashlib.sha1()
     with open(torrent_file_path, "rb") as f:
-        torrent_hash = hashlib.sha1(f).digest
+        for chunk in iter(lambda: f.read(4096), b""):
+            hasher.update(chunk)
+    return hasher.digest()
 
-    announce_url = tracker_url + "?have=" + torrent_hash.hex()
-    port = 6881
+def send_torrent_tracker(torrent_file_path, tracker):
+    torrent_hash=get_torrent_hash(torrent_file_path)
+    peer_repo.append({"filename": torrent_file_path, "reponame": torrent_file_path})
+    params={}
+    params['port']=port
+    params['torrent_hash']=torrent_hash
+    params['peerid']=peer_id
+    trCom.send_tracker("have",params)
 
-    params = {
-        "info_hash": torrent_hash.hex(),
-        "peer_id": peer_id,
-        "port": port,
-        "event": "seeding",
-    }
-
-    print(f"Sending announce to tracker: {announce_url}")
-    response = requests.get(tracker_url, params=params)
-    
-    if response.status_code == 200:
-        print("Successfully sent to tracker.")
-        print("Tracker response:", response.content)
-    else:
-        print(f"Error: Tracker responded with status code {response.status_code}")
-
-def have(file_path,tracker_url=None):
+def have(file_path, tracker_url=None):
     tracker_url = tracker_url if tracker_url else DEFAULT_TRACKER
     full_path = ""
     if os.path.isdir(file_path):
@@ -305,48 +245,36 @@ def have(file_path,tracker_url=None):
                 # If the file ends with .torrent, process it
                 if file.endswith(".torrent"):
                     full_path = os.path.join(root, file)
-                    send_torrent_tracker(full_path,tracker_url)  # Call the hypothetical send_to_tracker function
+                    send_torrent_tracker(
+                        full_path, tracker_url
+                    )  # Call the hypothetical send_to_tracker function
     elif file_path.endswith(".torrent"):
         # If it's a single .torrent file, process it directly
-        send_torrent_tracker(file_path,tracker_url) 
+        send_torrent_tracker(file_path, tracker_url)
     else:
         print(f"No .torrent file found at: {file_path}")
-
-def send_requests(msg: str, server_host, server_port):
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        client_socket.connect((server_host, server_port))
-        client_socket.send(msg.encode('utf-8'))
-        # print("test message")
-        response = client_socket.recv(1024).decode('utf-8')
-        print(response)
-        client_socket.close()
-        return response
-    except ConnectionRefusedError:
-        print("Connection to the server failed.")
-        return None
-
 
 def peer_connect(client_socket):
     reponame = client_socket.recv(1024).decode()
     filename = ""
+    print(peer_repo)
     for repo in peer_repo:
         if repo["reponame"] == reponame:
             filename = repo["filename"]
     file_size = os.path.getsize(filename)
-    piece_length=get_piece_length(file_size)
+    piece_length = get_piece_length(file_size)
     # Print for another pear
     client_socket.send(("recievied_" + filename).encode())
     client_socket.send(str(file_size).encode())
     with client_socket, client_socket.makefile("wb") as wfile:
         with open(filename, "rb") as f1:
             mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
-            a=client_socket.recv(4)
-            offset = int.from_bytes(a, 'big')
-            mm.seek(offset*piece_length)
+            a = client_socket.recv(4)
+            offset = int.from_bytes(a, "big")
+            mm.seek(offset * piece_length)
             # data= mm.read(offset,piece_length)
             data = mm.read(piece_length)
-            ressu=hashlib.sha1(data).digest()
+            ressu = hashlib.sha1(data).digest()
             print(ressu)
             print(offset)
             wfile.write(data)
@@ -369,94 +297,38 @@ def upload():
 
     upload_socket.close()
 
-# def download(reponame):
-#     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#     upload_host1 = socket.gethostbyname(socket.gethostname())
-#     msg = "FIND P2P-CI/1.0\nREPONAME:" + reponame
-#     port_list = send_requests(msg, "localhost", SERVER_PORT).split("\n")
-#     #####
-#     # port1 = int(input("Input peer port from list above: "))
-#     file_path = os.path.abspath("LA_form_TA.pdf")
-#     key_value=get_piece_hashes(make_torrent(file_path))
-#     total_size = os.path.getsize(file_path)
-#     piece_length=get_piece_length(total_size)
-        
-#     for port in port_list:  
-#         thread = Thread()
-#         client.connect((upload_host1, port))
-#         client.send(reponame.encode())
-#         if port==port_list[0]:
-#             file_name = client.recv(1024).decode()
-#             file_size = client.recv(1024).decode()
-#             print(file_name + " " + file_size)  
 
-#         progress = tqdm.tqdm(
-#             unit="B", unit_scale=True, unit_divisor=1000, total=int(file_size)
-#         )
-#         with client.makefile("rb") as rfile:
-#             with open(file_name, "wb") as f:
-#                 f.write(b'\x00' * int(file_size))
-#                 with open(file_name, "r+b") as f:
-#                     # Memory-map the file
-#                     mm = mmap.mmap(f.fileno(), 0)
-#                     remaining = int(file_size)        
-#                     offset=0
-#                     while remaining != 0:
-#                         client.send(offset.encode())                 
-#                         data = rfile.read(piece_length if remaining > piece_length else remaining)
-#                         ressu=hashlib.sha1(data).digest()
-#                         if ressu == key_value[offset]:
-#                             mm[offset * piece_length : (offset + 1) * piece_length] = data
-#                             offset+=1
-#                             # f.write(data)
-#                             progress.update(len(data))
-#                             remaining -= len(data)
-#                         else:
-#                             print("meo")
-#                             break
-#                     mm.close()
-#             f.close()
-#         rfile.close()
-#         client.close()
-    
-#     # with client.makefile("rb") as rfile:
-#     #     with open(file_name, "wb") as f:
-#     #         remaining = int(file_size)
-#     #         while remaining != 0:
-#     #             data = rfile.read(BLOCK1 if remaining > BLOCK1 else remaining)
-#     #             f.write(data)
-#     #             progress.update(len(data))
-#     #             remaining -= len(data)
-#     #     f.close()
-#     # rfile.close()
-#     # client.close()
-
-def download_chunk(port_list,reponame, port, offset, piece_length, file_resu, key_value,total_size):
+def download_chunk(
+    port_list, reponame, port, offset, piece_length, file_resu, key_value, total_size
+):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     upload_host1 = socket.gethostbyname(socket.gethostname())
-    
+
     client.connect((upload_host1, port))
     client.send(reponame.encode())
     file_name = client.recv(1024).decode()
     file_size = client.recv(1024).decode()
-    if port==port_list[0]:  
-        print(file_name + " " + file_size)  
+    if port == port_list[0]:
+        print(file_name + " " + file_size)
 
     # remaining = total_size - (offset * piece_length)
 
     progress = tqdm.tqdm(
-        unit="B", unit_scale=True, unit_divisor=1000, total=int(piece_length if total_size > piece_length else total_size)
+        unit="B",
+        unit_scale=True,
+        unit_divisor=1000,
+        total=int(piece_length if total_size > piece_length else total_size),
     )
     with client.makefile("rb") as rfile:
         with open(file_resu, "r+b") as f:
             # Memory-map the file
             mm = mmap.mmap(f.fileno(), 0)
             # while remaining != 0:
-            byte_data = offset.to_bytes(4, 'big')
-            client.send(byte_data) 
-            print(offset)                
+            byte_data = offset.to_bytes(4, "big")
+            client.send(byte_data)
+            print(offset)
             data = rfile.read(piece_length if total_size > piece_length else total_size)
-            ressu=hashlib.sha1(data).digest()
+            ressu = hashlib.sha1(data).digest()
             print(ressu)
             print(key_value[offset])
             if ressu == key_value[offset]:
@@ -470,114 +342,86 @@ def download_chunk(port_list,reponame, port, offset, piece_length, file_resu, ke
             f.close()
     rfile.close()
     client.close()
-        
-def download(reponame):
+
+
+def download(reponame, tracker=None):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    upload_host1 = socket.gethostbyname(socket.gethostname())
-    msg = "DOWN " + reponame
-    port_list = send_requests(msg, "localhost", SERVER_PORT).split("\n")
+    
+    if tracker is None:
+        tracker = DEFAULT_TRACKER
+    url = tracker+"/announce/down"
+    params={}
+    params['torrent_hash']=get_torrent_hash(reponame)
+    params['peerid']=peer_id
+    params['port']=port
+    port_list = trCom.send_get(url,params).json()
     #####
     # port1 = int(input("Input peer port from list above: "))
     file_path = os.path.abspath(reponame)
-    key_value=get_piece_hashes(make_torrent(file_path))
+    key_value = get_piece_hashes(make_torrent(file_path))
     total_size = os.path.getsize(file_path)
-    piece_length=get_piece_length(total_size)
-    
-    offset=0
-    port_index=0
+    piece_length = get_piece_length(total_size)
 
-    file_resu= reponame 
+    offset = 0
+    port_index = 0
+
+    file_resu = reponame
     with open(file_resu, "wb") as f:
-        f.write(b'\x00' * total_size)
-    
+        f.write(b"\x00" * total_size)
+
     threads = []
     print(port_index)
-    while offset<len(key_value):
-        port = port_list[port_index]
-    
-        thread = Thread(target=download_chunk, args=(port_list,reponame, int(port), offset, piece_length, file_resu, key_value, total_size))
+    while offset < len(key_value):
+        client_port = port_list[port_index]
+
+        thread = Thread(
+            target=download_chunk,
+            args=(
+                port_list,
+                reponame,
+                int(client_port),
+                offset,
+                piece_length,
+                file_resu,
+                key_value,
+                total_size,
+            ),
+        )
         thread.daemon = True
         threads.append(thread)
-        
+
         thread.start()
-        
+
         offset += 1
         port_index += 1
-        
+
         if port_index >= len(port_list):
             port_index = 0
-            
+
     for thread in threads:
-        thread.join()  
-        
+        thread.join()
+
     client.close()
-          
-        # client.connect((upload_host1, port))
-        # client.send(reponame.encode())
-        # if port==port_list[0]:
-        #     file_name = client.recv(1024).decode()
-        #     file_size = client.recv(1024).decode()
-        #     print(file_name + " " + file_size)  
 
-        # progress = tqdm.tqdm(
-        #     unit="B", unit_scale=True, unit_divisor=1000, total=int(file_size)
-        # )
-        # with client.makefile("rb") as rfile:
-        #     with open(file_name, "wb") as f:
-        #         f.write(b'\x00' * int(file_size))
-        #         with open(file_name, "r+b") as f:
-        #             # Memory-map the file
-        #             mm = mmap.mmap(f.fileno(), 0)
-        #             # while remaining != 0:
-        #             client.send(offset.encode())                 
-        #             data = rfile.read(piece_length if remaining > piece_length else remaining)
-        #             ressu=hashlib.sha1(data).digest()
-        #             if ressu == key_value[offset]:
-        #                     mm[offset * piece_length : (offset + 1) * piece_length] = data
-        #                     offset+=1
-        #                     # f.write(data)
-        #                     progress.update(len(data))
-        #                     remaining -= len(data)
-        #             else:
-        #                     print("meo")
-        #                     break
-        #             mm.close()
-        #     f.close()
-        # rfile.close()
-        # client.close()
-    
-    # with client.makefile("rb") as rfile:
-    #     with open(file_name, "wb") as f:
-    #         remaining = int(file_size)
-    #         while remaining != 0:
-    #             data = rfile.read(BLOCK1 if remaining > BLOCK1 else remaining)
-    #             f.write(data)
-    #             progress.update(len(data))
-    #             remaining -= len(data)
-    #     f.close()
-    # rfile.close()
-    # client.close()
+def join(tracker=None):
+    if tracker is peer_id:
+        tracker = DEFAULT_TRACKER
+    url = tracker+"/announce/join"
+    params={}
+    params['peerid']=peer_id
+    trCom.send_get(url,params)
 
+def client_exit(tracker=None):
+    if tracker is peer_id:
+        tracker = DEFAULT_TRACKER
+    url = tracker+"/announce/exit"
+    params={}
+    params['peerid']=peer_id
+    trCom.send_get(url,params)
 
-def add(host):
-    msg = "JOIN " + str(port)
-    # print("Test nữa")
-    send_requests(msg, "localhost", SERVER_PORT)
-
-
-def publish(host, title, filename):
-    peer_repo.append({"filename": title, "reponame": filename})
-    msg = (
-        "HAVE "+str(port)+" "+filename
-    )
-    send_requests(msg, "localhost", SERVER_PORT)
-
-def client_exit(host):
-    msg = "EXIT Client with hostname: "+ host + " " + ",port: " + str(port)
-    send_requests(msg, "localhost", SERVER_PORT)
 
 def main():
-    welcome()  # Display the welcome message
+    help.welcome()  # Display the welcome message
 
     upload_thread = Thread(target=upload)
     # destroy this upload thread on quitting
@@ -590,38 +434,33 @@ def main():
 
     hostname = peer_id
     print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {hostname} (OwO)")
-    add(hostname)
+    join(hostname)
     while True:
-        try: 
+        try:
             user_input = input("Enter a command: ").strip().lower()
             command_split = user_input.split()
-            if user_input.startswith("fetch"):
+            if user_input.startswith("down"):
                 if len(command_split) != 2:
                     print("Note : fetch only accept 1 argument")
                 else:
                     download(command_split[1])
-            elif user_input.startswith("publish"):
-                if len(command_split) != 3:
-                    print("Note : publish only accept 2 argument")
-                else:
-                    publish(hostname, command_split[1], command_split[2])
             # elif command_split[0] == 'find':
             #     if len(command_split) != 2:
             #         print("Note : publish only accept 1 argument")
             #     else:
             #         find(command_split[1])
             elif user_input == "help":
-                display_help_overview()  # Show concise help overview
+                help.display_help_overview()  # Show concise help overview
             elif user_input.startswith("help "):
                 command = user_input.split()[1]
                 # Show detailed help for the specific command
-                display_command_help(command)
+                help.display_command_help(command)
             elif user_input.startswith("preview"):
                 preview_torrent(command_split[1])
             elif user_input.startswith("have"):
-                if (len(command_split)>2):
+                if len(command_split) > 2:
                     have(command_split[1], command_split[2])
-                else: 
+                else:
                     have(command_split[1])
             elif user_input.startswith("test-get_piece_hash "):
                 # test getHash <file torrent> <coi hash của piece số mấy>
@@ -635,7 +474,9 @@ def main():
                 output_folder = None
                 # Parse the command
                 if len(parts) < 1:
-                    raise ValueError("Invalid input. Please provide at least the file path")
+                    raise ValueError(
+                        "Invalid input. Please provide at least the file path"
+                    )
                 # The first part is the command
                 command = parts[0]
                 # Expected parts: [command, file_path, output_folder (optional), tracker_url (optional)]
@@ -651,9 +492,11 @@ def main():
                 break
 
             else:
-                print("Unknown command. Type 'Help' to see the list of available commands.")
+                print(
+                    "Unknown command. Type 'Help' to see the list of available commands."
+                )
         except Exception as e:
-            print("Error: ",e)
+            print("Error: ", e)
 
 
 # Run the program
