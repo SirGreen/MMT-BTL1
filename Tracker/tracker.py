@@ -61,39 +61,6 @@ class Server:
         print(self.rfc_index)
         print(self.owner_file)
 
-    def new_client_connect(self, client_socket, addr):
-        try:
-            data = client_socket.recv(RECEIVE_SIZE).decode(CODE)
-            print(f"Received data: {data}")
-            data_list = data.split(" ")
-            command = data_list[0]
-
-            if command == "JOIN":
-                # self.client_join(client_socket, data_list, addr)
-                print("join called")
-            elif command == "HAVE":
-                if len(data_list) == 3:  # Kiểm tra số lượng tham số
-                    self.have_add_repo_client(data_list, client_socket, addr)
-                else:
-                    print("Invalid HAVE command format.")
-                    client_socket.send("Invalid HAVE command format.".encode(CODE))
-            elif command == "DOWN":
-                if len(data_list) == 2:  # Kiểm tra số lượng tham số
-                    self.down_find_peer(data_list, client_socket)
-                else:
-                    print("Invalid DOWN command format.")
-                    client_socket.send("Invalid DOWN command format.".encode(CODE))
-            elif command == "EXIT":
-                print("Client exit requested")
-                self.client_exit(addr)
-                return
-        except ConnectionResetError:
-            print("Connection reset by client")
-        except Exception as e:
-            print(f"Error occurred: {e}")
-        finally:
-            client_socket.close()
-
     # cmt
     def client_exit(self, peer_id):
         with self.lock:  # Sử dụng lock để bảo vệ truy cập
@@ -119,12 +86,6 @@ class Server:
                 
         print(self.rfc_index)
         print(self.owner_file)
-
-    def handle_process(self, client_socket, addr):
-        thread = Thread(target=self.new_client_connect, args=(client_socket, addr))
-        # print("test handle")
-        thread.daemon = True
-        thread.start()
 
 
 tracker_server = Server()
