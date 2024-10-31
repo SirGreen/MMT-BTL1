@@ -16,9 +16,9 @@ debugLock = Lock()
 
 #region Have
 def send_torrent_tracker(torrent_file_path, tracker):
-    torrent_hash = get_torrent_hash(torrent_file_path)
-    tracker = get_trackers(torrent_file_path)[0]
-    file_name = get_file_name(torrent_file_path)
+    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)
+    tracker = trCtrl.get_trackers(torrent_file_path)[0]
+    file_name = trCtrl.get_file_name(torrent_file_path)
     peer_repo.append({"filename": file_name, "reponame": torrent_hash})
     print(file_name)
     params = {}
