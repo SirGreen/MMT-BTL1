@@ -1,69 +1,278 @@
-\documentclass{article}
+\documentclass[a4paper]{article}
+\usepackage{vntex}
+%\usepackage[english,vietnam]{babel}
+%\usepackage[utf8]{inputenc}
 
-% Package for setting up custom headers and footers
-\usepackage{fancyhdr}
+%\usepackage[utf8]{inputenc}
+%\usepackage[francais]{babel}
+
+
+\usepackage{float}
+\usepackage{a4wide,amssymb,epsfig,latexsym,multicol,array,hhline,fancyhdr}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{lastpage}
+\usepackage[lined,boxed,commentsnumbered]{algorithm2e}
+\usepackage{enumerate}
+\usepackage{color}
+\usepackage{graphicx}							% Standard graphics package
+\usepackage{array}
+\usepackage{tabularx, caption}
+\usepackage{multirow}
+\usepackage[framemethod=tikz]{mdframed}% For highlighting paragraph backgrounds
+\usepackage{multicol}
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{epsfig}
+\usepackage{tikz}
+\usepackage{listings}
+\usetikzlibrary{arrows,snakes,backgrounds}
+\usepackage{hyperref}
+\usepackage{scrextend}
+\changefontsizes{13pt}
+\usepackage{svg}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tocloft}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\thesection}{\Roman{section}}
+\hypersetup{urlcolor=blue,linkcolor=black,citecolor=black,colorlinks=true} 
+%\usepackage{pstcol} 								% PSTricks with the standard color package
+
+\newtheorem{theorem}{{\bf Định lý}}
+\newtheorem{property}{{\bf Tính chất}}
+\newtheorem{proposition}{{\bf Mệnh đề}}
+\newtheorem{corollary}[proposition]{{\bf Hệ quả}}
+\newtheorem{lemma}[proposition]{{\bf Bổ đề}}
+
+\everymath{\color{blue}}
+%\usepackage{fancyhdr}
+\setlength{\headheight}{40pt}
 \pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{Dummy LaTeX Document}
-\fancyfoot[C]{\thepage}
+\fancyhead{} % clear all header fields
+\fancyhead[L]{
+ \begin{tabular}{rl}
+    \begin{picture}(25,15)(0,0)
+    \put(0,-8){\includegraphics[width=8mm, height=8mm]{hcmut.png}}
+    %\put(0,-8){\epsfig{width=10mm,figure=hcmut.eps}}
+   \end{picture}&
+	%\includegraphics[width=8mm, height=8mm]{hcmut.png} & %
+	\begin{tabular}{l}
+		\textbf{\bf \ttfamily Trường Đại Học Bách Khoa Tp.Hồ Chí Minh}\\
+		\textbf{\bf \ttfamily Khoa Khoa Học và Kỹ Thuật Máy Tính}
+	\end{tabular} 	
+ \end{tabular}
+}
+\fancyhead[R]{
+	\begin{tabular}{l}
+		\tiny \bf \\
+		\tiny \bf 
+	\end{tabular}  }
+\fancyfoot{} % clear all footer fields
+\fancyfoot[L]{\scriptsize \ttfamily Bài tập lớn môn Cơ sở dữ liệu - Niên khóa 2024-2025}
+\fancyfoot[R]{\scriptsize \ttfamily Trang {\thepage}/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0.3pt}
 
-% Title and author information
-\title{Dummy LaTeX Document}
-\author{John Doe}
-\date{\today}
 
+%%%
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+\makeatletter
+\newcounter {subsubsubsection}[subsubsection]
+\renewcommand\thesubsubsubsection{\thesubsubsection .\@alph\c@subsubsubsection}
+\newcommand\subsubsubsection{\@startsection{subsubsubsection}{4}{\z@}%
+                                     {-3.25ex\@plus -1ex \@minus -.2ex}%
+                                     {1.5ex \@plus .2ex}%
+                                     {\normalfont\normalsize\bfseries}}
+\newcommand*\l@subsubsubsection{\@dottedtocline{3}{10.0em}{4.1em}}
+\newcommand*{\subsubsubsectionmark}[1]{}
+\makeatother
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{backcolor}{RGB}{212,235,242}
+\lstset{frame=tb,
+	language=R,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3,
+	numbers=left,
+	stepnumber=1,
+	numbersep=1pt,    
+	firstnumber=1,
+	numberfirstline=true,
+}
+
+\usepackage{indentfirst}
 \begin{document}
+\setlength{\parindent}{0.5cm}
 
-% Title page
-\maketitle
+\begin{titlepage}
+\begin{center}
+ĐẠI HỌC QUỐC GIA THÀNH PHỐ HỒ CHÍ MINH \\
+TRƯỜNG ĐẠI HỌC BÁCH KHOA \\
+KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH 
+\end{center}
 
-% Abstract section
-\begin{abstract}
-This is a sample abstract. Here, you provide a brief summary of the document's purpose, main points, and conclusions. It is typically short, between 150-250 words.
-\end{abstract}
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[scale = 0.27]{01_logobachkhoasang.png}
+\end{center}
+\end{figure}
 
-% Introduction
-\section{Introduction}
-This is the introduction section. In this section, you introduce the topic and provide some background information.
 
-\subsection{Motivation}
-In this subsection, you explain the motivation for the document. Why is this topic important? What are the goals?
+\begin{center}
+\begin{tabular}{c}
+	\multicolumn{1}{l}{\textbf{{\Large HỌC KỲ }}}\\
+	~~\\
+	\hline
+	\\
+	\multicolumn{1}{l}{\textbf{{\Large Bài tập lớn}}}\\
+	\\
+	
+	\textbf{{\Huge Cơ Sở Dữ Liệu}}\\
+	\\
+	\hline
+\end{tabular}
+\end{center}
 
-\subsection{Objectives}
-In this subsection, you outline the specific objectives that this document aims to achieve.
-
-% Main Content
-\section{Main Content}
-Here is where you add the main content of the document. You can add more sections and subsections as needed.
-
-\subsection{Example Subsection}
-This is an example of a subsection. You can include equations, figures, and tables as necessary.
-
-\begin{equation}
-E = mc^2
-\end{equation}
-
-\begin{table}[h!]
-    \centering
-    \begin{tabular}{|c|c|}
-        \hline
-        Column 1 & Column 2 \\
-        \hline
-        Data 1 & Data 2 \\
-        Data 3 & Data 4 \\
-        \hline
-    \end{tabular}
-    \caption{Example Table}
-    \label{tab:example}
+\begin{table}[h]
+\begin{tabular}{rrll}
+\hspace{2.5 cm} & GVHD: & &\\
+& SV: &  &\\
+& &   Huỳnh Minh Khoa&- 2252346\\
+& &Thân Nguyễ Minh Khoa &- 2252361\\
+& & Trần Lương Yến Nhi &- 2252586\\
+ & & Nguyễn Lê Vân Tú&- 2252881\\
+\end{tabular}
 \end{table}
 
-% Conclusion
-\section{Conclusion}
-This is the conclusion section. Here, you summarize the document and highlight key takeaways.
+\begin{center}
+{\footnotesize TP. HỒ CHÍ MINH, THÁNG 10/2024}
+\end{center}
+\end{titlepage}
 
-% Bibliography
-\begin{thebibliography}{9}
-    \bibitem{sample} A. Author, \textit{Title of the Book}, Publisher, Year.
+\newpage
+\tableofcontents
+\newpage
+
+\section{BitTorrent File-Sharing Application Functions and Communication Protocols}
+
+\begin{enumerate}[label=\textbf{\arabic*.}, leftmargin=*, itemsep=10pt]
+
+    \item \textbf{File Discovery and Metadata Sharing}  
+    \textit{Description:} Allows users to locate and retrieve metadata about files to be shared or downloaded, typically through .torrent files or magnet links.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{HTTP:} For downloading .torrent files or accessing magnet links.
+    \end{itemize}
+
+    \item \textbf{Peer Discovery}  
+    \textit{Description:} Enables the identification and connection to other peers sharing the same file, ensuring distributed sharing.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{BitTorrent Tracker Protocol (HTTP):} Centralized approach to finding peers.
+    \end{itemize}
+
+    \item \textbf{File Piece Distribution}  
+    \textit{Description:} Divides files into smaller pieces for efficient sharing. Each piece is individually shared and verified to ensure data integrity.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{BitTorrent Protocol over TCP/UDP:} Manages the exchange of file pieces.
+    \end{itemize}
+
+    \item \textbf{Upload}  
+    \textit{Description:} Handles the sending of file pieces from a user's device to multiple peers in the network. Ensures balanced contribution and resource sharing.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{BitTorrent Protocol over TCP/UDP:} Governs the sending of data pieces to peers.
+    \end{itemize}
+
+    \item \textbf{Download}  
+    \textit{Description:} Manages receiving file pieces from other peers. Ensures optimal use of network resources by downloading from multiple peers concurrently.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{BitTorrent Protocol over TCP/UDP:} Controls receiving data pieces from multiple peers simultaneously.
+    \end{itemize}
+
+    \item \textbf{Piece Verification}  
+    \textit{Description:} Verifies the integrity of each downloaded piece by comparing its hash to the expected value, ensuring the reliability of the download.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{Internal Hash Verification (SHA-1):} Conducted within the application to confirm the accuracy of received data.
+    \end{itemize}
+
+    \item \textbf{Tit-for-Tat Function}  
+    \textit{Description:} Implements a strategy to ensure fair sharing by prioritizing peers that contribute more data. Encourages reciprocation among peers to balance the network load.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{BitTorrent Protocol:} Uses a built-in mechanism to manage upload/download ratios and prioritize reciprocating peers.
+    \end{itemize}
+
+    \item \textbf{Encryption Function}  
+    \textit{Description:} Ensures secure data transfer by encrypting communications between peers. Uses key exchange mechanisms to establish a secure connection.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{Diffie-Hellman Key Exchange:} Establishes a shared secret between peers to encrypt communication.
+        \item \textbf{AES (Advanced Encryption Standard):} Encrypts the actual data transfer for security.
+    \end{itemize}
+
+    \item \textbf{Error Handling and Recovery}  
+    \textit{Description:} Detects and recovers from issues like incomplete or corrupted downloads. Retries failed downloads and re-requests missing pieces from other peers.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{BitTorrent Protocol:} Contains mechanisms for retrying failed piece downloads and error detection.
+    \end{itemize}
+    \section{Tracker-Specific Functions}
+    \item \textbf{Tracker Registration}  
+    \textit{Description:} Registers new peers with the tracker to enable them to participate in the file-sharing network.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{BitTorrent Tracker Protocol (HTTP):} Used to register peers with a centralized tracker.
+    \end{itemize}
+
+    \item \textbf{Tracker Announce}  
+    \textit{Description:} Updates the tracker with a peer’s status, such as upload/download progress, which files the client is seeding and connection status.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{BitTorrent Tracker Protocol (HTTP):} Communicates the peer’s status to the tracker.
+    \end{itemize}
+
+    \item \textbf{Tracker Peer List Retrieval}  
+    \textit{Description:} Allows peers to retrieve a list of other peers sharing the same file from the tracker.  
+    \textit{Communication Protocols:}
+    \begin{itemize}
+        \item \textbf{BitTorrent Tracker Protocol (HTTP):} Provides a list of active peers from the tracker.
+    \end{itemize}
+
+\end{enumerate}
+
+\begin{thebibliography}{80}
+\item Nguyễn Đình Huy, Đậu Thế Cấp \& Lê Xuân Đại (2022). \textit{Giáo trình Xác Suất Và Thống Kê}. Nxb. Đại học quốc gia TP.HCM
+
+\item Amazon. \textit{Hồi quy logistic là gì?}. Truy cập từ: https://aws.amazon.com/vi/what-is/logistic-regression/
+\item Datacamp. (03/2023).
+\textit{Logistic Regression in R Tutorial}. Truy cập từ: https://www.datacamp.com/tutorial/logistic-regression-R
+
+\item Geeksforgeeks. (10/01/2023). 
+\textit{Advantages and Disadvantages of Logistic Regression}. Truy cập từ: https://www.geeksforgeeks.org/advantages-and-disadvantages-of-logistic-regression/
+
+\item Đặng Khải Hoàn. (25/2/2020). \textit{Kiểm định phân bố chuẩn (test for normal distribution)}. Truy cập từ: https://rpubs.com/HoanDang/abc456
+\item Hỗ Trợ SPSS. (25/01/2022). \textit{Cách đọc biểu đồ hộp boxplot}. Truy cập từ: https://phantichspss.com/cach-doc-bieu-do-hop-boxplot.html
+\item Statistics Globe. \textit{Graphics in R (Gallery with Examples)}. Truy cập tại: https://statisticsglobe.com/graphics-in-r
 \end{thebibliography}
-
 \end{document}
