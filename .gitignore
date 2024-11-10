@@ -1,3 +1,6 @@
 
 *.rar
 /Client/__pycache__
+report/report.synctex(busy)
+report/report.fdb_latexmk
+report/report.aux
