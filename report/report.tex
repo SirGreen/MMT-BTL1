@@ -147,7 +147,7 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
 
 \begin{center}
 \begin{tabular}{c}
-	\multicolumn{1}{l}{\textbf{{\Large HỌC KỲ }}}\\
+	\multicolumn{1}{l}{\textbf{{\Large HỌC KỲ 241}}}\\
 	~~\\
 	\hline
 	\\
@@ -172,7 +172,7 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
 \end{table}
 
 \begin{center}
-{\footnotesize TP. HỒ CHÍ MINH, THÁNG 10/2024}
+{\footnotesize TP. HỒ CHÍ MINH, THÁNG 11/2024}
 \end{center}
 \end{titlepage}
 
@@ -181,12 +181,12 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
 \newpage
 
 \section{Chức năng của ứng dụng}
-\subsection{Chức năng ứng dụng chia sẻ tệp BitTorrent và giao thức giao tiếp}
+\subsection{Các chức năng ứng dụng để chia sẻ tệp BitTorrent}
     \textbf{File Discovery và chia sẻ Metadata}  
-    \textit{Mô tả:} Cho phép người dùng định vị và truy xuất siêu dữ liệu về các tệp được chia sẻ hoặc tải xuống, thường thông qua các tệp .torrent hoặc magnet link.  
+    \textit{Mô tả:} Cho phép người dùng định vị và truy xuất dữ liệu về thông tin của các tệp được chia sẻ hoặc tải xuống, thường thông qua các tệp .torrent hoặc magnet link.  
 
     \textbf{Peer Discovery}  
-    \textit{Mô tả:} Cho phép nhận dạng và kết nối với các peer khác chia sẻ cùng một tệp, đảm bảo chia sẻ phân tán.  
+    \textit{Mô tả:} Cho phép nhận dạng và kết nối với các peer khác đang chia sẻ cùng một tệp, đảm bảo chia sẻ phân tán.  
 
 
     \textbf{Phân phối tập tin}  
@@ -205,35 +205,27 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
     \textit{Mô tả:} Xác minh tính toàn vẹn của từng mảnh được tải xuống bằng cách so sánh giá trị băm của nó với giá trị mong đợi, đảm bảo độ tin cậy của quá trình tải xuống.  
     
 
-    \textbf{Chức năng Tit-for-Tat}  
-    \textit{Mô tả:} Triển khai chiến lược để đảm bảo chia sẻ công bằng bằng cách ưu tiên các peer đóng góp nhiều dữ liệu hơn. Khuyến khích sự tương hỗ giữa các peer để cân bằng tải mạng.  
-    
-
-    \textbf{Chức năng mã hóa}  
-    \textit{Mô tả:} Đảm bảo truyền dữ liệu an toàn bằng cách mã hóa thông tin liên lạc giữa các peer. Sử dụng cơ chế trao đổi khóa để thiết lập kết nối an toàn.  
-    
-
     \textbf{Xử lý lỗi và phục hồi}  
     \textit{Mô tả:} Phát hiện và phục hồi các sự cố như tải xuống không đầy đủ hoặc bị hỏng. Thử lại các lần tải xuống không thành công và yêu cầu lại các phần bị thiếu từ các peer khác.  
     
-
 \subsection{Chức năng dành riêng cho Tracker}
 
-    \textbf{Đăng kí Tracker}  
-    \textit{Mô tả:} Đăng ký những peer mới với trình theo dõi để cho phép tham gia vào mạng chia sẻ tệp.  
+    \textbf{Đăng kí Peer mới với Tracker}  
+    \textit{Mô tả:} Đăng ký peer mới vào mạng chia sẻ tệp để truy xuất thông tin khi cần thi. 
     
 
     \textbf{Thông báo Tracker}  
-    \textit{Mô tả:} Cập nhật trình theo dõi với trạng thái của peer, chẳng hạn như tiến trình tải lên/tải xuống, các tệp mà máy khách đang seeding và trạng thái kết nối.  
+    \textit{Mô tả:} Cập nhật trình theo dõi với trạng thái của peer, chẳng hạn như tiến trình tải lên/tải xuống, các tệp mà máy Client đang seeding và trạng thái kết nối.  
     
-    \textbf{Truy xuất danh sách Tracker Peer}  
-    \textit{Mô tả:} Cho phép các peer lấy danh sách các peer khác chia sẻ cùng một tệp từ trình theo dõi.  
+    \textbf{Truy xuất danh sách các Peer có file từ Tracker}  
+    \textit{Mô tả:} Cho phép các peer lấy danh sách các peer khác chia sẻ cùng một tệp từ Tracker.  
     
 
 \section{Giao thức}
 
-    \subsection{Giao thức Uploader - Downloader}
-        \subsubsection{Downloader và Uploader} Lần lượt chờ đợi tin nhắn của nhau ứng theo các trường cần lưu
+    \subsection{Giao thức giữa các Client với nhiệm vụ là Uploader - Downloader}
+        \subsubsection{Giao thức tải file khi dùng socket} 
+        Lần lượt chờ đợi tin nhắn của nhau ứng theo các trường cần lưu
         \newline
         \newline
             \textbf{B1}: Downloader kết nối với Uploader:
@@ -264,7 +256,7 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
 
     \subsection{Giao thức Client - Tracker}
     Được xây dụng dựa trên giao thức HTTP, các client gửi các thông báo đến tracker thông qua giao thức HTTP GET \textquotedblleft \/announce\textquotedblright $+$ /<command> \textquotedblright $+$ \textquotedblleft $?$ \textquotedblright $+$  tham số
-    \subsubsection{Client và Tracker}
+    \subsubsection{Các giao thức để Client thông báo Tracker}
     \begin{itemize}
         \item Client tham gia vào Tracker:
         \begin{itemize}
