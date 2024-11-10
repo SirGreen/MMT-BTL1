@@ -8,8 +8,9 @@ import tqdm
 import help
 import trComController as trCom
 import random
-from config import peer_id, DEFAULT_TRACKER, peer_repo, Flag
+import config
 import torrentController as trCtrl
+import atexit
 
 write_lock = Lock()
 debugLock = Lock()
@@ -19,12 +20,12 @@ def send_torrent_tracker(torrent_file_path, tracker):
     torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)
     tracker = trCtrl.get_trackers(torrent_file_path)[0]
     file_name = trCtrl.get_file_name(torrent_file_path)
-    peer_repo.append({"filename": file_name, "reponame": torrent_hash})
+    config.peer_repo.append({"filename": file_name, "reponame": torrent_hash})
     print(file_name)
     params = {}
     params["port"] = port
     params["torrent_hash"] = torrent_hash
-    params["peerid"] = peer_id
+    params["peerid"] = config.peer_id
     trCom.send_tracker("have", params, tracker)
 
 
@@ -42,6 +43,7 @@ def have(file_path, tracker_url=None):
                     )  # Call the hypothetical send_to_tracker function
     elif file_path.endswith(".torrent"):
         # If it's a single .torrent file, process it directly
+        file_path=f'program_{config.prog_num}/torrents/'+file_path
         send_torrent_tracker(file_path, tracker_url)
     else:
         print(f"No .torrent file found at: {file_path}")
@@ -51,7 +53,7 @@ def have(file_path, tracker_url=None):
 def peer_connect(client_socket):
     reponame = client_socket.recv(1024)
     filename = ""
-    for repo in peer_repo:
+    for repo in config.peer_repo:
         if repo["reponame"] == reponame:
             filename = repo["filename"]
     file_size = os.path.getsize(filename)
@@ -83,7 +85,7 @@ def upload():
     upload_host = socket.gethostbyname(socket.gethostname())
     upload_socket.bind((upload_host, port))
     upload_socket.listen(5)
-    while not Flag:
+    while not config.Flag:
         (client_socket, client_addr) = upload_socket.accept()
         print("Got connection from", client_addr)
         new_thread = Thread(target=peer_connect, args=(client_socket,))
@@ -147,11 +149,11 @@ def download(torrent_file_name, tracker=None):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     torrent_hash = trCtrl.get_torrent_hash(torrent_file_name)
     if tracker is None:
-        tracker = DEFAULT_TRACKER
+        tracker = config.DEFAULT_TRACKER
     url = tracker + "/announce/down"
     params = {}
     params["torrent_hash"] = trCtrl.get_torrent_hash(torrent_file_name)
-    params["peerid"] = peer_id
+    params["peerid"] = config.peer_id
     params["port"] = port
     port_list = trCom.send_get(url, params).json()
     #####
@@ -164,7 +166,7 @@ def download(torrent_file_name, tracker=None):
     offset = 0
     port_index = 0
 
-    file_resu = "download/" + trCtrl.get_file_name(torrent_file_name)
+    file_resu = f"program_{config.prog_num}/downloads/" + trCtrl.get_file_name(torrent_file_name)
     os.makedirs(os.path.dirname(file_resu), exist_ok=True)
     with open(file_resu, "wb") as f:
         f.write(b"\x00" * total_size)
@@ -205,21 +207,78 @@ def download(torrent_file_name, tracker=None):
 #endregion
 
 #region join/exit
+def get_program_number():
+    running_file = "running.txt"
+    program_numbers = set()
+    
+    # Check if 'running.txt' exists and read the program numbers
+    if os.path.exists(running_file):
+        with open(running_file, "r") as f:
+            for line in f:
+                try:
+                    # Extract program numbers from each line
+                    program_numbers.add(int(line.strip()))
+                except ValueError:
+                    continue
+
+    # Find the next available program number
+    num = 1
+    while num in program_numbers:
+        num += 1
+    return num
+
+def cleanup(program_number):
+    # Remove the program number from 'running.txt' when exiting
+    running_file = "running.txt"
+    if os.path.exists(running_file):
+        with open(running_file, "r") as f:
+            lines = f.readlines()
+        
+        # Rewrite 'running.txt' without the current program number
+        with open(running_file, "w") as f:
+            for line in lines:
+                if line.strip() != str(program_number):
+                    f.write(line)
+
+def setup_program_folder():
+    # Get the designated program number
+    program_number = get_program_number()
+    program_folder = f"program_{program_number}"
+    
+    # Create the program folder and subfolders if they don't exist
+    if not os.path.exists(program_folder):
+        os.makedirs(os.path.join(program_folder, "torrents"))
+        os.makedirs(os.path.join(program_folder, "downloads"))
+    
+    # Append the program number to the central 'running.txt' to signal it's running
+    with open("running.txt", "a") as f:
+        f.write(f"{program_number}\n")
+
+    # Register cleanup function to remove the program number on exit
+    atexit.register(cleanup, program_number)
+
+    return program_number
+
+
+
 def join(tracker=None):
-    if tracker is peer_id:
-        tracker = DEFAULT_TRACKER
+    config.prog_num = setup_program_folder()
+    config.peer_id = config.peer_id + str(config.prog_num)
+    if tracker is None:
+        tracker = config.DEFAULT_TRACKER
     url = tracker + "/announce/join"
     params = {}
-    params["peerid"] = peer_id
+    params["peerid"] = config.peer_id
     trCom.send_get(url, params)
 
 
 def client_exit(tracker=None):
-    if tracker is peer_id:
-        tracker = DEFAULT_TRACKER
+    if tracker is None:
+        tracker = config.DEFAULT_TRACKER
     url = tracker + "/announce/exit"
     params = {}
-    params["peerid"] = peer_id
+    params["peerid"] = config.peer_id
+    print(config.peer_id)
     trCom.send_get(url, params)
 #endregion
 
@@ -235,9 +294,9 @@ def main():
     # ping_thread.daemon = True
     # ping_thread.start()
 
-    hostname = peer_id
-    print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {hostname} (OwO)")
+    hostname = config.DEFAULT_TRACKER
     join(hostname)
+    print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {config.peer_id} (OwO)")
     while True:
         try:
             user_input = input("Enter a command: ").strip().lower()

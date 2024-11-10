@@ -242,7 +242,7 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
                 Uploader sẽ nằm trong vòng lặp chờ nhận các integer cho đến khi ngắt kết nối:
                 \begin{itemize}
                     \item B3.1: Downloader: Sẽ gửi 1 interger ứng với vị trí Piece cần tải
-                    \item B3.2: Uploader: Sau khi nhận sẽ bắt đầu gửi dữ liệu từ Piece với độ dài Piece theo Piece\_length được lưu trong file Torrent cho Downloader
+                    \item B3.2: Uploader: Sau khi nhận sẽ bắt đầu gửi dữ liệu từ file theo các Piece với độ dài theo Piece\_length được lưu trong file Torrent cho Downloader
                     \item B3.3: Downloader: Sẽ nhận và xử lý dữ liệu và lập lại bước 3.1 cho đến khi hết Piece để download từ Uploader này hoặc đã tải hết tất cả các Piece
                 \end{itemize}
         \subsubsection{Lý do sử dụng socket}
