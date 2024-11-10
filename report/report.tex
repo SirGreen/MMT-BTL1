@@ -184,90 +184,51 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
 \subsection{Chức năng ứng dụng chia sẻ tệp BitTorrent và giao thức giao tiếp}
     \textbf{File Discovery và chia sẻ Metadata}  
     \textit{Mô tả:} Cho phép người dùng định vị và truy xuất siêu dữ liệu về các tệp được chia sẻ hoặc tải xuống, thường thông qua các tệp .torrent hoặc magnet link.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{HTTP:} Để tải xuống các tệp .torrent hoặc truy cập các liên kết nam châm.
-    \end{itemize}
 
     \textbf{Peer Discovery}  
     \textit{Mô tả:} Cho phép nhận dạng và kết nối với các peer khác chia sẻ cùng một tệp, đảm bảo chia sẻ phân tán.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{Giao thức BitTorrent Tracker (HTTP):} Cách tiếp cận tập trung để tìm kiếm peer.
-    \end{itemize}
+
 
     \textbf{Phân phối tập tin}  
     \textit{Mô tả:} Chia tệp thành các mảnh nhỏ hơn để chia sẻ hiệu quả. Mỗi mảnh được chia sẻ và xác minh riêng lẻ để đảm bảo tính toàn vẹn của dữ liệu.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{Giao thức BitTorrent qua TCP/UDP:} Quản lý việc trao đổi các mảnh của tập tin.
-    \end{itemize}
+    
 
     \textbf{Tải lên}  
     \textit{Mô tả:} Xử lý việc gửi các phần tệp từ thiết bị của người dùng đến nhiều peer trong mạng. Đảm bảo cân bằng sự đóng góp và chia sẻ tài nguyên.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{Giao thức BitTorrent qua TCP/UDP:} Quản lý việc gửi các mảnh tới các peer.
-    \end{itemize}
+    
 
     \textbf{Tải xuống}  
     \textit{Mô tả:} Quản lý việc nhận các mảnh tệp từ các peer khác. Đảm bảo sử dụng tối ưu tài nguyên mạng bằng cách tải xuống từ nhiều peer đồng thời.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{Giao thức BitTorrent qua TCP/UDP:} Kiểm soát việc tiếp nhận các mảnh từ nhiều peer cùng lúc.
-    \end{itemize}
+    
 
     \textbf{Xác minh mảnh}  
     \textit{Mô tả:} Xác minh tính toàn vẹn của từng mảnh được tải xuống bằng cách so sánh giá trị băm của nó với giá trị mong đợi, đảm bảo độ tin cậy của quá trình tải xuống.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{Xác minh Internal Hash (SHA-1):} Được thực hiện trong ứng dụng để xác nhận tính chính xác của dữ liệu đã nhận.
-    \end{itemize}
+    
 
     \textbf{Chức năng Tit-for-Tat}  
     \textit{Mô tả:} Triển khai chiến lược để đảm bảo chia sẻ công bằng bằng cách ưu tiên các peer đóng góp nhiều dữ liệu hơn. Khuyến khích sự tương hỗ giữa các peer để cân bằng tải mạng.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{Giao thức BitTorrent:} Sử dụng cơ chế tích hợp để quản lý tỷ lệ tải lên/xuống và ưu tiên các peer tương tác.
-    \end{itemize}
+    
 
     \textbf{Chức năng mã hóa}  
     \textit{Mô tả:} Đảm bảo truyền dữ liệu an toàn bằng cách mã hóa thông tin liên lạc giữa các peer. Sử dụng cơ chế trao đổi khóa để thiết lập kết nối an toàn.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{Trao đổi khóa Diffie-Hellman:} Establishes a shared secret between peers to encrypt communication.
-        \item \textbf{AES (Advanced Encryption Standard, Tiêu chuẩn mã hóa nâng cao):} Mã hóa dữ liệu truyền đi thực tế để đảm bảo an toàn.
-    \end{itemize}
+    
 
     \textbf{Xử lý lỗi và phục hồi}  
     \textit{Mô tả:} Phát hiện và phục hồi các sự cố như tải xuống không đầy đủ hoặc bị hỏng. Thử lại các lần tải xuống không thành công và yêu cầu lại các phần bị thiếu từ các peer khác.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{Giao thức BitTorrent:} Bao gồm các cơ chế để thử lại các lần tải xuống không thành công và phát hiện lỗi.
-    \end{itemize}
+    
 
 \subsection{Chức năng dành riêng cho Tracker}
 
     \textbf{Đăng kí Tracker}  
     \textit{Mô tả:} Đăng ký những peer mới với trình theo dõi để cho phép tham gia vào mạng chia sẻ tệp.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{Giao thức BitTorrent Tracker (HTTP):} Được sử dụng để đăng ký các peer với một tracker tập trung.
-    \end{itemize}
+    
 
     \textbf{Thông báo Tracker}  
     \textit{Mô tả:} Cập nhật trình theo dõi với trạng thái của peer, chẳng hạn như tiến trình tải lên/tải xuống, các tệp mà máy khách đang seeding và trạng thái kết nối.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{Giao thức BitTorrent Tracker (HTTP):} Truyền đạt trạng thái của peer tới trình theo dõi.
-    \end{itemize}
-
+    
     \textbf{Truy xuất danh sách Tracker Peer}  
     \textit{Mô tả:} Cho phép các peer lấy danh sách các peer khác chia sẻ cùng một tệp từ trình theo dõi.  
-    \textit{Giao thức giao tiếp:}
-    \begin{itemize}
-        \item \textbf{Giao thức BitTorrent Tracker (HTTP):} Cung cấp danh sách các peer đang hoạt động từ tracker.
-    \end{itemize}
+    
 
 \section{Giao thức}
 
@@ -312,12 +273,12 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
         \end{itemize}
         \item Client thông báo có đủ file cho Tracker:
         \begin{itemize}
-            \item \textquotedblleft/announce/have?torrent\_hash$=$\%C1\%27\%12\%94\%D7\%F6\%CB5\%94\%FB\%09\%10\%7Bs\%C1\%BF\%85\%24\%16B\&peerid$=$BKU$-$Torrent$-$836763067317\textquotedblright
+            \item \textquotedblleft/announce/have?torrent\_hash$=$\%C1\%27\%12\%94\%D7\%F6\%CB5\%94\%FB\%09 \%10\%7Bs\%C1\%BF\%85\%24\%16B\&peerid$=$BKU$-$Torrent$-$836763067317\textquotedblright
             \item Tracker sẽ lưu thông tin của client có peerid đang chia sẻ file theo tham số torrent\_hash là mã hash đại diện cho file torrent đó.
         \end{itemize}
         \item Client thông báo muốn tải file cho Tracker:
         \begin{itemize}
-            \item \textquotedblleft/announce/down?torrent\_hash\=\%C1\%27\%12\%94\%D7\%F6\%CB5\%94\%FB\%09\%10\%7Bs\%C1\%BF\%85\%24\%16B\&peerid$=$BKU$-$Torrent$-$836763067317\textquotedblright
+            \item \textquotedblleft/announce/down?torrent\_hash\=\%C1\%27\%12\%94\%D7\%F6\%CB5\%94\%FB\%09 \%10\%7Bs\%C1\%BF\%85\%24\%16B\&peerid$=$BKU$-$Torrent$-$836763067317\textquotedblright
             \item Tracker sẽ dựa vào torrent\_hash để gửi cho peerid một danh sách các IP và port của các client đang có file và đồng thời thêm peerid vào danh sách đó.
         \end{itemize}
         \item Client thông báo thoát khỏi Tracker:
@@ -357,16 +318,24 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
     \item Các yêu cầu HTTP thường là đơn giản và nhẹ, chứa các tham số cần thiết trong URL (như /announce?torrent\_hash$=$ ...\&peer\_id$=$...). Điều này giúp tracker xử lý nhiều yêu cầu cùng lúc mà không tốn quá nhiều tài nguyên, thích hợp cho hệ thống theo dõi mạng ngang hàng (P2P) có lượng yêu cầu rất lớn.
 \end{itemize}
 
-% \subsection{Biểu đồ:}
+\subsection{Biểu đồ:}
 
-% \includesvg[width=0.5\textwidth]{MVC.svg}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{MVC.png}
+    \captionsetup{labelformat=empty}
+    \caption{MVC}
+    \label{fig:mvc}
+\end{figure}
 
-% \includesvg[width=0.5\textwidth]{join_module.svg} 
+\textbf{Flow chart của các module:}
 
-% \includesvg[width=0.5\textwidth]{have_module.svg} 
+\includegraphics[width=0.5\textwidth]{join_module.png} 
 
-% \includesvg[width=0.5\textwidth]{file_sharing_module.svg}
+\includegraphics[width=0.5\textwidth]{have_module.png} 
 
-% \includesvg[width=0.5\textwidth]{exit_module.svg} 
+\includegraphics[width=0.5\textwidth]{file_sharing_module.png}
+
+\includegraphics[width=0.5\textwidth]{exit_module.png} 
 
 \end{document}

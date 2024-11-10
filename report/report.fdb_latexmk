@@ -1,7 +1,8 @@
 # Fdb version 4
-["pdflatex"] 1731224941.44184 "d:/Github/MMT-BTL1/report/report.tex" "report.pdf" "report" 1731224943.46728 0
+["pdflatex"] 1731230038.14418 "d:/Github/MMT-BTL1/report/report.tex" "report.pdf" "report" 1731230040.5354 0
   "01_logobachkhoasang.png" 1730739404 56581 5fccf1b2c810badc2465219984b028cd ""
-  "d:/Github/MMT-BTL1/report/report.tex" 1731224938 19419 a92d0ecd763f228d88dc0bad589b08b8 ""
+  "MVC.png" 1731229498 22344 3b7a3dbc8ad01f8215ed63d3b9eb2588 ""
+  "d:/Github/MMT-BTL1/report/report.tex" 1731230035 16926 10523148131720177edb3fa2653ebbba ""
   "d:/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1730741581 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "d:/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1730743108 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "d:/texlive/2024/texmf-dist/fonts/tfm/jknappen/ec/tcrm1200.tfm" 1730742438 1536 74b7293ec3713bb7fdca8dd1bd1f469c ""
@@ -241,11 +242,15 @@
   "d:/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1730749387 5521136 413d4c319f2bc8e15312dccd0b40f787 ""
   "d:/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1730749544 3343032 143093e8d29b413d5f47057d81654766 ""
   "d:/texlive/2024/texmf.cnf" 1730749369 713 e69b156964470283e0530f5060668171 ""
+  "exit_module.png" 1731228765 23714 5807088b5f20c6a06114be9fd2f6965e ""
+  "file_sharing_module.png" 1731228696 201895 382a8c8f5b400dd6d960568d806ee38b ""
+  "have_module.png" 1731228746 33600 00bc5157880299b0a4672191d013c617 ""
   "hcmut.png" 1730739404 15500 472a8c05c4ec56839c0bd57622ec7631 ""
-  "report.aux" 1731224943 2042 ca3c02fdeb2d074371cf28e00f9c0572 "pdflatex"
-  "report.out" 1731224943 2498 8d72a057f238bcea6e8e119a0be28fac "pdflatex"
-  "report.tex" 1731224938 19419 a92d0ecd763f228d88dc0bad589b08b8 ""
-  "report.toc" 1731224943 1067 361d41c38a63001be44d9898e8d05f96 "pdflatex"
+  "join_module.png" 1731228726 18806 ba132e9a6bee27da8a47b5e599346c21 ""
+  "report.aux" 1731230040 2315 1bd5297692cfcd886a5fb6f49f1d3d4b "pdflatex"
+  "report.out" 1731230040 2608 6844a002f9091c07414152e41f40737e "pdflatex"
+  "report.tex" 1731230035 16926 10523148131720177edb3fa2653ebbba ""
+  "report.toc" 1731230040 1146 6e8434be28ec78d995f32ecae9669a9f "pdflatex"
   (generated)
   "report.aux"
   "report.log"

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.5)  10 NOV 2024 14:49
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.5)  10 NOV 2024 16:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1197,7 +1197,7 @@ Package hyperref Info: Link coloring ON on input line 131.
 \@outlinefile=\write4
 \openout4 = `report.out'.
 
-<01_logobachkhoasang.png, id=47, 845.0772pt x 597.6729pt>
+<01_logobachkhoasang.png, id=51, 845.0772pt x 597.6729pt>
 File: 01_logobachkhoasang.png Graphic file (type png)
 <use 01_logobachkhoasang.png>
 Package pdftex.def Info: 01_logobachkhoasang.png  used on input line 143.
@@ -1265,73 +1265,139 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has b
 l.181 \newpage
                [1]
 
-LaTeX Font Warning: Font shape `TS1/cmr/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 189.
-
-
-
-<hcmut.png, id=75, 272.01625pt x 277.035pt>
+<hcmut.png, id=80, 272.01625pt x 277.035pt>
 File: hcmut.png Graphic file (type png)
 <use hcmut.png>
-Package pdftex.def Info: hcmut.png  used on input line 231.
+Package pdftex.def Info: hcmut.png  used on input line 229.
 (pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
-LaTeX Font Info:    Trying to load font information for T5+cmtt on input line 231.
+LaTeX Font Info:    Trying to load font information for T5+cmtt on input line 229.
 (d:/texlive/2024/texmf-dist/tex/latex/vntex/t5cmtt.fd
 File: t5cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `T5/cmtt/bx/n' in size <13> not available
-(Font)              Font shape `T5/cmtt/m/n' tried instead on input line 231.
- [2{d:/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc} <./hcmut.png>]
-
-File: hcmut.png Graphic file (type png)
-<use hcmut.png>
-Package pdftex.def Info: hcmut.png  used on input line 270.
-(pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
-[3]
-Underfull \hbox (badness 10000) in paragraph at lines 275--280
+(Font)              Font shape `T5/cmtt/m/n' tried instead on input line 229.
+ [2 <./hcmut.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 236--241
 
  []
 
 
+LaTeX Font Warning: Font shape `TS1/cmr/m/n' in size <13> not available
+(Font)              size <12> substituted on input line 241.
+
+
 
 File: hcmut.png Graphic file (type png)
 <use hcmut.png>
-Package pdftex.def Info: hcmut.png  used on input line 298.
+Package pdftex.def Info: hcmut.png  used on input line 260.
 (pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
-[4]
-Overfull \hbox (7.28313pt too wide) in paragraph at lines 310--311
+[3{d:/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
+Overfull \hbox (7.28313pt too wide) in paragraph at lines 271--272
 []\T5/cmr/m/n/13 ^^P/announce/join$[]\OT1/cmr/m/n/12 ?$[]\T5/cmr/m/n/13 peerid=BKU$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 Torrent$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 836763067317&port$[]\OT1/cmr/m/n/12 =$[]\T5/cmr/m/n/13 8333^^Q 
  []
 
 
-Overfull \hbox (481.328pt too wide) in paragraph at lines 315--316
-[]\T5/cmr/m/n/13 ^^P/announce/have?torrent_hash$[]\OT1/cmr/m/n/12 =$[]\T5/cmr/m/n/13 %C1%27%12%94%D7%F6%CB5%94%FB%09%10%7Bs%C1%BF%85%24%16B&peerid$[]\OT1/cmr/m/n/12 =$[]\T5/cmr/m/n/13 BKU$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 Torrent$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 836763067317^^Q 
+Overfull \hbox (70.09995pt too wide) in paragraph at lines 276--277
+[]\T5/cmr/m/n/13 ^^P/announce/have?torrent_hash$[]\OT1/cmr/m/n/12 =$[]\T5/cmr/m/n/13 %C1%27%12%94%D7%F6%CB5%94%FB%09
+ []
+
+
+Overfull \hbox (39.97441pt too wide) in paragraph at lines 276--277
+\T5/cmr/m/n/13 %10%7Bs%C1%BF%85%24%16B&peerid$[]\OT1/cmr/m/n/12 =$[]\T5/cmr/m/n/13 BKU$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 Torrent$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 836763067317^^Q 
  []
 
 
 
 File: hcmut.png Graphic file (type png)
 <use hcmut.png>
-Package pdftex.def Info: hcmut.png  used on input line 317.
+Package pdftex.def Info: hcmut.png  used on input line 277.
+(pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
+[4]
+Overfull \hbox (65.20316pt too wide) in paragraph at lines 281--282
+[]\T5/cmr/m/n/13 ^^P/announce/down?torrent_hash[]%C1%27%12%94%D7%F6%CB5%94%FB%09
+ []
+
+
+Overfull \hbox (39.97441pt too wide) in paragraph at lines 281--282
+\T5/cmr/m/n/13 %10%7Bs%C1%BF%85%24%16B&peerid$[]\OT1/cmr/m/n/12 =$[]\T5/cmr/m/n/13 BKU$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 Torrent$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 836763067317^^Q 
+ []
+
+
+
+File: hcmut.png Graphic file (type png)
+<use hcmut.png>
+Package pdftex.def Info: hcmut.png  used on input line 309.
 (pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
 [5]
-Overfull \hbox (476.43121pt too wide) in paragraph at lines 320--321
-[]\T5/cmr/m/n/13 ^^P/announce/down?torrent_hash[]%C1%27%12%94%D7%F6%CB5%94%FB%09%10%7Bs%C1%BF%85%24%16B&peerid$[]\OT1/cmr/m/n/12 =$[]\T5/cmr/m/n/13 BKU$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 Torrent$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 836763067317^^Q 
- []
-
+<MVC.png, id=109, 574.5465pt x 394.77487pt>
+File: MVC.png Graphic file (type png)
+<use MVC.png>
+Package pdftex.def Info: MVC.png  used on input line 325.
+(pdftex.def)             Requested size: 418.25368pt x 287.38812pt.
 
 
 File: hcmut.png Graphic file (type png)
 <use hcmut.png>
-Package pdftex.def Info: hcmut.png  used on input line 348.
+Package pdftex.def Info: hcmut.png  used on input line 330.
 (pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
 [6]
+<join_module.png, id=116, 316.18124pt x 514.92375pt>
+File: join_module.png Graphic file (type png)
+<use join_module.png>
+Package pdftex.def Info: join_module.png  used on input line 333.
+(pdftex.def)             Requested size: 209.12683pt x 340.58142pt.
+
 
 File: hcmut.png Graphic file (type png)
 <use hcmut.png>
-Package pdftex.def Info: hcmut.png  used on input line 372.
+Package pdftex.def Info: hcmut.png  used on input line 335.
 (pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
-[7] 
+[7 <./MVC.png>]
+<have_module.png, id=124, 329.28018pt x 731.73375pt>
+File: have_module.png Graphic file (type png)
+<use have_module.png>
+Package pdftex.def Info: have_module.png  used on input line 335.
+(pdftex.def)             Requested size: 209.12683pt x 464.73509pt.
+
+
+File: hcmut.png Graphic file (type png)
+<use hcmut.png>
+Package pdftex.def Info: hcmut.png  used on input line 337.
+(pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
+[8 <./join_module.png>]
+<file_sharing_module.png, id=131, 551.05875pt x 1571.8725pt>
+File: file_sharing_module.png Graphic file (type png)
+<use file_sharing_module.png>
+Package pdftex.def Info: file_sharing_module.png  used on input line 337.
+(pdftex.def)             Requested size: 209.12683pt x 596.52628pt.
+
+
+File: hcmut.png Graphic file (type png)
+<use hcmut.png>
+Package pdftex.def Info: hcmut.png  used on input line 339.
+(pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
+[9 <./have_module.png>]
+Overfull \vbox (4.99608pt too high) has occurred while \output is active []
+
+
+
+File: hcmut.png Graphic file (type png)
+<use hcmut.png>
+Package pdftex.def Info: hcmut.png  used on input line 339.
+(pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
+[10 <./file_sharing_module.png>]
+<exit_module.png, id=144, 329.28018pt x 605.26125pt>
+File: exit_module.png Graphic file (type png)
+<use exit_module.png>
+Package pdftex.def Info: exit_module.png  used on input line 339.
+(pdftex.def)             Requested size: 209.12683pt x 384.41049pt.
+
+
+File: hcmut.png Graphic file (type png)
+<use hcmut.png>
+Package pdftex.def Info: hcmut.png  used on input line 341.
+(pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
+[11 <./exit_module.png>] 
 enddocument/afterlastpage: lastpage setting LastPage.
 (./report.aux)
  ***********
@@ -1344,21 +1410,21 @@ LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
 
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: 8D72A057F238BCEA6E8E119A0BE28FAC;2498.
+(rerunfilecheck)             Checksum: 6844A002F9091C07414152E41F40737E;2608.
  ) 
 Here is how much of TeX's memory you used:
- 30324 strings out of 473362
- 568832 string characters out of 5725051
+ 30371 strings out of 473362
+ 569744 string characters out of 5725051
  1172761 words of memory out of 5000000
- 52822 multiletter control sequences out of 15000+600000
+ 52863 multiletter control sequences out of 15000+600000
  576531 words of font info for 73 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 108i,24n,115p,653b,681s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 108i,25n,115p,653b,677s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <d:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><d:/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnbx12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnr10.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnr12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnti12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vntt12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vntt9.pfb>
-Output written on report.pdf (8 pages, 205913 bytes).
+Output written on report.pdf (12 pages, 419298 bytes).
 PDF statistics:
- 162 PDF objects out of 1000 (max. 8388607)
- 128 compressed objects within 2 object streams
- 20 named destinations out of 1000 (max. 500000)
- 103 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 199 PDF objects out of 1000 (max. 8388607)
+ 151 compressed objects within 2 object streams
+ 26 named destinations out of 1000 (max. 500000)
+ 136 words of extra memory for PDF output out of 10000 (max. 10000000)
 
