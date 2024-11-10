@@ -180,98 +180,98 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
 \tableofcontents
 \newpage
 
-\section{Functions of application}
-\subsection{BitTorrent File-Sharing Application Functions and Communication Protocols}
-    \textbf{File Discovery and Metadata Sharing}  
-    \textit{Description:} Allows users to locate and retrieve metadata about files to be shared or downloaded, typically through .torrent files or magnet links.  
-    \textit{Communication Protocols:}
+\section{Chức năng của ứng dụng}
+\subsection{Chức năng ứng dụng chia sẻ tệp BitTorrent và giao thức giao tiếp}
+    \textbf{File Discovery và chia sẻ Metadata}  
+    \textit{Mô tả:} Cho phép người dùng định vị và truy xuất siêu dữ liệu về các tệp được chia sẻ hoặc tải xuống, thường thông qua các tệp .torrent hoặc magnet link.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{HTTP:} For downloading .torrent files or accessing magnet links.
+        \item \textbf{HTTP:} Để tải xuống các tệp .torrent hoặc truy cập các liên kết nam châm.
     \end{itemize}
 
     \textbf{Peer Discovery}  
-    \textit{Description:} Enables the identification and connection to other peers sharing the same file, ensuring distributed sharing.  
-    \textit{Communication Protocols:}
+    \textit{Mô tả:} Cho phép nhận dạng và kết nối với các peer khác chia sẻ cùng một tệp, đảm bảo chia sẻ phân tán.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{BitTorrent Tracker Protocol (HTTP):} Centralized approach to finding peers.
+        \item \textbf{Giao thức BitTorrent Tracker (HTTP):} Cách tiếp cận tập trung để tìm kiếm peer.
     \end{itemize}
 
-    \textbf{File Piece Distribution}  
-    \textit{Description:} Divides files into smaller pieces for efficient sharing. Each piece is individually shared and verified to ensure data integrity.  
-    \textit{Communication Protocols:}
+    \textbf{Phân phối tập tin}  
+    \textit{Mô tả:} Chia tệp thành các mảnh nhỏ hơn để chia sẻ hiệu quả. Mỗi mảnh được chia sẻ và xác minh riêng lẻ để đảm bảo tính toàn vẹn của dữ liệu.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{BitTorrent Protocol over TCP/UDP:} Manages the exchange of file pieces.
+        \item \textbf{Giao thức BitTorrent qua TCP/UDP:} Quản lý việc trao đổi các mảnh của tập tin.
     \end{itemize}
 
-    \textbf{Upload}  
-    \textit{Description:} Handles the sending of file pieces from a user's device to multiple peers in the network. Ensures balanced contribution and resource sharing.  
-    \textit{Communication Protocols:}
+    \textbf{Tải lên}  
+    \textit{Mô tả:} Xử lý việc gửi các phần tệp từ thiết bị của người dùng đến nhiều peer trong mạng. Đảm bảo cân bằng sự đóng góp và chia sẻ tài nguyên.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{BitTorrent Protocol over TCP/UDP:} Governs the sending of data pieces to peers.
+        \item \textbf{Giao thức BitTorrent qua TCP/UDP:} Quản lý việc gửi các mảnh tới các peer.
     \end{itemize}
 
-    \textbf{Download}  
-    \textit{Description:} Manages receiving file pieces from other peers. Ensures optimal use of network resources by downloading from multiple peers concurrently.  
-    \textit{Communication Protocols:}
+    \textbf{Tải xuống}  
+    \textit{Mô tả:} Quản lý việc nhận các mảnh tệp từ các peer khác. Đảm bảo sử dụng tối ưu tài nguyên mạng bằng cách tải xuống từ nhiều peer đồng thời.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{BitTorrent Protocol over TCP/UDP:} Controls receiving data pieces from multiple peers simultaneously.
+        \item \textbf{Giao thức BitTorrent qua TCP/UDP:} Kiểm soát việc tiếp nhận các mảnh từ nhiều peer cùng lúc.
     \end{itemize}
 
-    \textbf{Piece Verification}  
-    \textit{Description:} Verifies the integrity of each downloaded piece by comparing its hash to the expected value, ensuring the reliability of the download.  
-    \textit{Communication Protocols:}
+    \textbf{Xác minh mảnh}  
+    \textit{Mô tả:} Xác minh tính toàn vẹn của từng mảnh được tải xuống bằng cách so sánh giá trị băm của nó với giá trị mong đợi, đảm bảo độ tin cậy của quá trình tải xuống.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{Internal Hash Verification (SHA-1):} Conducted within the application to confirm the accuracy of received data.
+        \item \textbf{Xác minh Internal Hash (SHA-1):} Được thực hiện trong ứng dụng để xác nhận tính chính xác của dữ liệu đã nhận.
     \end{itemize}
 
-    \textbf{Tit-for-Tat Function}  
-    \textit{Description:} Implements a strategy to ensure fair sharing by prioritizing peers that contribute more data. Encourages reciprocation among peers to balance the network load.  
-    \textit{Communication Protocols:}
+    \textbf{Chức năng Tit-for-Tat}  
+    \textit{Mô tả:} Triển khai chiến lược để đảm bảo chia sẻ công bằng bằng cách ưu tiên các peer đóng góp nhiều dữ liệu hơn. Khuyến khích sự tương hỗ giữa các peer để cân bằng tải mạng.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{BitTorrent Protocol:} Uses a built-in mechanism to manage upload/download ratios and prioritize reciprocating peers.
+        \item \textbf{Giao thức BitTorrent:} Sử dụng cơ chế tích hợp để quản lý tỷ lệ tải lên/xuống và ưu tiên các peer tương tác.
     \end{itemize}
 
-    \textbf{Encryption Function}  
-    \textit{Description:} Ensures secure data transfer by encrypting communications between peers. Uses key exchange mechanisms to establish a secure connection.  
-    \textit{Communication Protocols:}
+    \textbf{Chức năng mã hóa}  
+    \textit{Mô tả:} Đảm bảo truyền dữ liệu an toàn bằng cách mã hóa thông tin liên lạc giữa các peer. Sử dụng cơ chế trao đổi khóa để thiết lập kết nối an toàn.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{Diffie-Hellman Key Exchange:} Establishes a shared secret between peers to encrypt communication.
-        \item \textbf{AES (Advanced Encryption Standard):} Encrypts the actual data transfer for security.
+        \item \textbf{Trao đổi khóa Diffie-Hellman:} Establishes a shared secret between peers to encrypt communication.
+        \item \textbf{AES (Advanced Encryption Standard, Tiêu chuẩn mã hóa nâng cao):} Mã hóa dữ liệu truyền đi thực tế để đảm bảo an toàn.
     \end{itemize}
 
-    \textbf{Error Handling and Recovery}  
-    \textit{Description:} Detects and recovers from issues like incomplete or corrupted downloads. Retries failed downloads and re-requests missing pieces from other peers.  
-    \textit{Communication Protocols:}
+    \textbf{Xử lý lỗi và phục hồi}  
+    \textit{Mô tả:} Phát hiện và phục hồi các sự cố như tải xuống không đầy đủ hoặc bị hỏng. Thử lại các lần tải xuống không thành công và yêu cầu lại các phần bị thiếu từ các peer khác.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{BitTorrent Protocol:} Contains mechanisms for retrying failed piece downloads and error detection.
+        \item \textbf{Giao thức BitTorrent:} Bao gồm các cơ chế để thử lại các lần tải xuống không thành công và phát hiện lỗi.
     \end{itemize}
 
-\subsection{Tracker-Specific Functions}
+\subsection{Chức năng dành riêng cho Tracker}
 
-    \textbf{Tracker Registration}  
-    \textit{Description:} Registers new peers with the tracker to enable them to participate in the file-sharing network.  
-    \textit{Communication Protocols:}
+    \textbf{Đăng kí Tracker}  
+    \textit{Mô tả:} Đăng ký những peer mới với trình theo dõi để cho phép tham gia vào mạng chia sẻ tệp.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{BitTorrent Tracker Protocol (HTTP):} Used to register peers with a centralized tracker.
+        \item \textbf{Giao thức BitTorrent Tracker (HTTP):} Được sử dụng để đăng ký các peer với một tracker tập trung.
     \end{itemize}
 
-    \textbf{Tracker Announce}  
-    \textit{Description:} Updates the tracker with a peer’s status, such as upload/download progress, which files the client is seeding and connection status.  
-    \textit{Communication Protocols:}
+    \textbf{Thông báo Tracker}  
+    \textit{Mô tả:} Cập nhật trình theo dõi với trạng thái của peer, chẳng hạn như tiến trình tải lên/tải xuống, các tệp mà máy khách đang seeding và trạng thái kết nối.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{BitTorrent Tracker Protocol (HTTP):} Communicates the peer’s status to the tracker.
+        \item \textbf{Giao thức BitTorrent Tracker (HTTP):} Truyền đạt trạng thái của peer tới trình theo dõi.
     \end{itemize}
 
-    \textbf{Tracker Peer List Retrieval}  
-    \textit{Description:} Allows peers to retrieve a list of other peers sharing the same file from the tracker.  
-    \textit{Communication Protocols:}
+    \textbf{Truy xuất danh sách Tracker Peer}  
+    \textit{Mô tả:} Cho phép các peer lấy danh sách các peer khác chia sẻ cùng một tệp từ trình theo dõi.  
+    \textit{Giao thức giao tiếp:}
     \begin{itemize}
-        \item \textbf{BitTorrent Tracker Protocol (HTTP):} Provides a list of active peers from the tracker.
+        \item \textbf{Giao thức BitTorrent Tracker (HTTP):} Cung cấp danh sách các peer đang hoạt động từ tracker.
     \end{itemize}
 
-\section{Protocols}
+\section{Giao thức}
 
-    \subsection{Uploader - Downloader Protocol}
+    \subsection{Giao thức Uploader - Downloader}
         \subsubsection{Downloader và Uploader} Lần lượt chờ đợi tin nhắn của nhau ứng theo các trường cần lưu
         \newline
         \newline
@@ -301,7 +301,7 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
             \item Socket có thể được sử dụng trên nhiều hệ điều hành và nền tảng khác nhau như Windows, macOS, Linux, và các thiết bị di động. Điều này giúp ứng dụng mạng sử dụng socket có thể dễ dàng tương thích và hoạt động trên nhiều thiết bị khác nhau.
         \end{itemize}
 
-    \subsection{Client - Tracker Protocol}
+    \subsection{Giao thức Client - Tracker}
     Được xây dụng dựa trên giao thức HTTP, các client gửi các thông báo đến tracker thông qua giao thức HTTP GET \textquotedblleft \/announce\textquotedblright $+$ /<command> \textquotedblright $+$ \textquotedblleft $?$ \textquotedblright $+$  tham số
     \subsubsection{Client và Tracker}
     \begin{itemize}
@@ -357,16 +357,16 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
     \item Các yêu cầu HTTP thường là đơn giản và nhẹ, chứa các tham số cần thiết trong URL (như /announce?torrent\_hash$=$ ...\&peer\_id$=$...). Điều này giúp tracker xử lý nhiều yêu cầu cùng lúc mà không tốn quá nhiều tài nguyên, thích hợp cho hệ thống theo dõi mạng ngang hàng (P2P) có lượng yêu cầu rất lớn.
 \end{itemize}
 
-\subsection{Biểu đồ:}
+% \subsection{Biểu đồ:}
 
-\includesvg[width=0.5\textwidth]{MVC.svg}
+% \includesvg[width=0.5\textwidth]{MVC.svg}
 
-\includesvg[width=0.5\textwidth]{join_module.svg} 
+% \includesvg[width=0.5\textwidth]{join_module.svg} 
 
-\includesvg[width=0.5\textwidth]{have_module.svg} 
+% \includesvg[width=0.5\textwidth]{have_module.svg} 
 
-\includesvg[width=0.5\textwidth]{file_sharing_module.svg}
+% \includesvg[width=0.5\textwidth]{file_sharing_module.svg}
 
-\includesvg[width=0.5\textwidth]{exit_module.svg} 
+% \includesvg[width=0.5\textwidth]{exit_module.svg} 
 
 \end{document}

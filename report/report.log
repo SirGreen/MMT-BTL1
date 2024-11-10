@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.5)  10 NOV 2024 13:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.5)  10 NOV 2024 14:49
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1193,15 +1193,17 @@ Package caption Info: End \AtBeginDocument code.
 
 \c@lstlisting=\count378
 Package hyperref Info: Link coloring ON on input line 131.
+(./report.out) (./report.out)
 \@outlinefile=\write4
 \openout4 = `report.out'.
 
-<01_logobachkhoasang.png, id=7, 845.0772pt x 597.6729pt>
+<01_logobachkhoasang.png, id=47, 845.0772pt x 597.6729pt>
 File: 01_logobachkhoasang.png Graphic file (type png)
 <use 01_logobachkhoasang.png>
 Package pdftex.def Info: 01_logobachkhoasang.png  used on input line 143.
 (pdftex.def)             Requested size: 228.17389pt x 161.37383pt.
 LaTeX Font Info:    Calculating math sizes for size <13> on input line 149.
+
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <13> not available
 (Font)              size <12> substituted on input line 149.
@@ -1250,8 +1252,7 @@ LaTeX Font Warning: Font shape `U/lasy/m/n' in size <6.5> not available
 
 [1
 
-{d:/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./01_logobachkhoasang.png>]
-No file report.toc.
+{d:/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./01_logobachkhoasang.png>] (./report.toc)
 \tf@toc=\write5
 \openout5 = `report.toc'.
 
@@ -1263,22 +1264,13 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has b
                    \relax 
 l.181 \newpage
                [1]
-Overfull \hbox (3.68872pt too wide) in paragraph at lines 184--184
-[]\T5/cmr/bx/n/15.59996 BitTorrent File-Sharing Ap-pli-ca-tion Func-tions and
- []
-
 
 LaTeX Font Warning: Font shape `TS1/cmr/m/n' in size <13> not available
 (Font)              size <12> substituted on input line 189.
 
 
-Overfull \hbox (5.71251pt too wide) in paragraph at lines 217--218
-[]\T5/cmr/bx/n/13 BitTorrent Pro-to-col over TCP/UDP: \T5/cmr/m/n/13 Con-trols re-ceiv-ing data pieces
- []
 
-
-
-<hcmut.png, id=23, 272.01625pt x 277.035pt>
+<hcmut.png, id=75, 272.01625pt x 277.035pt>
 File: hcmut.png Graphic file (type png)
 <use hcmut.png>
 Package pdftex.def Info: hcmut.png  used on input line 231.
@@ -1289,19 +1281,12 @@ File: t5cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `T5/cmtt/bx/n' in size <13> not available
 (Font)              Font shape `T5/cmtt/m/n' tried instead on input line 231.
-
-
-LaTeX Warning: Reference `LastPage' on page 2 undefined on input line 231.
-
-[2{d:/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc} <./hcmut.png>]
+ [2{d:/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc} <./hcmut.png>]
 
 File: hcmut.png Graphic file (type png)
 <use hcmut.png>
-Package pdftex.def Info: hcmut.png  used on input line 269.
+Package pdftex.def Info: hcmut.png  used on input line 270.
 (pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
-
-LaTeX Warning: Reference `LastPage' on page 3 undefined on input line 269.
-
 [3]
 Underfull \hbox (badness 10000) in paragraph at lines 275--280
 
@@ -1313,9 +1298,6 @@ File: hcmut.png Graphic file (type png)
 <use hcmut.png>
 Package pdftex.def Info: hcmut.png  used on input line 298.
 (pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
-
-LaTeX Warning: Reference `LastPage' on page 4 undefined on input line 298.
-
 [4]
 Overfull \hbox (7.28313pt too wide) in paragraph at lines 310--311
 []\T5/cmr/m/n/13 ^^P/announce/join$[]\OT1/cmr/m/n/12 ?$[]\T5/cmr/m/n/13 peerid=BKU$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 Torrent$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 836763067317&port$[]\OT1/cmr/m/n/12 =$[]\T5/cmr/m/n/13 8333^^Q 
@@ -1332,9 +1314,6 @@ File: hcmut.png Graphic file (type png)
 <use hcmut.png>
 Package pdftex.def Info: hcmut.png  used on input line 317.
 (pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
-
-LaTeX Warning: Reference `LastPage' on page 5 undefined on input line 317.
-
 [5]
 Overfull \hbox (476.43121pt too wide) in paragraph at lines 320--321
 []\T5/cmr/m/n/13 ^^P/announce/down?torrent_hash[]%C1%27%12%94%D7%F6%CB5%94%FB%09%10%7Bs%C1%BF%85%24%16B&peerid$[]\OT1/cmr/m/n/12 =$[]\T5/cmr/m/n/13 BKU$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 Torrent$[]\OMS/cmsy/m/n/12 ^^@$[]\T5/cmr/m/n/13 836763067317^^Q 
@@ -1346,174 +1325,12 @@ File: hcmut.png Graphic file (type png)
 <use hcmut.png>
 Package pdftex.def Info: hcmut.png  used on input line 348.
 (pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
-
-LaTeX Warning: Reference `LastPage' on page 6 undefined on input line 348.
-
 [6]
-
-Package svg Warning: You didn't enable `shell escape' (or `write18')
-(svg)                so it wasn't possible to launch the Inkscape export
-(svg)                for `MVC.svg' on input line 362.
-
-
-d:/Github/MMT-BTL1/report/report.tex:362: Package svg Error: File `MVC_svg-tex.pdf' is missing.
-
-See the svg package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.362 \includesvg[width=0.5\textwidth]{MVC.svg}
-                                               
-Did you run the export with Inkscape? There's no file
-`./svg-inkscape/MVC_svg-tex.pdf'
-although `MVC.svg' was found.
-
-
-d:/Github/MMT-BTL1/report/report.tex:362: Package svg Error: File `MVC_svg-tex.pdf_tex' is missing.
-
-See the svg package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.362 \includesvg[width=0.5\textwidth]{MVC.svg}
-                                               
-Did you run the export with Inkscape? There's no file
-`./svg-inkscape/MVC_svg-tex.pdf_tex'
-although `MVC.svg' was found.
-
-
-Package svg Warning: You didn't enable `shell escape' (or `write18')
-(svg)                so it wasn't possible to launch the Inkscape export
-(svg)                for `join_module.svg' on input line 364.
-
-
-d:/Github/MMT-BTL1/report/report.tex:364: Package svg Error: File `join_module_svg-tex.pdf' is missing.
-
-See the svg package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.364 ...svg[width=0.5\textwidth]{join_module.svg}
-                                                  
-Did you run the export with Inkscape? There's no file
-`./svg-inkscape/join_module_svg-tex.pdf'
-although `join_module.svg' was found.
-
-
-d:/Github/MMT-BTL1/report/report.tex:364: Package svg Error: File `join_module_svg-tex.pdf_tex' is missing.
-
-See the svg package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.364 ...svg[width=0.5\textwidth]{join_module.svg}
-                                                  
-Did you run the export with Inkscape? There's no file
-`./svg-inkscape/join_module_svg-tex.pdf_tex'
-although `join_module.svg' was found.
-
-
-Package svg Warning: You didn't enable `shell escape' (or `write18')
-(svg)                so it wasn't possible to launch the Inkscape export
-(svg)                for `have_module.svg' on input line 366.
-
-
-d:/Github/MMT-BTL1/report/report.tex:366: Package svg Error: File `have_module_svg-tex.pdf' is missing.
-
-See the svg package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.366 ...svg[width=0.5\textwidth]{have_module.svg}
-                                                  
-Did you run the export with Inkscape? There's no file
-`./svg-inkscape/have_module_svg-tex.pdf'
-although `have_module.svg' was found.
-
-
-d:/Github/MMT-BTL1/report/report.tex:366: Package svg Error: File `have_module_svg-tex.pdf_tex' is missing.
-
-See the svg package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.366 ...svg[width=0.5\textwidth]{have_module.svg}
-                                                  
-Did you run the export with Inkscape? There's no file
-`./svg-inkscape/have_module_svg-tex.pdf_tex'
-although `have_module.svg' was found.
-
-
-Package svg Warning: You didn't enable `shell escape' (or `write18')
-(svg)                so it wasn't possible to launch the Inkscape export
-(svg)                for `file_sharing_module.svg' on input line 368.
-
-
-d:/Github/MMT-BTL1/report/report.tex:368: Package svg Error: File `file_sharing_module_svg-tex.pdf' is missing.
-
-See the svg package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.368 ...h=0.5\textwidth]{file_sharing_module.svg}
-                                                  
-Did you run the export with Inkscape? There's no file
-`./svg-inkscape/file_sharing_module_svg-tex.pdf'
-although `file_sharing_module.svg' was found.
-
-
-d:/Github/MMT-BTL1/report/report.tex:368: Package svg Error: File `file_sharing_module_svg-tex.pdf_tex' is missing.
-
-See the svg package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.368 ...h=0.5\textwidth]{file_sharing_module.svg}
-                                                  
-Did you run the export with Inkscape? There's no file
-`./svg-inkscape/file_sharing_module_svg-tex.pdf_tex'
-although `file_sharing_module.svg' was found.
-
-
-Package svg Warning: You didn't enable `shell escape' (or `write18')
-(svg)                so it wasn't possible to launch the Inkscape export
-(svg)                for `exit_module.svg' on input line 370.
-
-
-d:/Github/MMT-BTL1/report/report.tex:370: Package svg Error: File `exit_module_svg-tex.pdf' is missing.
-
-See the svg package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.370 ...svg[width=0.5\textwidth]{exit_module.svg}
-                                                  
-Did you run the export with Inkscape? There's no file
-`./svg-inkscape/exit_module_svg-tex.pdf'
-although `exit_module.svg' was found.
-
-
-d:/Github/MMT-BTL1/report/report.tex:370: Package svg Error: File `exit_module_svg-tex.pdf_tex' is missing.
-
-See the svg package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.370 ...svg[width=0.5\textwidth]{exit_module.svg}
-                                                  
-Did you run the export with Inkscape? There's no file
-`./svg-inkscape/exit_module_svg-tex.pdf_tex'
-although `exit_module.svg' was found.
-
-
 
 File: hcmut.png Graphic file (type png)
 <use hcmut.png>
 Package pdftex.def Info: hcmut.png  used on input line 372.
 (pdftex.def)             Requested size: 22.76204pt x 22.75928pt.
-
-LaTeX Warning: Reference `LastPage' on page 7 undefined on input line 372.
-
 [7] 
 enddocument/afterlastpage: lastpage setting LastPage.
 (./report.aux)
@@ -1526,37 +1343,22 @@ L3 programming layer <2024-11-02>
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
 
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `report.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `report.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  F4779B834E0B4E2F1FBAA06288263953;2515.
-
-Package lastpage Warning: Rerun to get the references right on input line 372.
-
+Package rerunfilecheck Info: File `report.out' has not changed.
+(rerunfilecheck)             Checksum: 8D72A057F238BCEA6E8E119A0BE28FAC;2498.
  ) 
 Here is how much of TeX's memory you used:
- 30349 strings out of 473362
- 569996 string characters out of 5725051
- 1171761 words of memory out of 5000000
- 52851 multiletter control sequences out of 15000+600000
- 577512 words of font info for 74 fonts, out of 8000000 for 9000
+ 30324 strings out of 473362
+ 568832 string characters out of 5725051
+ 1172761 words of memory out of 5000000
+ 52822 multiletter control sequences out of 15000+600000
+ 576531 words of font info for 73 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 108i,24n,115p,495b,681s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<d:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><d:/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnbx12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnbx9.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnr10.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnr12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnti12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vntt12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vntt9.pfb>
-Output written on report.pdf (8 pages, 202401 bytes).
+ 108i,24n,115p,653b,681s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<d:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><d:/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnbx12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnr10.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnr12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vnti12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vntt12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/vntex/vnr/vntt9.pfb>
+Output written on report.pdf (8 pages, 205913 bytes).
 PDF statistics:
- 118 PDF objects out of 1000 (max. 8388607)
- 83 compressed objects within 1 object stream
- 21 named destinations out of 1000 (max. 500000)
- 23 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 162 PDF objects out of 1000 (max. 8388607)
+ 128 compressed objects within 2 object streams
+ 20 named destinations out of 1000 (max. 500000)
+ 103 words of extra memory for PDF output out of 10000 (max. 10000000)
 
