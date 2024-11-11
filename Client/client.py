@@ -11,6 +11,7 @@ import random
 import config
 import torrentController as trCtrl
 import atexit
+import progress as fdt
 
 write_lock = Lock()
 debugLock = Lock()
@@ -18,6 +19,9 @@ debugLock = Lock()
 #region Have
 def send_torrent_tracker(torrent_file_path, tracker):
     torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)
+    print(torrent_file_path)
+    n = len(trCtrl.get_piece_hashes(torrent_file_path))
+    fdt.add_file(torrent_file_path,[False]*n)
     tracker = trCtrl.get_trackers(torrent_file_path)[0]
     file_name = trCtrl.get_file_name(torrent_file_path)
     config.peer_repo.append({"filename": file_name, "reponame": torrent_hash})
@@ -297,6 +301,14 @@ def main():
     hostname = config.DEFAULT_TRACKER
     join(hostname)
     print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {config.peer_id} (OwO)")
+    
+    fdt.update_data_file()
+    # Example Usage
+    fdt.add_file("example_file_1", [True, False, True])
+    fdt.update_array("example_file_1", [False, False, True])
+    # Example Usage
+    print("All files:", fdt.get_all_files())
+    print("Array for 'example_file_1':", fdt.get_array("example_file_1"))
     while True:
         try:
             user_input = input("Enter a command: ").strip().lower()
