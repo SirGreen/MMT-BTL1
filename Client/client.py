@@ -26,6 +26,8 @@ def send_torrent_tracker(torrent_file_path, tracker):
     params["torrent_hash"] = torrent_hash
     params["peerid"] = peer_id
     trCom.send_tracker("have", params, tracker)
+    #TODO
+    #Dict[torrent_hash]=[True]*
 
 
 def have(file_path, tracker_url=None):
@@ -60,6 +62,7 @@ def peer_connect(client_socket):
     # Print for another pear
     client_socket.send(("recievied_" + filename).encode())
     client_socket.send(str(file_size).encode())
+    #gui Dict[reponame]
     with client_socket, client_socket.makefile("wb") as wfile:
         with open(filename, "rb") as f1:
             mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
@@ -99,9 +102,11 @@ def download_chunk(
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     upload_host1 = socket.gethostbyname(socket.gethostname())
     client.connect((upload_host1, port))
-    client.send(reponame)
+    client.send(reponame) #reponame la torrent hash
     file_name = client.recv(1024).decode()
     file_size = client.recv(1024).decode()
+    #TODO
+    #Nhan list bool
     print(file_name)
     if port == port_list[0]:
         print(file_name + " " + file_size)
@@ -168,7 +173,8 @@ def download(torrent_file_name, tracker=None):
     os.makedirs(os.path.dirname(file_resu), exist_ok=True)
     with open(file_resu, "wb") as f:
         f.write(b"\x00" * total_size)
-
+    #TODO
+    #dict key torrent_hash = [False]*len(key_value)
     threads = []
     print(port_index)
     while offset < len(key_value):
