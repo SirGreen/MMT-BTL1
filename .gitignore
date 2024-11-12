@@ -19,3 +19,5 @@ active_client.dat
 owner_file.dat
 rfc_index.dat
 *.txt
+*.pdf
+*.dat

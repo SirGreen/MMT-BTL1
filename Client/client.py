@@ -41,6 +41,7 @@ def have(file_path, tracker_url=None):
                 # If the file ends with .torrent, process it
                 if file.endswith(".torrent"):
                     full_path = os.path.join(root, file)
+                    full_path = full_path.replace("/","\\")
                     send_torrent_tracker(
                         full_path, tracker_url
                     )  # Call the hypothetical send_to_tracker function
