@@ -1,7 +1,10 @@
 import os
 import bencodepy
 import hashlib
-from config import DEFAULT_TRACKER
+import config
+import importlib
+
+DEFAULT_TRACKER = config.DEFAULT_TRACKER
 
 # region Piece&Torrent
 def generate_piece_hashes(file_path, piece_length):
@@ -91,14 +94,13 @@ def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):
         },
     }
 
-    # print(torrent_data)
-
     # Bencode the data
     bencoded_data = bencodepy.encode(torrent_data)
 
     # Save to output folder or current directory
     torrent_name = f"{os.path.splitext(os.path.basename(file_path))[0]}.torrent"
-    output_path = os.path.join(output_folder if output_folder else "", torrent_name)
+    prog_num = config.prog_num
+    output_path = os.path.join(output_folder if output_folder else f'program_{prog_num}/torrents', torrent_name)
 
     with open(output_path, "wb") as torrent_file:
         torrent_file.write(bencoded_data)
