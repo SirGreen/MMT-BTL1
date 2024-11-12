@@ -15,3 +15,6 @@ running.txt
 *.pdf
 *.torrent
 *.txt
+active_client.dat
+owner_file.dat
+rfc_index.dat
