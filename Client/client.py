@@ -20,6 +20,7 @@ def send_torrent_tracker(torrent_file_path, tracker):
     torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)
     print(torrent_file_path)
     n = len(trCtrl.get_piece_hashes(torrent_file_path))
+    
     fdt.add_file(torrent_file_path,[False]*n)
     tracker = trCtrl.get_trackers(torrent_file_path)[0]
     file_name = trCtrl.get_file_name(torrent_file_path)
@@ -303,7 +304,9 @@ def main():
     hostname = config.DEFAULT_TRACKER
     join(hostname)
     print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {config.peer_id} (OwO)")
+    fdt.update_data_file()
     
+    have(f'program_{config.prog_num}/torrents')
     while True:
         try:
             user_input = input("Enter a command: ").strip().lower()

@@ -2,7 +2,6 @@ import os
 import bencodepy
 import hashlib
 import config
-import importlib
 
 DEFAULT_TRACKER = config.DEFAULT_TRACKER
 

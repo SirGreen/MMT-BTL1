@@ -18,3 +18,4 @@ running.txt
 active_client.dat
 owner_file.dat
 rfc_index.dat
+*.txt
