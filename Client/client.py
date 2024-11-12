@@ -1,4 +1,3 @@
-# Bittorrent Program Simulation
 import mmap
 import os
 import hashlib
@@ -27,12 +26,9 @@ def send_torrent_tracker(torrent_file_path, tracker):
     config.peer_repo.append({"filename": file_name, "reponame": torrent_hash})
     print(file_name)
     params = {}
-    params["port"] = port
     params["torrent_hash"] = torrent_hash
     params["peerid"] = config.peer_id
     trCom.send_tracker("have", params, tracker)
-    #TODO
-    #Dict[torrent_hash]=[True]*
 
 
 def have(file_path, tracker_url=None):
@@ -163,7 +159,6 @@ def download(torrent_file_name, tracker=None):
     params = {}
     params["torrent_hash"] = trCtrl.get_torrent_hash(torrent_file_name)
     params["peerid"] = config.peer_id
-    params["port"] = port
     port_list = trCom.send_get(url, params).json()
     #####
     # port1 = int(input("Input peer port from list above: "))
@@ -279,6 +274,7 @@ def join(tracker=None):
     url = tracker + "/announce/join"
     params = {}
     params["peerid"] = config.peer_id
+    params["port"] = port
     trCom.send_get(url, params)
 
 
@@ -308,13 +304,6 @@ def main():
     join(hostname)
     print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {config.peer_id} (OwO)")
     
-    fdt.update_data_file()
-    # Example Usage
-    fdt.add_file("example_file_1", [True, False, True])
-    fdt.update_array("example_file_1", [False, False, True])
-    # Example Usage
-    print("All files:", fdt.get_all_files())
-    print("Array for 'example_file_1':", fdt.get_array("example_file_1"))
     while True:
         try:
             user_input = input("Enter a command: ").strip().lower()
