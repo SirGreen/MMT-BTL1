@@ -179,6 +179,12 @@ def main():
             server_thread.join()  # Wait for the server thread to finish
             print("Server has been shut down.")
             break
+        if command == 'clean':
+            print("Cleaning arrays")
+            Server.active_client = []
+            Server.rfc_index = {}
+            Server.owner_file = {}
+            break
         if command.startswith("delete"):
             print(f'deleting {params[1]}')
             try:

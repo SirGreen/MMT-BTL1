@@ -1,1 +1,0 @@
-{"example_file_1": [false, false, true], "test.pdf": [1, 1]}

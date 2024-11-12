@@ -91,10 +91,12 @@ def peer_connect(client_socket):
                     offset = int.from_bytes(a, "big")
                     mm.seek(offset * piece_length)
                     data = mm.read(piece_length)
+                    # print(f'độ dài data trc khi hash: {len(data)}')
                     ressu = hashlib.sha1(data).digest()
                     # print(f'Data: {data.hex()}')
                     print(f"Hash ra: {ressu.hex()}")
                     print(offset)
+                    print(len(data))
                     wfile.write(data)
                     wfile.flush()
             f1.close()
@@ -181,43 +183,13 @@ def download_chunk(
                     unit_divisor=1000,
                     total=int(piece_length if total_size > piece_length else total_size),
                 )
-                # with client.makefile("rb") as rfile:
-                #     with open(file_resu, "r+b") as f:
-                #         # Memory-map the file
-                #         mm = mmap.mmap(f.fileno(), 0)
-                #         # while remaining != 0:
-                #         byte_data = offset.to_bytes(4, "big")
-                #         client.send(byte_data)
-                #         print(offset)
-                #         data = rfile.read(piece_length if total_size > piece_length else total_size)
-                #         ressu = hashlib.sha1(data).digest()
-                #         print(
-                #             f"So byte doc: {piece_length if total_size > piece_length else total_size}"
-                #         )
-                #         # print(f'Data hex: {data.hex()}')
-                #         print(f"Hash Data ra: {ressu.hex()}")
-                #         print(key_value[offset].hex())
-                #         if ressu == key_value[offset]:
-                #             with write_lock:
-                #                 mm[offset * piece_length : (offset + 1) * piece_length] = data
-                #                 progress.update(len(data))
-                #                 config.downloadArray[offset_in_download_array][offset+math.ceil(total_size/piece_length)]  = 1 # tai xong
-                #                 # fdt.update_data_file() TODO
-                                
-                #         else:
-                #             print("meo")
-                #             with write_lock:
-                #                 config.downloadArray[offset_in_download_array][offset+math.ceil(total_size/piece_length)]  = 0 # tai fail
-                #         mm.close()
-                #         f.close()
-                # rfile.close()
-                
-                 # Memory-map the file
-                # while remaining != 0:
                 byte_data = offset.to_bytes(4, "big")
                 client.send(byte_data)
                 print(offset)
+                print(piece_length if total_size > piece_length else total_size)
                 data = rfile.read(piece_length if total_size > piece_length else total_size)
+                total_size = total_size - piece_length if total_size > piece_length else total_size
+                #nhi la con ga
                 ressu = hashlib.sha1(data).digest()
                 print(
                     f"So byte doc: {piece_length if total_size > piece_length else total_size}"
