@@ -11,6 +11,7 @@ import config
 import torrentController as trCtrl
 import atexit
 import progress as fdt
+import time
 
 write_lock = Lock()
 debugLock = Lock()
@@ -290,6 +291,30 @@ def client_exit(tracker=None):
     trCom.send_get(url, params)
 #endregion
 
+#region ping
+
+def ping_tracker(tracker=None):
+    if tracker is None:
+        tracker = config.DEFAULT_TRACKER
+    url = tracker + "/announce/ping"
+    params = {}
+    params["peerid"] = config.peer_id
+
+    while not config.Flag:
+        # trCom.send_get(url, params)
+        print("Ping sent to tracker")
+        rep = trCom.send_get(url, params)
+        if (rep is None): print("No tracker connected.")
+        else:   
+            if (rep.text != "OK!"): print("Tracker offline!!!")
+            else: print("Tracker say hi!")
+
+        # print(f"{type(trCom.send_get(url, params))}")
+        time.sleep(1798) #30p 1798
+        
+
+#endregion
+
 def main():
     help.welcome()  # Display the welcome message
 
@@ -301,11 +326,17 @@ def main():
     # ping_thread = Thread(target=recieve_ping)
     # ping_thread.daemon = True
     # ping_thread.start()
+    
+    
 
     hostname = config.DEFAULT_TRACKER
     join(hostname)
     print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {config.peer_id} (OwO)")
     fdt.update_data_file()
+    
+    ping_thread = Thread(target=ping_tracker, args=(hostname,))
+    ping_thread.daemon = True
+    ping_thread.start()
     
     have(f'program_{config.prog_num}/torrents')
     while True:

@@ -8,3 +8,4 @@ BLOCK = 128 << 10  # 128KB
 BLOCK1 = 1 << 20  # 1024KB
 peer_id = "BKU-Torrent-" 
 prog_num = 0
+ping_time = 298 # 5min

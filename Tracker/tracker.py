@@ -166,6 +166,14 @@ class Listener(BaseHTTPRequestHandler):
                 self.send_header("Content-type", "text/plain")
                 self.end_headers()
                 self.wfile.write(b"OK!")
+            elif path.startswith("/ping"):
+                self.send_response(200)
+                parse_url = urlparse(path)
+                query_params = parse_qs(parse_url.query)
+                print(query_params)
+                self.send_header("Content-type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"OK!")
             elif path.startswith("/exit"):
                 self.send_response(200)
                 parse_url = urlparse(path)
