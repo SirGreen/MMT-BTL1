@@ -1,5 +1,5 @@
 import requests
-from config import DEFAULT_TRACKER, peer_id
+from config import DEFAULT_TRACKER
 
 def send_get(url, params=None):
     try:
