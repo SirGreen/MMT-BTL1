@@ -27,7 +27,6 @@ debugLock = Lock()
 download_queue = queue.Queue()
 downloads = []
 running = True
-completed_downloads = []  # List to store completed downloads
 
 # region Have
 def send_torrent_tracker(torrent_file_path, tracker):    
@@ -36,15 +35,7 @@ def send_torrent_tracker(torrent_file_path, tracker):
     print(torrent_file_path)
     n = len(trCtrl.get_piece_hashes(torrent_file_path))
 
-    if file_name not in fdt.get_all_files():
-        if fdt.file_exists(file_name):
-            fdt.add_file(file_name, [1] * n)
-        else:
-            fdt.add_file(file_name, [0] * n)
-    
-    if not fdt.file_exists(file_name):
-        if file_name in fdt.get_all_files():
-            fdt.update_array(file_name,[0]*n)
+    fdt.update_data_file(file_name,n)
 
     tracker = trCtrl.get_trackers(torrent_file_path)[0]
     config.peer_repo.append({"filename": file_name, "reponame": torrent_hash})
@@ -106,7 +97,7 @@ def peer_connect(client_socket):
                 # print(trCtrl.get_file_name(torrent_file_name))
 
                 # send DownloadedChunkBit Array
-                fdt.update_data_file()
+                fdt.update_data_file_dir()
                 data = json.dumps(
                     fdt.get_array(trCtrl.get_file_name(torrent_file_name))
                 )
@@ -118,6 +109,7 @@ def peer_connect(client_socket):
                 data = mm.read(piece_length)
                 byte_data = len(data).to_bytes(4, "big")
                 client_socket.send(byte_data)
+                
                 wfile.write(data)
         f1.close()
     wfile.close()
@@ -276,7 +268,7 @@ def download_chunk(
                         config.downloadArray[offset_in_download_array][
                             offset + math.ceil(total_size / piece_length)
                         ] = 1  # tai xong
-                        fdt.update_data_file()
+                        fdt.update_data_file_dir()
                         fdt.change_element(
                             trCtrl.get_file_name(torrent_file_name), offset, 1
                         )
@@ -327,6 +319,7 @@ def download(torrent_file_name, progress, tracker=None):
     # print(f"File length: {total_size}")
 
     file_name = trCtrl.get_file_name(torrent_file_name)
+    fdt.update_data_file(file_name,num_of_piece)
     a = num_of_piece * 2
     task = progress.add_task(f"Download {file_name}", total=num_of_piece)
     downloads.append((file_name, task))
@@ -338,7 +331,7 @@ def download(torrent_file_name, progress, tracker=None):
         config.offsetDownloader += 1
 
     # add file into progress file with all 0 element
-    fdt.update_data_file()
+    fdt.update_data_file_dir()
     if fdt.get_array(trCtrl.get_file_name(torrent_file_name)) is None:
         # Example Usage
         initial_data = [0] * num_of_piece
@@ -419,9 +412,8 @@ def download(torrent_file_name, progress, tracker=None):
                 progress.update(task, description=f"Moving {file_name} to completed in {remaining_time}s")
                 time.sleep(1)
 
-            # After the 30 seconds, remove the task from the progress bar and add it to completed list
+            # After the 10 seconds, remove the task from the progress bar and add it to completed list
             progress.remove_task(task)
-            completed_downloads.append(f"Downloaded {file_name}")
 
 
 # endregion
@@ -512,7 +504,7 @@ def input_listener(show_progress, live):
     hostname = config.DEFAULT_TRACKER
     join(hostname)
     print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {config.peer_id} (OwO)")
-    fdt.update_data_file()
+    fdt.update_data_file_dir()
 
     have(f"program_{config.prog_num}/torrents")
     
@@ -582,13 +574,11 @@ def input_listener(show_progress, live):
                 show_progress[0] = False
                 live.stop()
             elif user_input.lower() == "completed":
-                # Display completed downloads
-                if completed_downloads:
-                    print("Completed Downloads:")
-                    for download in completed_downloads:
-                        print(download)
-                else:
-                    print("No downloads completed yet in this.")
+                files = fdt.get_all_files()
+                print("Downloaded:")
+                for file in files:
+                    if fdt.file_downloaded(file):
+                        print(file)
             elif user_input.lower() == "exit":
                 client_exit(hostname)
                 global running 

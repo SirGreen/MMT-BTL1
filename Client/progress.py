@@ -5,9 +5,30 @@ import os
 # The file where data will be stored
 DATA_FILE = f'program_{config.prog_num}/downloads/'+"file_data.txt"
 
-def update_data_file():
+def update_data_file_dir():
     global DATA_FILE
     DATA_FILE = f'program_{config.prog_num}/downloads/'+"file_data.txt"
+    
+def update_data_file(file_name, n):
+    if file_name not in get_all_files():
+        if file_exists(file_name):
+            add_file(file_name, [1] * n)
+        else:
+            add_file(file_name, [0] * n)
+    
+    if not file_exists(file_name):
+        if file_name in get_all_files():
+            update_array(file_name,[0]*n)
+
+def file_downloaded(filename):
+    array = get_array(filename)
+    i = 0
+    for _ in array:
+        i = i + 1
+    if i==len(array):
+        return True
+    else:
+        return False
 
 def file_exists(file_path):
     # Construct the full path
