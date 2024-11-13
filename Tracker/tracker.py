@@ -11,25 +11,28 @@ SERVER_IP = "localhost"
 RECEIVE_SIZE = 1024
 CODE = "utf-8"
 
+
 def save_to_file(data, filename):
     """Save a list or dictionary to a file in JSON format."""
-    with open(filename, 'w') as file:
+    with open(filename, "w") as file:
         json.dump(data, file)
     print(f"Data saved to {filename}")
+
 
 def load_from_file(filename):
     """Load a list or dictionary from a JSON-formatted file."""
     if not os.path.exists(filename):
         # Create the file with an empty list as default data
-        with open(filename, 'w') as file:
+        with open(filename, "w") as file:
             json.dump({}, file)
         print(f"{filename} did not exist and has been created with an empty list.")
         return {}
-    
-    with open(filename, 'r') as file:
+
+    with open(filename, "r") as file:
         data = json.load(file)
     print(f"Data loaded from {filename}")
     return data
+
 
 class Server:
     def __init__(self):
@@ -43,11 +46,20 @@ class Server:
         self.owner_file = load_from_file("owner_file.dat")
         self.lock = Lock()
 
+    def clean(self):
+        self.active_client = {}
+        self.rfc_index = {}
+        self.owner_file = {}
+        
+        save_to_file(self.owner_file, "owner_file.dat")
+        save_to_file(self.rfc_index, "rfc_index.dat")
+        save_to_file(self.active_client, "active_client.dat")
+
     def client_join(self, peerid, port, ip):
         # Thêm client vào danh sách active_client
         with self.lock:  # Bảo vệ truy cập đến active_client
             self.active_client[peerid] = [ip, port]
-        save_to_file(self.active_client,"active_client.dat")
+        save_to_file(self.active_client, "active_client.dat")
         print(f"Welcome client: {peerid}")
         print(self.active_client)
 
@@ -78,8 +90,8 @@ class Server:
             self.owner_file[peerid].append(torhash)
         else:
             self.owner_file[peerid] = [torhash]
-        save_to_file(self.owner_file,"owner_file.dat")
-        save_to_file(self.rfc_index,"rfc_index.dat")
+        save_to_file(self.owner_file, "owner_file.dat")
+        save_to_file(self.rfc_index, "rfc_index.dat")
         print(self.rfc_index)
         print(self.owner_file)
 
@@ -88,13 +100,12 @@ class Server:
             self.active_client.pop(peer_id)
             if peer_id in self.owner_file:
                 files_to_remove = self.owner_file[peer_id]
-
                 for filename in files_to_remove:
                     if filename in self.rfc_index:
                         self.rfc_index[filename] = [
                             entry
                             for entry in self.rfc_index[filename]
-                            if entry[0] != peer_id
+                            if entry != peer_id
                         ]
                         if not self.rfc_index[filename]:
                             del self.rfc_index[filename]
@@ -105,9 +116,9 @@ class Server:
             else:
                 print(f"No files found for client {peer_id}.")
 
-        save_to_file(self.owner_file,"owner_file.dat")
-        save_to_file(self.rfc_index,"rfc_index.dat")
-        save_to_file(self.active_client,"active_client.dat")
+        save_to_file(self.owner_file, "owner_file.dat")
+        save_to_file(self.rfc_index, "rfc_index.dat")
+        save_to_file(self.active_client, "active_client.dat")
         print(self.rfc_index)
         print(self.owner_file)
 
@@ -117,6 +128,7 @@ tracker_server = Server()
 
 class Listener(BaseHTTPRequestHandler):
     try:
+
         def do_GET(self):
             if self.path.find("/announce") == -1:
                 raise "Error URL"
@@ -209,6 +221,9 @@ def main():
             server_thread.join()  # Wait for the server thread to finish
             print("Server has been shut down.")
             break
+        if command == "clean":
+            print("Cleaning array...")
+            tracker_server.clean()
         if command.startswith("delete"):
             print(f"deleting {params[1]}")
             try:

@@ -45,7 +45,7 @@ def have(file_path, tracker_url=None):
                     full_path = full_path.replace("/","\\")
                     send_torrent_tracker(
                         full_path, tracker_url
-                    )  # Call the hypothetical send_to_tracker function
+                    )  
     elif file_path.endswith(".torrent"):
         # If it's a single .torrent file, process it directly
         file_path=f'program_{config.prog_num}/torrents/'+file_path
@@ -271,6 +271,7 @@ def download_chunk(
 
 
 def download(torrent_file_name, tracker=None):
+    torrent_file_name=f'program_{config.prog_num}/torrents/'+torrent_file_name
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     torrent_hash = trCtrl.get_torrent_hash(torrent_file_name)
     if tracker is None:
@@ -498,7 +499,7 @@ def main():
                 else:
                     have(command_split[1])
             elif user_input.startswith("test-get_piece_hash "):
-                # test getHash <file torrent> <coi hash của piece số mấy>
+                # test-get_piece_hash <file torrent> <coi hash của piece số mấy>
                 print(trCtrl.get_piece_hashes(command_split[1])[int(command_split[2])].hex())
             elif user_input.startswith("maketor "):
                 # Split the input by spaces
@@ -516,6 +517,7 @@ def main():
                 command = parts[0]
                 # Expected parts: [command, file_path, output_folder (optional), tracker_url (optional)]
                 file_path = parts[1]  # The second part is the file path
+                file_path=f'program_{config.prog_num}/downloads/'+file_path  
                 output_folder = parts[2] if len(parts) > 2 else None
                 tracker_url = parts[3] if len(parts) > 3 else None
                 # Validate required parameters

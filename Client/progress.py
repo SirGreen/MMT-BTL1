@@ -15,6 +15,10 @@ def load_data():
         with open(DATA_FILE, 'r') as file:
             return json.load(file)
     except FileNotFoundError:
+        print("Create new file_data.txt")
+        return {}
+    except ValueError:
+        print("File empty")
         return {}
 
 # Function to save data to the text file
@@ -30,7 +34,7 @@ def add_file(file_name, bool_array):
         return
     data[file_name] = bool_array
     save_data(data)
-    print(f"File '{file_name}' added with array {bool_array}.")
+    print(f"File '{file_name}' added to file data.")
 
 # Function to update the array for an existing file
 def update_array(file_name, new_array):
