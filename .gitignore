@@ -10,6 +10,14 @@ report/report.out
 report/report.pdf
 report/report.synctex.gz
 report/report.toc
+running.txt
 *.txt
-*.dat
+*.pdf
 *.torrent
+*.txt
+active_client.dat
+owner_file.dat
+rfc_index.dat
+*.txt
+*.pdf
+*.dat

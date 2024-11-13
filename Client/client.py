@@ -1,4 +1,3 @@
-# Bittorrent Program Simulation
 import mmap
 import os
 import hashlib
@@ -29,12 +28,9 @@ def send_torrent_tracker(torrent_file_path, tracker):
     config.peer_repo.append({"filename": file_name, "reponame": torrent_hash})
     print(file_name)
     params = {}
-    params["port"] = port
     params["torrent_hash"] = torrent_hash
     params["peerid"] = config.peer_id
     trCom.send_tracker("have", params, tracker)
-    #TODO
-    #Dict[torrent_hash]=[True]*
 
 
 def have(file_path, tracker_url=None):
@@ -46,6 +42,7 @@ def have(file_path, tracker_url=None):
                 # If the file ends with .torrent, process it
                 if file.endswith(".torrent"):
                     full_path = os.path.join(root, file)
+                    full_path = full_path.replace("/","\\")
                     send_torrent_tracker(
                         full_path, tracker_url
                     )  # Call the hypothetical send_to_tracker function
@@ -71,13 +68,10 @@ def peer_connect(client_socket):
     client_socket.send(("recievied_" + filename).encode())
     client_socket.send(str(file_size).encode())
     
-        
-        #gui Dict[reponame]
     with client_socket.makefile("wb") as wfile:
             with open(filename, "rb") as f1:
                 mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
                 while 1: 
-                              
                     torrent_file_name=client_socket.recv(1024).decode()
                     if not torrent_file_name:
                         f1.close()
@@ -87,6 +81,7 @@ def peer_connect(client_socket):
                     print ('rece file name:')
                     print(trCtrl.get_file_name(torrent_file_name))
                     
+                    # send DownloadedChunkBit Array
                     fdt.update_data_file()
                     data = json.dumps(fdt.get_array(trCtrl.get_file_name(torrent_file_name)))
                     print(trCtrl.get_file_name(torrent_file_name))
@@ -136,33 +131,40 @@ def download_chunk(
     
     with client.makefile("rb") as rfile:
         with open(file_resu, "r+b") as f:
+            
             mm = mmap.mmap(f.fileno(), 0)
             
             while 1:
                 client.send(torrent_file_name.encode())
                 trCtrl.get_file_name(torrent_file_name)
                 # chunk_array=client.recv(1024).decode()
-                data = client.recv(32768)  # adjust buffer size as needed
+                data = client.recv(32768)  # DownloadedChunkBit Array
                 chunk_array = json.loads(data.decode('utf-8'))
-                index=0
+                
                 with write_lock:
                 
-                    # fdt.update_data_file()
-                    # array=fdt.get_array(trCtrl.get_file_name(torrent_file_name))
+                    #Check whether have full file
                     array=config.downloadArray[offset_in_download_array][math.ceil(total_size/piece_length):math.ceil(total_size/piece_length)*2]
                     if min(array)==1:
                         if max(array)==1:
                             client.close()
                             return 
+                      
+                    #update number of clients having each chunk    
+                    index=0                
                     while index<math.ceil(total_size/piece_length):
                         config.downloadArray[offset_in_download_array][index]+=chunk_array[index]
                         index+=1
+                        
                 while 1:
+                        #Check whether have full file
                         array=config.downloadArray[offset_in_download_array][math.ceil(total_size/piece_length):math.ceil(total_size/piece_length)*2]
                         if min(array)==1:
                             if max(array)==1:
                                 client.close()
                                 return 
+                            
+                        #Find rarest chunk    
                         with write_lock:
                             min_value = min(config.downloadArray[offset_in_download_array][0:math.ceil(total_size/piece_length)])
                             value_chunk_of_downloader=config.downloadArray[offset_in_download_array][config.downloadArray[offset_in_download_array].index(min_value)+math.ceil(total_size/piece_length)] 
@@ -173,22 +175,15 @@ def download_chunk(
                                     break
                             if value_chunk_of_downloader== 1:
                                 config.downloadArray[offset_in_download_array][config.downloadArray[offset_in_download_array].index(min_value)]=1000000
+                 
                             
-                            
-                #TODO
-                #Nhan list bool
-                print(file_name)
-                if port == port_list[0]:
-                    print(file_name + " " + file_size)
+                # print(f"{file_name} - ")
+                # if port == port_list[0]:
+                #     print(file_name + " " + file_size)
 
-                # remaining = total_size - (offset * piece_length)
 
-                progress = tqdm.tqdm(
-                    unit="B",
-                    unit_scale=True,
-                    unit_divisor=1000,
-                    total=int(piece_length if total_size > piece_length else total_size),
-                )
+                
+                
                 # with client.makefile("rb") as rfile:
                 #     with open(file_resu, "r+b") as f:
                 #         # Memory-map the file
@@ -222,42 +217,52 @@ def download_chunk(
                 
                  # Memory-map the file
                 # while remaining != 0:
+                
+                # send offset chunk 
                 byte_data = offset.to_bytes(4, "big")
                 client.send(byte_data)
-                print(offset)
+                print(f"{file_name} - Chunk: {offset} \n")
+                
+                # receive required piece's length
                 a = client.recv(4)
                 byteDownload = int.from_bytes(a, "big")
-                # with write_lock:
-                #     data = rfile.read(piece_length if offset  != (math.ceil(total_size/piece_length))  else (total_size- (math.ceil(total_size/piece_length)-1)*piece_length))
+               
+                # receive data chunk
                 data=rfile.read(byteDownload)
                 ressu = hashlib.sha1(data).digest()
                 print(
-                    f"So byte doc: {len(data)}"
+                    f"So byte doc: {len(data)} \n"
                 )
                 # print(f'Data hex: {data.hex()}')
-                print(f"Hash Data ra: {ressu.hex()}")
+                print(f"Hash Data ra: {ressu.hex()} \n")
                 print(key_value[offset].hex())
+                
+                progress = tqdm.tqdm(
+                    unit="B",
+                    unit_scale=True,
+                    unit_divisor=1000,
+                    total=int(byteDownload),
+                )
+                
+                # Check data with hash key
                 if ressu == key_value[offset]:
                             with write_lock:
                                 mm[offset * piece_length : (offset + 1) * piece_length] = data
                                 progress.update(len(data))
-                                config.downloadArray[offset_in_download_array][(math.ceil(total_size/piece_length)+math.ceil(total_size/piece_length))]  -= len(data) # tai xong
+                                progress.close()
                                 config.downloadArray[offset_in_download_array][offset+math.ceil(total_size/piece_length)]  = 1 # tai xong
-                                # fdt.update_data_file() TODO
-                                
+                                fdt.update_data_file() 
+                                fdt.change_element(trCtrl.get_file_name(torrent_file_name), offset, 1)                          
                 else:
-                            print("Received data does not match hash key")
+                            print("Received data does not match hash key\n")
                             with write_lock:
                                 config.downloadArray[offset_in_download_array][offset+math.ceil(total_size/piece_length)]  = 0 # tai fail
                 
                 with write_lock:
-                    # fdt.update_data_file()
-                    # array=fdt.get_array(trCtrl.get_file_name(torrent_file_name))
+                    #Check whether have full file
                     array=config.downloadArray[offset_in_download_array][math.ceil(total_size/piece_length):(math.ceil(total_size/piece_length)+math.ceil(total_size/piece_length))]
                     if min(array)==1:
                         if max(array)==1:
-                            have(torrent_file_name)
-                            config.downloadArray[offset_in_download_array][(math.ceil(total_size/piece_length)+math.ceil(total_size/piece_length))]=1
                             break
             mm.close()
             f.close()
@@ -274,56 +279,67 @@ def download(torrent_file_name, tracker=None):
     params = {}
     params["torrent_hash"] = trCtrl.get_torrent_hash(torrent_file_name)
     params["peerid"] = config.peer_id
-    params["port"] = port
     port_list = trCom.send_get(url, params).json()
     #####
+    
     # port1 = int(input("Input peer port from list above: "))
     key_value = trCtrl.get_piece_hashes(torrent_file_name)
     total_size = trCtrl.get_file_length(torrent_file_name)
     piece_length = trCtrl.get_piece_length(total_size)
     num_of_piece=math.ceil(total_size/piece_length)
     print(f"Piece length: {piece_length}")
-    print(f"Total Size: {total_size}")
+    print(f"File length: {total_size}")
     
+    a=num_of_piece*2
+    
+    
+    # each downloader has specific offset_in_download_array
     with write_lock:
+        config.downloadArray.append([0]*a) 
         offset_in_download_array=config.offsetDownloader
         config.offsetDownloader+=1
+      
+      
+    # add file into progress file with all 0 element
     fdt.update_data_file()
     if fdt.get_array(trCtrl.get_file_name(torrent_file_name)) is None:
         # Example Usage
         initial_data = [0] * num_of_piece
         fdt.add_file(trCtrl.get_file_name(torrent_file_name), initial_data)      
+    chunk_array=fdt.get_array(trCtrl.get_file_name(torrent_file_name))
+      
+        
     index=0
     print(offset_in_download_array)
     print(num_of_piece)
-    chunk_array=fdt.get_array(trCtrl.get_file_name(torrent_file_name))
+    
+    #assign to global array
     with write_lock:
         while index<num_of_piece:
             # print(config.downloadArray[offset_in_download_array])
             config.downloadArray[offset_in_download_array][num_of_piece+index]=chunk_array[index]
             index+=1
-        config.downloadArray[offset_in_download_array][num_of_piece+index]=0
-    # print(config.downloadArray[offset_in_download_array])
-    offset = 0
-    port_index = 0
+    print(config.downloadArray[offset_in_download_array])
 
     file_resu = f"program_{config.prog_num}/downloads/" + trCtrl.get_file_name(torrent_file_name)
     os.makedirs(os.path.dirname(file_resu), exist_ok=True)
     with open(file_resu, "wb") as f:
         f.write(b"\x00" * total_size)
-    #TODO
-    #dict key torrent_hash = [False]*len(key_value)
+    
+    offset = 0
+    port_index = 0
     threads = []
     print(port_index)
     
-    while port_index<len(port_list):
+    while port_index<len(port_list) and port_index <5:
         with write_lock:
-            # fdt.update_data_file()
-            # array=fdt.get_array(trCtrl.get_file_name(torrent_file_name))
+            # Check whether have full file
             array=config.downloadArray[offset_in_download_array][math.ceil(total_size/piece_length):math.ceil(total_size/piece_length)*2]
             if min(array)==1:
                 if max(array)==1:
-                    return
+                    have(torrent_file_name)
+                    break
+                
         client_port = port_list[port_index]
         
         if client_port == port:
@@ -353,8 +369,6 @@ def download(torrent_file_name, tracker=None):
         offset += 1
         port_index += 1
 
-        # if port_index >= len(port_list):
-        #     port_index = 0
 
     for thread in threads:
         thread.join()
@@ -425,6 +439,7 @@ def join(tracker=None):
     url = tracker + "/announce/join"
     params = {}
     params["peerid"] = config.peer_id
+    params["port"] = port
     trCom.send_get(url, params)
 
 
@@ -453,14 +468,9 @@ def main():
     hostname = config.DEFAULT_TRACKER
     join(hostname)
     print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {config.peer_id} (OwO)")
-    
     fdt.update_data_file()
-    # Example Usage
-    fdt.add_file("example_file_1", [True, False, True])
-    fdt.update_array("example_file_1", [False, False, True])
-    # Example Usage
-    print("All files:", fdt.get_all_files())
-    print("Array for 'example_file_1':", fdt.get_array("example_file_1"))
+    
+    have(f'program_{config.prog_num}/torrents')
     while True:
         try:
             user_input = input("Enter a command: ").strip().lower()
