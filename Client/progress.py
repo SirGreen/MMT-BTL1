@@ -1,5 +1,6 @@
 import json
 import config
+import os
 
 # The file where data will be stored
 DATA_FILE = f'program_{config.prog_num}/downloads/'+"file_data.txt"
@@ -8,6 +9,12 @@ def update_data_file():
     global DATA_FILE
     DATA_FILE = f'program_{config.prog_num}/downloads/'+"file_data.txt"
 
+def file_exists(file_path):
+    # Construct the full path
+    full_path = f'program_{config.prog_num}/downloads/' + file_path
+    
+    # Check if the file exists
+    return os.path.isfile(full_path)
 
 # Function to load data from the text file
 def load_data():

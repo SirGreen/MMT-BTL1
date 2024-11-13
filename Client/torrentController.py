@@ -113,6 +113,8 @@ def preview_torrent(torrent_file_path):
     """
     Parses and displays the contents of a .torrent file in a human-readable format.
     """
+    torrent_file_path = f'program_{config.prog_num}/torrents/'+torrent_file_path
+    
     if not os.path.exists(torrent_file_path):
         print(f"Error: The torrent file '{torrent_file_path}' does not exist.")
         return
@@ -123,7 +125,7 @@ def preview_torrent(torrent_file_path):
             torrent_data = bencodepy.decode(f.read())
 
         # Display the torrent contents in a readable format
-        print("\n=== Torrent File Contents ===")
+        print("\n==== Torrent File Contents ====")
         for key, value in torrent_data.items():
             if isinstance(
                 value, dict
