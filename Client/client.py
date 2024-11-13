@@ -127,7 +127,7 @@ def download_chunk(
     client.connect((upload_host1, port))
     client.send(reponame) #reponame la torrent hash
     file_name = client.recv(1024).decode()
-    file_size = client.recv(1024).decode()
+    # file_size = client.recv(1024).decode()
     
     with client.makefile("rb") as rfile:
         with open(file_resu, "r+b") as f:
