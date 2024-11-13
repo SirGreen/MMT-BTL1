@@ -142,7 +142,7 @@ def download_chunk(
                 client.send(torrent_file_name.encode())
                 trCtrl.get_file_name(torrent_file_name)
                 # chunk_array=client.recv(1024).decode()
-                data = client.recv(4096)  # adjust buffer size as needed
+                data = client.recv(32768)  # adjust buffer size as needed
                 chunk_array = json.loads(data.decode('utf-8'))
                 index=0
                 with write_lock:
@@ -283,7 +283,7 @@ def download(torrent_file_name, tracker=None):
     piece_length = trCtrl.get_piece_length(total_size)
     num_of_piece=math.ceil(total_size/piece_length)
     print(f"Piece length: {piece_length}")
-    print(f"Piece length: {total_size}")
+    print(f"Total Size: {total_size}")
     
     with write_lock:
         offset_in_download_array=config.offsetDownloader
@@ -299,10 +299,11 @@ def download(torrent_file_name, tracker=None):
     chunk_array=fdt.get_array(trCtrl.get_file_name(torrent_file_name))
     with write_lock:
         while index<num_of_piece:
+            # print(config.downloadArray[offset_in_download_array])
             config.downloadArray[offset_in_download_array][num_of_piece+index]=chunk_array[index]
             index+=1
         config.downloadArray[offset_in_download_array][num_of_piece+index]=0
-    print(config.downloadArray[offset_in_download_array])
+    # print(config.downloadArray[offset_in_download_array])
     offset = 0
     port_index = 0
 

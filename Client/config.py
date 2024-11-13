@@ -9,5 +9,5 @@ BLOCK1 = 1 << 20  # 1024KB
 peer_id = "BKU-Torrent-" 
 prog_num = 0
 offsetDownloader=0
-rows, cols = 5, 10
+rows, cols = 5, 14000
 downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]
