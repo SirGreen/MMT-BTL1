@@ -51,7 +51,7 @@ def update_array(file_name, new_array):
         return
     data[file_name] = new_array
     save_data(data)
-    print(f"File '{file_name}' updated with new array {new_array}.")
+    print(f"File '{file_name}' updated with new array.")
     
 def change_element(file_name, index, new_value):
     data = load_data()
