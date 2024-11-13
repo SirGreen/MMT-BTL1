@@ -41,6 +41,24 @@ def update_array(file_name, new_array):
     data[file_name] = new_array
     save_data(data)
     print(f"File '{file_name}' updated with new array {new_array}.")
+    
+def change_element(file_name, index, new_value):
+    data = load_data()
+    
+    # Check if the file exists
+    if file_name not in data:
+        print(f"File '{file_name}' does not exist.")
+        return
+
+    # Check if the index is within bounds
+    if index < 0 or index >= len(data[file_name]):
+        print(f"Index {index} is out of bounds for the array in '{file_name}'.")
+        return
+    
+    # Update the element in the array
+    data[file_name][index] = new_value
+    save_data(data)
+    # print(f"Updated element at index {index} in '{file_name}' to {new_value}.")
 
 # Function to get a list of all files
 def get_all_files():
