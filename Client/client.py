@@ -76,9 +76,14 @@ def peer_connect(client_socket):
     with client_socket.makefile("wb") as wfile:
             with open(filename, "rb") as f1:
                 mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
-                
                 while 1: 
+                              
                     torrent_file_name=client_socket.recv(1024).decode()
+                    if not torrent_file_name:
+                        f1.close()
+                        wfile.close()
+                        client_socket.close()
+                        return 
                     print ('rece file name:')
                     print(trCtrl.get_file_name(torrent_file_name))
                     
@@ -91,14 +96,14 @@ def peer_connect(client_socket):
                     offset = int.from_bytes(a, "big")
                     mm.seek(offset * piece_length)
                     data = mm.read(piece_length)
-                    # print(f'độ dài data trc khi hash: {len(data)}')
                     ressu = hashlib.sha1(data).digest()
                     # print(f'Data: {data.hex()}')
                     print(f"Hash ra: {ressu.hex()}")
                     print(offset)
-                    print(len(data))
+                    byte_data = len(data).to_bytes(4, "big")
+                    client_socket.send(byte_data)
                     wfile.write(data)
-                    wfile.flush()
+                    # wfile.flush()
             f1.close()
     wfile.close()
     client_socket.close()
@@ -152,21 +157,22 @@ def download_chunk(
                     while index<math.ceil(total_size/piece_length):
                         config.downloadArray[offset_in_download_array][index]+=chunk_array[index]
                         index+=1
-                    while 1:
+                while 1:
                         array=config.downloadArray[offset_in_download_array][math.ceil(total_size/piece_length):math.ceil(total_size/piece_length)*2]
                         if min(array)==1:
                             if max(array)==1:
                                 client.close()
                                 return 
-                        min_value = min(config.downloadArray[offset_in_download_array][0:math.ceil(total_size/piece_length)])
-                        value_chunk_of_downloader=config.downloadArray[offset_in_download_array][config.downloadArray[offset_in_download_array].index(min_value)+math.ceil(total_size/piece_length)] 
-                        if value_chunk_of_downloader== 0:
-                            if chunk_array[config.downloadArray[offset_in_download_array].index(min_value)]==1:
-                                config.downloadArray[offset_in_download_array][config.downloadArray[offset_in_download_array].index(min_value)+math.ceil(total_size/piece_length)]  = 2 #dang tai
-                                offset= int(config.downloadArray[offset_in_download_array].index(min_value))
-                                break
-                        if value_chunk_of_downloader== 1:
-                            config.downloadArray[offset_in_download_array][config.downloadArray[offset_in_download_array].index(min_value)]=1000000
+                        with write_lock:
+                            min_value = min(config.downloadArray[offset_in_download_array][0:math.ceil(total_size/piece_length)])
+                            value_chunk_of_downloader=config.downloadArray[offset_in_download_array][config.downloadArray[offset_in_download_array].index(min_value)+math.ceil(total_size/piece_length)] 
+                            if value_chunk_of_downloader== 0:
+                                if chunk_array[config.downloadArray[offset_in_download_array].index(min_value)]==1:
+                                    config.downloadArray[offset_in_download_array][config.downloadArray[offset_in_download_array].index(min_value)+math.ceil(total_size/piece_length)]  = 2 #dang tai
+                                    offset= int(config.downloadArray[offset_in_download_array].index(min_value))
+                                    break
+                            if value_chunk_of_downloader== 1:
+                                config.downloadArray[offset_in_download_array][config.downloadArray[offset_in_download_array].index(min_value)]=1000000
                             
                             
                 #TODO
@@ -183,16 +189,50 @@ def download_chunk(
                     unit_divisor=1000,
                     total=int(piece_length if total_size > piece_length else total_size),
                 )
+                # with client.makefile("rb") as rfile:
+                #     with open(file_resu, "r+b") as f:
+                #         # Memory-map the file
+                #         mm = mmap.mmap(f.fileno(), 0)
+                #         # while remaining != 0:
+                #         byte_data = offset.to_bytes(4, "big")
+                #         client.send(byte_data)
+                #         print(offset)
+                #         data = rfile.read(piece_length if total_size > piece_length else total_size)
+                #         ressu = hashlib.sha1(data).digest()
+                #         print(
+                #             f"So byte doc: {piece_length if total_size > piece_length else total_size}"
+                #         )
+                #         # print(f'Data hex: {data.hex()}')
+                #         print(f"Hash Data ra: {ressu.hex()}")
+                #         print(key_value[offset].hex())
+                #         if ressu == key_value[offset]:
+                #             with write_lock:
+                #                 mm[offset * piece_length : (offset + 1) * piece_length] = data
+                #                 progress.update(len(data))
+                #                 config.downloadArray[offset_in_download_array][offset+math.ceil(total_size/piece_length)]  = 1 # tai xong
+                #                 # fdt.update_data_file() TODO
+                                
+                #         else:
+                #             print("meo")
+                #             with write_lock:
+                #                 config.downloadArray[offset_in_download_array][offset+math.ceil(total_size/piece_length)]  = 0 # tai fail
+                #         mm.close()
+                #         f.close()
+                # rfile.close()
+                
+                 # Memory-map the file
+                # while remaining != 0:
                 byte_data = offset.to_bytes(4, "big")
                 client.send(byte_data)
                 print(offset)
-                print(piece_length if total_size > piece_length else total_size)
-                data = rfile.read(piece_length if total_size > piece_length else total_size)
-                total_size = total_size - piece_length if total_size > piece_length else total_size
-                #nhi la con ga
+                a = client.recv(4)
+                byteDownload = int.from_bytes(a, "big")
+                # with write_lock:
+                #     data = rfile.read(piece_length if offset  != (math.ceil(total_size/piece_length))  else (total_size- (math.ceil(total_size/piece_length)-1)*piece_length))
+                data=rfile.read(byteDownload)
                 ressu = hashlib.sha1(data).digest()
                 print(
-                    f"So byte doc: {piece_length if total_size > piece_length else total_size}"
+                    f"So byte doc: {len(data)}"
                 )
                 # print(f'Data hex: {data.hex()}')
                 print(f"Hash Data ra: {ressu.hex()}")
@@ -201,11 +241,12 @@ def download_chunk(
                             with write_lock:
                                 mm[offset * piece_length : (offset + 1) * piece_length] = data
                                 progress.update(len(data))
+                                config.downloadArray[offset_in_download_array][(math.ceil(total_size/piece_length)+math.ceil(total_size/piece_length))]  -= len(data) # tai xong
                                 config.downloadArray[offset_in_download_array][offset+math.ceil(total_size/piece_length)]  = 1 # tai xong
                                 # fdt.update_data_file() TODO
                                 
                 else:
-                            print("meo")
+                            print("Received data does not match hash key")
                             with write_lock:
                                 config.downloadArray[offset_in_download_array][offset+math.ceil(total_size/piece_length)]  = 0 # tai fail
                 
@@ -215,6 +256,8 @@ def download_chunk(
                     array=config.downloadArray[offset_in_download_array][math.ceil(total_size/piece_length):(math.ceil(total_size/piece_length)+math.ceil(total_size/piece_length))]
                     if min(array)==1:
                         if max(array)==1:
+                            have(torrent_file_name)
+                            config.downloadArray[offset_in_download_array][(math.ceil(total_size/piece_length)+math.ceil(total_size/piece_length))]=1
                             break
             mm.close()
             f.close()
@@ -258,6 +301,7 @@ def download(torrent_file_name, tracker=None):
         while index<num_of_piece:
             config.downloadArray[offset_in_download_array][num_of_piece+index]=chunk_array[index]
             index+=1
+        config.downloadArray[offset_in_download_array][num_of_piece+index]=0
     print(config.downloadArray[offset_in_download_array])
     offset = 0
     port_index = 0
@@ -280,6 +324,10 @@ def download(torrent_file_name, tracker=None):
                 if max(array)==1:
                     return
         client_port = port_list[port_index]
+        
+        if client_port == port:
+            port_index+=1
+            continue
 
         thread = Thread(
             target=download_chunk,
