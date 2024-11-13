@@ -19,7 +19,7 @@ debugLock = Lock()
 
 
 # region Have
-def send_torrent_tracker(torrent_file_path, tracker):
+def send_torrent_tracker(torrent_file_path, tracker):    
     torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)
     file_name = trCtrl.get_file_name(torrent_file_path)
     print(torrent_file_path)
@@ -74,8 +74,9 @@ def peer_connect(client_socket):
     print(f"Piece length: {piece_length}")
     # Print for another pear
     client_socket.send(("recievied_" + filename).encode())
-    client_socket.send(str(file_size).encode())
-
+    # client_socket.send(str(file_size).encode())
+    filename = f'program_{config.prog_num}/downloads/' + filename
+    print(filename)
     with client_socket.makefile("wb") as wfile:
         with open(filename, "rb") as f1:
             mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
@@ -161,7 +162,7 @@ def download_chunk(
                 # chunk_array=client.recv(1024).decode()
                 data = client.recv(32768)  # DownloadedChunkBit Array
                 chunk_array = json.loads(data.decode("utf-8"))
-
+                print(chunk_array)
                 with write_lock:
                     # Check whether have full file
                     array = config.downloadArray[offset_in_download_array][
@@ -301,7 +302,8 @@ def download_chunk(
 
 
 def download(torrent_file_name, tracker=None):
-    # torrent_file_name=f'program_{config.prog_num}/torrents/'+torrent_file_name
+    # torrent = torrent_file_name
+    torrent_file_name=f'program_{config.prog_num}/torrents/'+torrent_file_name
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     torrent_hash = trCtrl.get_torrent_hash(torrent_file_name)
     if tracker is None:
@@ -378,10 +380,9 @@ def download(torrent_file_name, tracker=None):
 
         client_port = port_list[port_index]
 
-        if client_port == port:
+        if int(client_port) == int(port):
             port_index += 1
             continue
-
         thread = Thread(
             target=download_chunk,
             args=(
