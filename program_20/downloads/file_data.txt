@@ -1,1 +1,1 @@
-{"example_file_1": [false, false, true], "test.pdf": [1, 1]}
+{"example_file_1": [false, false, true], "test.pdf": [0, 0]}

@@ -1,1 +1,1 @@
-{"example_file_1": [false, false, true], "program_8/torrents/test.torrent": [false, false]}
+{"example_file_1": [false, false, true], "test.pdf": [0, 0]}
