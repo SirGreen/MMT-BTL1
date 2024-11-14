@@ -23,12 +23,14 @@ def update_data_file(file_name, n):
 def file_downloaded(filename):
     array = get_array(filename)
     i = 0
-    for _ in array:
-        i = i + 1
+    for x in array:
+        i = x + i
     if i==len(array):
-        return True
+        return 1
+    elif i==0:
+        return 0
     else:
-        return False
+        return 2
 
 def file_exists(file_path):
     # Construct the full path
@@ -72,7 +74,7 @@ def update_array(file_name, new_array):
         return
     data[file_name] = new_array
     save_data(data)
-    print(f"File '{file_name}' updated with new array.")
+    # print(f"File '{file_name}' updated with new array.")
     
 def change_element(file_name, index, new_value):
     data = load_data()

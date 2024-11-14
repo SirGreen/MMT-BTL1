@@ -3,7 +3,6 @@ import os
 import hashlib
 import socket
 from threading import Lock, Thread
-import tqdm
 import help
 import trComController as trCom
 import random
@@ -17,9 +16,17 @@ import threading
 import time
 import queue
 import sys
+from rich.console import Console
 
 from rich.live import Live
-from rich.progress import Progress, BarColumn, TextColumn
+from rich.progress import (
+    Progress,
+    BarColumn,
+    TextColumn,
+    TimeRemainingColumn,
+    DownloadColumn,
+    TaskProgressColumn,
+)
 
 
 write_lock = Lock()
@@ -27,19 +34,25 @@ debugLock = Lock()
 download_queue = queue.Queue()
 downloads = []
 running = True
+console = Console()
+
+
+def printAnnounce(msg):
+    print(msg + "\nEnter a command: ")
+
 
 # region Have
-def send_torrent_tracker(torrent_file_path, tracker):    
+def send_torrent_tracker(torrent_file_path, tracker):
     torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)
     file_name = trCtrl.get_file_name(torrent_file_path)
-    print(torrent_file_path)
+    print(f"Sending tracker: {torrent_file_path}")
     n = len(trCtrl.get_piece_hashes(torrent_file_path))
 
-    fdt.update_data_file(file_name,n)
+    fdt.update_data_file(file_name, n)
 
     tracker = trCtrl.get_trackers(torrent_file_path)[0]
     config.peer_repo.append({"filename": file_name, "reponame": torrent_hash})
-    print(file_name)
+    # print(file_name)
     params = {}
     params["torrent_hash"] = torrent_hash
     params["peerid"] = config.peer_id
@@ -75,14 +88,13 @@ def peer_connect(client_socket):
     for repo in config.peer_repo:
         if repo["reponame"] == reponame:
             filename = repo["filename"]
-    filename = f'program_{config.prog_num}/downloads/' + filename
+    filename = f"program_{config.prog_num}/downloads/" + filename
     file_size = os.path.getsize(filename)
-    piece_length = trCtrl.get_piece_length(file_size)
-    print(f"Piece length: {piece_length}")
-    # Print for another pear
+    piece_length = 0
     client_socket.send(("recievied_" + filename).encode())
     # client_socket.send(str(file_size).encode())
     print(filename)
+    first = True
     with client_socket.makefile("wb") as wfile:
         with open(filename, "rb") as f1:
             mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
@@ -93,6 +105,10 @@ def peer_connect(client_socket):
                     wfile.close()
                     client_socket.close()
                     return
+                elif first:
+                    first = False                    
+                    piece_length = trCtrl.get_piece_length_from_torrent(torrent_file_name)
+                    print(f"Piece length: {piece_length}")
                 # print("recieved file name:")
                 # print(trCtrl.get_file_name(torrent_file_name))
 
@@ -109,7 +125,7 @@ def peer_connect(client_socket):
                 data = mm.read(piece_length)
                 byte_data = len(data).to_bytes(4, "big")
                 client_socket.send(byte_data)
-                
+
                 wfile.write(data)
         f1.close()
     wfile.close()
@@ -259,12 +275,17 @@ def download_chunk(
                 # print(f"Hash Data ra: {ressu.hex()}")
                 # print(f'Hash trong torrent: {key_value[offset].hex()}\n')
 
-
                 # Check data with hash key
                 if ressu == key_value[offset]:
                     with write_lock:
                         mm[offset * piece_length : (offset + 1) * piece_length] = data
-                        progress.update(task,advance=1)
+                        config.bytesDownload[offset_in_download_array] += piece_length/(1024*1024)
+                        progress.update(task, advance=piece_length)
+
+                        # console.print(
+                        #     f"[yellow]Speed: {config.bytesDownload[offset_in_download_array]/(time.time()-config.timeStartDownload[offset_in_download_array]):.2f} MB/s[/yellow]",
+                        #     end="\r",
+                        # )
                         config.downloadArray[offset_in_download_array][
                             offset + math.ceil(total_size / piece_length)
                         ] = 1  # tai xong
@@ -298,7 +319,7 @@ def download_chunk(
 
 def download(torrent_file_name, progress, tracker=None):
     # torrent = torrent_file_name
-    torrent_file_name=f'program_{config.prog_num}/torrents/'+torrent_file_name
+    torrent_file_name = f"program_{config.prog_num}/torrents/" + torrent_file_name
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     torrent_hash = trCtrl.get_torrent_hash(torrent_file_name)
     if tracker is None:
@@ -313,20 +334,23 @@ def download(torrent_file_name, progress, tracker=None):
     # port1 = int(input("Input peer port from list above: "))
     key_value = trCtrl.get_piece_hashes(torrent_file_name)
     total_size = trCtrl.get_file_length(torrent_file_name)
-    piece_length = trCtrl.get_piece_length(total_size)
+    piece_length = trCtrl.get_piece_length_from_torrent(torrent_file_name)
     num_of_piece = math.ceil(total_size / piece_length)
     # print(f"Piece length: {piece_length}")
     # print(f"File length: {total_size}")
 
     file_name = trCtrl.get_file_name(torrent_file_name)
-    fdt.update_data_file(file_name,num_of_piece)
+    fdt.update_data_file(file_name, num_of_piece)
+    if fdt.file_downloaded(file_name) == 1:
+        printAnnounce("This file is already downloaded, remove it to redownload")
+        return
     a = num_of_piece * 2
-    task = progress.add_task(f"Download {file_name}", total=num_of_piece)
-    downloads.append((file_name, task))
 
     # each downloader has specific offset_in_download_array
     with write_lock:
         config.downloadArray.append([0] * a)
+        config.bytesDownload.append(0)
+        config.timeStartDownload.append(time.time())
         offset_in_download_array = config.offsetDownloader
         config.offsetDownloader += 1
 
@@ -337,6 +361,15 @@ def download(torrent_file_name, progress, tracker=None):
         initial_data = [0] * num_of_piece
         fdt.add_file(trCtrl.get_file_name(torrent_file_name), initial_data)
     chunk_array = fdt.get_array(trCtrl.get_file_name(torrent_file_name))
+
+    num_of_piece_left = 0
+    for x in chunk_array:
+        if x == 0:
+            num_of_piece_left = num_of_piece_left + 1
+    task = progress.add_task(
+        f"Download {file_name}", total=num_of_piece_left * piece_length
+    )
+    downloads.append((file_name, task))
 
     index = 0
     # print(offset_in_download_array)
@@ -399,21 +432,22 @@ def download(torrent_file_name, progress, tracker=None):
     client.close()
     # Check whether have full file
     array = config.downloadArray[offset_in_download_array][
-        math.ceil(total_size / piece_length) : math.ceil(
-            total_size / piece_length
-        )
-        * 2
+        math.ceil(total_size / piece_length) : math.ceil(total_size / piece_length) * 2
     ]
     if min(array) == 1:
         if max(array) == 1:
             # have(torrent_file_name)
             # Now the task is complete, start the 30-second delay
             for remaining_time in range(10, 0, -1):
-                progress.update(task, description=f"Moving {file_name} to completed in {remaining_time}s")
+                progress.update(
+                    task,
+                    description=f"Moving {file_name} to completed in {remaining_time}s",
+                )
                 time.sleep(1)
 
             # After the 10 seconds, remove the task from the progress bar and add it to completed list
             progress.remove_task(task)
+            downloads.remove((file_name, task))
 
 
 # endregion
@@ -499,6 +533,7 @@ def client_exit(tracker=None):
 
 # endregion
 
+
 # Function to listen to user input commands and manage display
 def input_listener(show_progress, live):
     hostname = config.DEFAULT_TRACKER
@@ -507,7 +542,7 @@ def input_listener(show_progress, live):
     fdt.update_data_file_dir()
 
     have(f"program_{config.prog_num}/torrents")
-    
+
     while True:
         try:
             user_input = input("Enter a command: ").strip().lower()
@@ -566,22 +601,41 @@ def input_listener(show_progress, live):
                     raise ValueError("File path is required.")
                 trCtrl.make_torrent(file_path, output_folder, tracker_url)
             elif user_input.lower() == "progress":
-                show_progress[0] = True
-                live.start()
-                # Wait for any single key press to hide progress
-                print("Press any key to hide progress...")
-                get_keypress()  # Wait for any key press without Enter
-                show_progress[0] = False
-                live.stop()
-            elif user_input.lower() == "completed":
+                if len(downloads) == 0:
+                    print(
+                        "Download queue is empty. Waiting for a downloads to start or for a key press..."
+                    )
+
+                while len(downloads) == 0 and not msvcrt.kbhit():
+                    time.sleep(0.1)
+
+                # If the user presses a key, proceed with hiding progress
+                if msvcrt.kbhit():
+                    msvcrt.getch()
+                    print("Key pressed. Hiding progress...")
+                    continue
+
+                if len(downloads) != 0:
+                    show_progress[0] = True
+                    live.start()
+                    get_keypress()  # Wait for any key press without Enter
+                    print("Press any key to hide progress...")
+                    show_progress[0] = False
+                    live.stop()
+            elif user_input.lower() == "status":
                 files = fdt.get_all_files()
-                print("Downloaded:")
                 for file in files:
-                    if fdt.file_downloaded(file):
-                        print(file)
+                    fdt.update_data_file(file, len(fdt.get_array(file)))
+                    x = fdt.file_downloaded(file)
+                    if x == 1:
+                        print(f"Downloaded {file}")
+                    elif x == 0:
+                        print(f"Not downloaded {file}")
+                    else:
+                        print(f"Downloading {file}")
             elif user_input.lower() == "exit":
                 client_exit(hostname)
-                global running 
+                global running
                 running = False
                 break
 
@@ -592,23 +646,29 @@ def input_listener(show_progress, live):
         except Exception as e:
             print("Error: ", e)
 
+
 # Function to manage and launch downloads
 def download_manager(progress):
     while True:
         # Check for new download requests
         if not download_queue.empty():
             torName = download_queue.get()
-            threading.Thread(target=download, args=(torName, progress), daemon=True).start()
+            threading.Thread(
+                target=download, args=(torName, progress), daemon=True
+            ).start()
         time.sleep(0.1)
+
 
 # Check the platform to use appropriate key press detection
 if sys.platform == "win32":
     import msvcrt
+
     def get_keypress():
         return msvcrt.getch()
 else:
     import tty
     import termios
+
     def get_keypress():
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
@@ -618,6 +678,7 @@ else:
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
+
 def main():
     help.welcome()  # Display the welcome message
 
@@ -625,11 +686,13 @@ def main():
     show_progress = [False]
     progress = Progress(
         TextColumn("[progress.description]{task.description}"),
-        BarColumn(),
-        TextColumn("[progress.percentage]{task.percentage:>3.0f}%")
+        BarColumn(bar_width=40),
+        TaskProgressColumn(),
+        DownloadColumn(),
+        TimeRemainingColumn(),
+        console=console,
     )
-    live = Live(progress, refresh_per_second=4, transient=True)
-
+    live = Live(progress, refresh_per_second=20, transient=True)
     upload_thread = Thread(target=upload)
     # destroy this upload thread on quitting
     upload_thread.daemon = True
@@ -638,8 +701,10 @@ def main():
     # Start the download manager in a background thread
     threading.Thread(target=download_manager, args=(progress,), daemon=True).start()
     # Start the input listener in a background thread
-    threading.Thread(target=input_listener, args=(show_progress, live), daemon=True).start()
-    
+    threading.Thread(
+        target=input_listener, args=(show_progress, live), daemon=True
+    ).start()
+
     # Keep the main thread alive
     while running:
         if show_progress[0]:

@@ -81,7 +81,6 @@ class Server:
     def have_add_repo_client(self, torhash, peerid):
         # update rfc_index
         if torhash in self.rfc_index:
-            print("HEHEHEHE")
             print(self.rfc_index[torhash])
             print(peerid not in self.rfc_index[torhash])
             if peerid not in self.rfc_index[torhash]:

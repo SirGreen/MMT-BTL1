@@ -13,3 +13,5 @@ offsetDownloader=0
 # downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]
 
 downloadArray = []
+bytesDownload = []
+timeStartDownload = []
