@@ -529,6 +529,31 @@ def client_exit(tracker=None):
     params["peerid"] = config.peer_id
     print(config.peer_id)
     trCom.send_get(url, params)
+#endregion
+
+#region ping
+
+def ping_tracker(tracker=None):
+    if tracker is None:
+        tracker = config.DEFAULT_TRACKER
+    url = tracker + "/announce/ping"
+    params = {}
+    params["peerid"] = config.peer_id
+
+    while not config.Flag:
+        # trCom.send_get(url, params)
+        print("Ping sent to tracker")
+        rep = trCom.send_get(url, params)
+        if (rep is None): print("No tracker connected.")
+        else:   
+            if (rep.text != "OK!"): print("Tracker offline!!!")
+            else: print("Tracker say hi!")
+
+        # print(f"{type(trCom.send_get(url, params))}")
+        time.sleep(1798) #30p 1798
+        
+
+#endregion
 
 
 # endregion
@@ -540,6 +565,10 @@ def input_listener(show_progress, live):
     join(hostname)
     print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {config.peer_id} (OwO)")
     fdt.update_data_file_dir()
+    
+    ping_thread = Thread(target=ping_tracker, args=(hostname,))
+    ping_thread.daemon = True
+    ping_thread.start()
 
     have(f"program_{config.prog_num}/torrents")
 
