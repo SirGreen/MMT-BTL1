@@ -1,0 +1,943 @@
+[
+    {
+        "label": "mmap",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "mmap",
+        "description": "mmap",
+        "detail": "mmap",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "hashlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "hashlib",
+        "description": "hashlib",
+        "detail": "hashlib",
+        "documentation": {}
+    },
+    {
+        "label": "socket",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "socket",
+        "description": "socket",
+        "detail": "socket",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Lock",
+        "importPath": "threading",
+        "description": "threading",
+        "isExtraImport": true,
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Thread",
+        "importPath": "threading",
+        "description": "threading",
+        "isExtraImport": true,
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Lock",
+        "importPath": "threading",
+        "description": "threading",
+        "isExtraImport": true,
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "tqdm",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "tqdm",
+        "description": "tqdm",
+        "detail": "tqdm",
+        "documentation": {}
+    },
+    {
+        "label": "help",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "help",
+        "description": "help",
+        "detail": "help",
+        "documentation": {}
+    },
+    {
+        "label": "trComController",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "trComController",
+        "description": "trComController",
+        "detail": "trComController",
+        "documentation": {}
+    },
+    {
+        "label": "random",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "random",
+        "description": "random",
+        "detail": "random",
+        "documentation": {}
+    },
+    {
+        "label": "config",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "config",
+        "description": "config",
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "DEFAULT_TRACKER",
+        "importPath": "config",
+        "description": "config",
+        "isExtraImport": true,
+        "detail": "config",
+        "documentation": {}
+    },
+    {
+        "label": "torrentController",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "torrentController",
+        "description": "torrentController",
+        "detail": "torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "atexit",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "atexit",
+        "description": "atexit",
+        "detail": "atexit",
+        "documentation": {}
+    },
+    {
+        "label": "progress",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "progress",
+        "description": "progress",
+        "detail": "progress",
+        "documentation": {}
+    },
+    {
+        "label": "math",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "math",
+        "description": "math",
+        "detail": "math",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "queue",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "queue",
+        "description": "queue",
+        "detail": "queue",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "Live",
+        "importPath": "rich.live",
+        "description": "rich.live",
+        "isExtraImport": true,
+        "detail": "rich.live",
+        "documentation": {}
+    },
+    {
+        "label": "Progress",
+        "importPath": "rich.progress",
+        "description": "rich.progress",
+        "isExtraImport": true,
+        "detail": "rich.progress",
+        "documentation": {}
+    },
+    {
+        "label": "BarColumn",
+        "importPath": "rich.progress",
+        "description": "rich.progress",
+        "isExtraImport": true,
+        "detail": "rich.progress",
+        "documentation": {}
+    },
+    {
+        "label": "TextColumn",
+        "importPath": "rich.progress",
+        "description": "rich.progress",
+        "isExtraImport": true,
+        "detail": "rich.progress",
+        "documentation": {}
+    },
+    {
+        "label": "bencodepy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "bencodepy",
+        "description": "bencodepy",
+        "detail": "bencodepy",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "BaseHTTPRequestHandler",
+        "importPath": "http.server",
+        "description": "http.server",
+        "isExtraImport": true,
+        "detail": "http.server",
+        "documentation": {}
+    },
+    {
+        "label": "HTTPServer",
+        "importPath": "http.server",
+        "description": "http.server",
+        "isExtraImport": true,
+        "detail": "http.server",
+        "documentation": {}
+    },
+    {
+        "label": "urlparse",
+        "importPath": "urllib.parse",
+        "description": "urllib.parse",
+        "isExtraImport": true,
+        "detail": "urllib.parse",
+        "documentation": {}
+    },
+    {
+        "label": "parse_qs",
+        "importPath": "urllib.parse",
+        "description": "urllib.parse",
+        "isExtraImport": true,
+        "detail": "urllib.parse",
+        "documentation": {}
+    },
+    {
+        "label": "pickle",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pickle",
+        "description": "pickle",
+        "detail": "pickle",
+        "documentation": {}
+    },
+    {
+        "label": "send_get",
+        "importPath": "Client.trComController",
+        "description": "Client.trComController",
+        "isExtraImport": true,
+        "detail": "Client.trComController",
+        "documentation": {}
+    },
+    {
+        "label": "send_torrent_tracker",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))\n    fdt.update_data_file(file_name,n)\n    tracker = trCtrl.get_trackers(torrent_file_path)[0]\n    config.peer_repo.append({\"filename\": file_name, \"reponame\": torrent_hash})\n    print(file_name)\n    params = {}",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "have",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def have(file_path, tracker_url=None):\n    full_path = \"\"\n    if os.path.isdir(file_path):\n        # Walk through the directory and its subdirectories\n        for root, dirs, files in os.walk(file_path):\n            for file in files:\n                # If the file ends with .torrent, process it\n                if file.endswith(\".torrent\"):\n                    full_path = os.path.join(root, file)\n                    full_path = full_path.replace(\"/\", \"\\\\\")",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "send_scrape",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def send_scrape(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    tracker = trCtrl.get_trackers(torrent_file_path)[0]\n    config.peer_repo.append({\"filename\": file_name, \"reponame\": torrent_hash})\n    print(file_name)\n    params = {}\n    params[\"torrent_hash\"] = torrent_hash\n    params[\"peerid\"] = config.peer_id\n    trCom.send_tracker(\"scrape\", params, tracker)",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "scrape",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def scrape(file_path, tracker_url=None):\n    full_path = \"\"\n    if os.path.isdir(file_path):\n        # Walk through the directory and its subdirectories\n        for root, dirs, files in os.walk(file_path):\n            for file in files:\n                # If the file ends with .torrent, process it\n                if file.endswith(\".torrent\"):\n                    full_path = os.path.join(root, file)\n                    full_path = full_path.replace(\"/\", \"\\\\\")",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "peer_connect",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def peer_connect(client_socket):\n    reponame = client_socket.recv(1024)\n    filename = \"\"\n    for repo in config.peer_repo:\n        if repo[\"reponame\"] == reponame:\n            filename = repo[\"filename\"]\n    filename = f'program_{config.prog_num}/downloads/' + filename\n    file_size = os.path.getsize(filename)\n    piece_length = trCtrl.get_piece_length(file_size)\n    print(f\"Piece length: {piece_length}\")",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "upload",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def upload():\n    upload_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    upload_host = socket.gethostbyname(socket.gethostname())\n    upload_socket.bind((upload_host, port))\n    upload_socket.listen(5)\n    while not config.Flag:\n        (client_socket, client_addr) = upload_socket.accept()\n        print(\"Got connection from\", client_addr)\n        new_thread = Thread(target=peer_connect, args=(client_socket,))\n        new_thread.start()",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "download_chunk",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def download_chunk(\n    progress,\n    task,\n    reponame,\n    port,\n    offset,\n    piece_length,\n    file_resu,\n    key_value,\n    total_size,",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "download",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def download(torrent_file_name, progress, tracker=None):\n    # torrent = torrent_file_name\n    torrent_file_name=f'program_{config.prog_num}/torrents/'+torrent_file_name\n    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_name)\n    if tracker is None:\n        tracker = config.DEFAULT_TRACKER\n    url = tracker + \"/announce/down\"\n    params = {}\n    params[\"torrent_hash\"] = trCtrl.get_torrent_hash(torrent_file_name)",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "get_program_number",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def get_program_number():\n    running_file = \"running.txt\"\n    program_numbers = set()\n    # Check if 'running.txt' exists and read the program numbers\n    if os.path.exists(running_file):\n        with open(running_file, \"r\") as f:\n            for line in f:\n                try:\n                    # Extract program numbers from each line\n                    program_numbers.add(int(line.strip()))",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "cleanup",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def cleanup(program_number):\n    # Remove the program number from 'running.txt' when exiting\n    running_file = \"running.txt\"\n    if os.path.exists(running_file):\n        with open(running_file, \"r\") as f:\n            lines = f.readlines()\n        # Rewrite 'running.txt' without the current program number\n        with open(running_file, \"w\") as f:\n            for line in lines:\n                if line.strip() != str(program_number):",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "setup_program_folder",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def setup_program_folder():\n    # Get the designated program number\n    program_number = get_program_number()\n    program_folder = f\"program_{program_number}\"\n    # Create the program folder and subfolders if they don't exist\n    if not os.path.exists(program_folder):\n        os.makedirs(os.path.join(program_folder, \"torrents\"))\n        os.makedirs(os.path.join(program_folder, \"downloads\"))\n    # Append the program number to the central 'running.txt' to signal it's running\n    with open(\"running.txt\", \"a\") as f:",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "join",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def join(tracker=None):\n    config.prog_num = setup_program_folder()\n    config.peer_id = config.peer_id + str(config.prog_num)\n    if tracker is None:\n        tracker = config.DEFAULT_TRACKER\n    url = tracker + \"/announce/join\"\n    params = {}\n    params[\"peerid\"] = config.peer_id\n    params[\"port\"] = port\n    trCom.send_get(url, params)",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "client_exit",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def client_exit(tracker=None):\n    if tracker is None:\n        tracker = config.DEFAULT_TRACKER\n    url = tracker + \"/announce/exit\"\n    params = {}\n    params[\"peerid\"] = config.peer_id\n    print(config.peer_id)\n    trCom.send_get(url, params)\n# endregion\n# Function to listen to user input commands and manage display",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "input_listener",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def input_listener(show_progress, live):\n    hostname = config.DEFAULT_TRACKER\n    join(hostname)\n    print(f\"Welcome user to ***'s bittorrent network,\\nPeer ID: {config.peer_id} (OwO)\")\n    fdt.update_data_file_dir()\n    have(f\"program_{config.prog_num}/torrents\")\n    while True:\n        try:\n            user_input = input(\"Enter a command: \").strip().lower()\n            command_split = user_input.split()",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "download_manager",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def download_manager(progress):\n    while True:\n        # Check for new download requests\n        if not download_queue.empty():\n            torName = download_queue.get()\n            threading.Thread(target=download, args=(torName, progress), daemon=True).start()\n        time.sleep(0.1)\n# Check the platform to use appropriate key press detection\nif sys.platform == \"win32\":\n    import msvcrt",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def main():\n    help.welcome()  # Display the welcome message\n    # Initialize Progress and Live objects\n    show_progress = [False]\n    progress = Progress(\n        TextColumn(\"[progress.description]{task.description}\"),\n        BarColumn(),\n        TextColumn(\"[progress.percentage]{task.percentage:>3.0f}%\")\n    )\n    live = Live(progress, refresh_per_second=4, transient=True)",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "write_lock",
+        "kind": 5,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "write_lock = Lock()\ndebugLock = Lock()\ndownload_queue = queue.Queue()\ndownloads = []\nrunning = True\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "debugLock",
+        "kind": 5,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "debugLock = Lock()\ndownload_queue = queue.Queue()\ndownloads = []\nrunning = True\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "download_queue",
+        "kind": 5,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "download_queue = queue.Queue()\ndownloads = []\nrunning = True\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))\n    fdt.update_data_file(file_name,n)",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "downloads",
+        "kind": 5,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "downloads = []\nrunning = True\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))\n    fdt.update_data_file(file_name,n)\n    tracker = trCtrl.get_trackers(torrent_file_path)[0]",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "running",
+        "kind": 5,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "running = True\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))\n    fdt.update_data_file(file_name,n)\n    tracker = trCtrl.get_trackers(torrent_file_path)[0]\n    config.peer_repo.append({\"filename\": file_name, \"reponame\": torrent_hash})",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "Flag",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "Flag = False\npeer_repo = []\nSERVER_PORT = 8080\nSERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "peer_repo",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "peer_repo = []\nSERVER_PORT = 8080\nSERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "SERVER_PORT",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "SERVER_PORT = 8080\nSERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "SERVER_HOST",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "SERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "DEFAULT_TRACKER",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "DEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "BLOCK_SZ",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "BLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "BLOCK",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "BLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "BLOCK1",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "BLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "peer_id",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "peer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "prog_num",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "prog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "downloadArray",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "downloadArray = []",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "welcome",
+        "kind": 2,
+        "importPath": "Client.help",
+        "description": "Client.help",
+        "peekOfCode": "def welcome():\n    print(\"Welcome to a BitTorrent program by ***, press Help to see how to use\")\ndef display_help_overview():\n    help_overview = \"\"\"\n    Available commands:\n    + Help (Command name): View detailed explanation of a command\n    + MakeTor [F] (IPT): Create a torrent file from the input file for the specified IP, uses default if IP not provided.\n    + Have [FTor]: Send torrent file(s) to a tracker of the torrent file.\n    + Down [FTor]: Download a file using the torrent, communicates with tracker of the torrent file.\n    + Preview [FTor]: View the contents of a torrent file in a human-readable format.",
+        "detail": "Client.help",
+        "documentation": {}
+    },
+    {
+        "label": "display_help_overview",
+        "kind": 2,
+        "importPath": "Client.help",
+        "description": "Client.help",
+        "peekOfCode": "def display_help_overview():\n    help_overview = \"\"\"\n    Available commands:\n    + Help (Command name): View detailed explanation of a command\n    + MakeTor [F] (IPT): Create a torrent file from the input file for the specified IP, uses default if IP not provided.\n    + Have [FTor]: Send torrent file(s) to a tracker of the torrent file.\n    + Down [FTor]: Download a file using the torrent, communicates with tracker of the torrent file.\n    + Preview [FTor]: View the contents of a torrent file in a human-readable format.\n    + Exit: Exit the program\n    \"\"\"",
+        "detail": "Client.help",
+        "documentation": {}
+    },
+    {
+        "label": "display_command_help",
+        "kind": 2,
+        "importPath": "Client.help",
+        "description": "Client.help",
+        "peekOfCode": "def display_command_help(command):\n    detailed_help = {\n        \"help\": \"\"\"\n        Command: Help (Command name)\n        Description: Use 'Help' followed by the command name to get detailed usage instructions for that specific command.\n        Example: Help MakeTor\n        \"\"\",\n        \"maketor\": \"\"\"\n        Command: MakeTor [F] (IPT)\n        Description: Creates a torrent file from the input file path (or folder) [F]. If no IP of tracker (IPT) is provided, the default tracker IP will be used.",
+        "detail": "Client.help",
+        "documentation": {}
+    },
+    {
+        "label": "update_data_file_dir",
+        "kind": 2,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "def update_data_file_dir():\n    global DATA_FILE\n    DATA_FILE = f'program_{config.prog_num}/downloads/'+\"file_data.txt\"\ndef update_data_file(file_name, n):\n    if file_name not in get_all_files():\n        if file_exists(file_name):\n            add_file(file_name, [1] * n)\n        else:\n            add_file(file_name, [0] * n)\n    if not file_exists(file_name):",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "update_data_file",
+        "kind": 2,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "def update_data_file(file_name, n):\n    if file_name not in get_all_files():\n        if file_exists(file_name):\n            add_file(file_name, [1] * n)\n        else:\n            add_file(file_name, [0] * n)\n    if not file_exists(file_name):\n        if file_name in get_all_files():\n            update_array(file_name,[0]*n)\ndef file_downloaded(filename):",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "file_downloaded",
+        "kind": 2,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "def file_downloaded(filename):\n    array = get_array(filename)\n    i = 0\n    for _ in array:\n        i = i + 1\n    if i==len(array):\n        return True\n    else:\n        return False\ndef file_exists(file_path):",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "file_exists",
+        "kind": 2,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "def file_exists(file_path):\n    # Construct the full path\n    full_path = f'program_{config.prog_num}/downloads/' + file_path\n    # Check if the file exists\n    return os.path.isfile(full_path)\n# Function to load data from the text file\ndef load_data():\n    try:\n        with open(DATA_FILE, 'r') as file:\n            return json.load(file)",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "load_data",
+        "kind": 2,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "def load_data():\n    try:\n        with open(DATA_FILE, 'r') as file:\n            return json.load(file)\n    except FileNotFoundError:\n        print(\"Create new file_data.txt\")\n        return {}\n    except ValueError:\n        print(\"File empty\")\n        return {}",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "save_data",
+        "kind": 2,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "def save_data(data):\n    with open(DATA_FILE, 'w') as file:\n        json.dump(data, file)\n# Function to add a new file with a boolean array\ndef add_file(file_name, bool_array):\n    data = load_data()\n    if file_name in data:\n        print(f\"File '{file_name}' already exists.\")\n        return\n    data[file_name] = bool_array",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "add_file",
+        "kind": 2,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "def add_file(file_name, bool_array):\n    data = load_data()\n    if file_name in data:\n        print(f\"File '{file_name}' already exists.\")\n        return\n    data[file_name] = bool_array\n    save_data(data)\n    print(f\"File '{file_name}' added to file data.\")\n# Function to update the array for an existing file\ndef update_array(file_name, new_array):",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "update_array",
+        "kind": 2,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "def update_array(file_name, new_array):\n    data = load_data()\n    if file_name not in data:\n        print(f\"File '{file_name}' does not exist.\")\n        return\n    data[file_name] = new_array\n    save_data(data)\n    print(f\"File '{file_name}' updated with new array.\")\ndef change_element(file_name, index, new_value):\n    data = load_data()",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "change_element",
+        "kind": 2,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "def change_element(file_name, index, new_value):\n    data = load_data()\n    # Check if the file exists\n    if file_name not in data:\n        print(f\"File '{file_name}' does not exist.\")\n        return\n    # Check if the index is within bounds\n    if index < 0 or index >= len(data[file_name]):\n        print(f\"Index {index} is out of bounds for the array in '{file_name}'.\")\n        return",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "get_all_files",
+        "kind": 2,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "def get_all_files():\n    data = load_data()\n    return list(data.keys())\n# Function to get the array associated with a specific file name\ndef get_array(file_name):\n    data = load_data()\n    if file_name in data:\n        return data[file_name]\n    else:\n        print(f\"File '{file_name}' does not exist.\")",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "get_array",
+        "kind": 2,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "def get_array(file_name):\n    data = load_data()\n    if file_name in data:\n        return data[file_name]\n    else:\n        print(f\"File '{file_name}' does not exist.\")\n        return None",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "DATA_FILE",
+        "kind": 5,
+        "importPath": "Client.progress",
+        "description": "Client.progress",
+        "peekOfCode": "DATA_FILE = f'program_{config.prog_num}/downloads/'+\"file_data.txt\"\ndef update_data_file_dir():\n    global DATA_FILE\n    DATA_FILE = f'program_{config.prog_num}/downloads/'+\"file_data.txt\"\ndef update_data_file(file_name, n):\n    if file_name not in get_all_files():\n        if file_exists(file_name):\n            add_file(file_name, [1] * n)\n        else:\n            add_file(file_name, [0] * n)",
+        "detail": "Client.progress",
+        "documentation": {}
+    },
+    {
+        "label": "generate_piece_hashes",
+        "kind": 2,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "def generate_piece_hashes(file_path, piece_length):\n    \"\"\"Generates SHA-1 hashes for each piece of the file.\"\"\"\n    piece_hashes = b\"\"\n    with open(file_path, \"rb\") as f:\n        while True:\n            piece = f.read(piece_length)\n            if not piece:\n                break\n            piece_hashes += hashlib.sha1(piece).digest()\n    return piece_hashes",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "get_piece_length",
+        "kind": 2,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "def get_piece_length(total_size):\n    \"\"\"Determines the appropriate piece length based on total file size.\"\"\"\n    if total_size < 100 * 1024 * 1024:  # Less than 100 MB\n        return 128 * 1024  # 128 KB\n    elif total_size < 1 * 1024 * 1024 * 1024:  # Less than 1 GB\n        return 256 * 1024  # 256 KB\n    elif total_size < 5 * 1024 * 1024 * 1024:  # Less than 5 GB\n        return 512 * 1024  # 512 KB\n    else:\n        return 1 * 1024 * 1024  # 1 MB",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "make_torrent",
+        "kind": 2,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):\n    if tracker_url is None:\n        tracker_url = DEFAULT_TRACKER\n    \"\"\"Creates a .torrent file from the given file or directory.\"\"\"\n    if os.path.isdir(file_path):\n        # If it's a directory, gather all files\n        files = []\n        total_size = 0\n        for root, _, filenames in os.walk(file_path):\n            for filename in filenames:",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "preview_torrent",
+        "kind": 2,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "def preview_torrent(torrent_file_path):\n    \"\"\"\n    Parses and displays the contents of a .torrent file in a human-readable format.\n    \"\"\"\n    torrent_file_path = f'program_{config.prog_num}/torrents/'+torrent_file_path\n    if not os.path.exists(torrent_file_path):\n        print(f\"Error: The torrent file '{torrent_file_path}' does not exist.\")\n        return\n    # Read and decode the torrent file\n    try:",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "get_piece_hashes",
+        "kind": 2,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "def get_piece_hashes(torrent_file_path):\n    \"\"\"\n    Returns a list of SHA-1 hashes of the pieces (chunks) stored in the .torrent file.\n    :param torrent_file_path: Path to the .torrent file\n    :return: List of SHA-1 hashes\n    \"\"\"\n    if not os.path.exists(torrent_file_path):\n        print(f\"Error: The torrent file '{torrent_file_path}' does not exist.\")\n        return []\n    try:",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "get_file_object",
+        "kind": 2,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "def get_file_object(filename, mode='r'):\n    \"\"\"Open a file and return the file object.\"\"\"\n    try:\n        file_object = open(filename, mode)\n        return file_object\n    except FileNotFoundError:\n        print(f\"Error: The file '{filename}' was not found.\")\n        return None\n    except Exception as e:\n        print(f\"An error occurred: {e}\")",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "get_trackers",
+        "kind": 2,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "def get_trackers(torrent_file_path):\n    \"\"\"Extract and return tracker URLs from a torrent file.\"\"\"\n    try:\n        # Open the torrent file and decode it\n        with open(torrent_file_path, \"rb\") as file:\n            torrent_data = bencodepy.decode(file.read())\n        # Initialize an empty list to hold tracker URLs\n        trackers = []\n        # Extract the primary tracker URL if it exists\n        if b'announce' in torrent_data:",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "get_torrent_hash",
+        "kind": 2,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "def get_torrent_hash(torrent_file_path):\n    if not os.path.exists(torrent_file_path):\n        raise FileNotFoundError(\n            f\"The torrent file '{torrent_file_path}' does not exist.\"\n        )\n    hasher = hashlib.sha1()\n    with open(torrent_file_path, \"rb\") as f:\n        for chunk in iter(lambda: f.read(4096), b\"\"):\n            hasher.update(chunk)\n    return hasher.digest()",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "get_file_name",
+        "kind": 2,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "def get_file_name(torrent_file_path):\n    \"\"\"Extract and return the file name from a torrent file.\"\"\"\n    try:\n        # Open the torrent file and decode it\n        with open(torrent_file_path, \"rb\") as file:\n            torrent_data = bencodepy.decode(file.read())\n        # The file name is usually stored under 'info' > 'name'\n        if b'info' in torrent_data and b'name' in torrent_data[b'info']:\n            file_name = torrent_data[b'info'][b'name'].decode('utf-8')\n            return file_name",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "get_file_length",
+        "kind": 2,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "def get_file_length(torrent_file_path):\n    with open(torrent_file_path, \"rb\") as file:\n        # Decode the torrent file\n        torrent_data = bencodepy.decode(file.read())\n        # Extract file length from single or multiple files\n        if b'info' in torrent_data:\n            info = torrent_data[b'info']\n            if b'length' in info:  # Single-file torrent\n                return info[b'length']\n            elif b'files' in info:  # Multi-file torrent",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "DEFAULT_TRACKER",
+        "kind": 5,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "DEFAULT_TRACKER = config.DEFAULT_TRACKER\n# region Piece&Torrent\ndef generate_piece_hashes(file_path, piece_length):\n    \"\"\"Generates SHA-1 hashes for each piece of the file.\"\"\"\n    piece_hashes = b\"\"\n    with open(file_path, \"rb\") as f:\n        while True:\n            piece = f.read(piece_length)\n            if not piece:\n                break",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
+        "label": "send_get",
+        "kind": 2,
+        "importPath": "Client.trComController",
+        "description": "Client.trComController",
+        "peekOfCode": "def send_get(url, params=None):\n    try:\n        # Send the GET request\n        response = requests.get(url, params=params)\n        # Check if the request was successful\n        response.raise_for_status()  # Raise an error for bad responses (4xx or 5xx)\n        # Process the response\n        # print(\"Response Status Code:\", response.status_code)\n        # print(\"Response Text:\", response.text)  # or response.json() for JSON responses\n        print(\"Response Text:\", response.text)",
+        "detail": "Client.trComController",
+        "documentation": {}
+    },
+    {
+        "label": "send_tracker",
+        "kind": 2,
+        "importPath": "Client.trComController",
+        "description": "Client.trComController",
+        "peekOfCode": "def send_tracker(cmd: str, params, tracker=None):\n    if tracker is None:\n        tracker = DEFAULT_TRACKER\n    url = tracker+\"/announce/\"+cmd\n    return send_get(url,params)",
+        "detail": "Client.trComController",
+        "documentation": {}
+    },
+    {
+        "label": "Server",
+        "kind": 6,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "class Server:\n    def __init__(self):\n        # server_info\n        self.port = SERVER_PORT\n        self.ip = SERVER_IP\n        # server_attributes\n        self.active_client = load_from_file(\"active_client.dat\")\n        self.rfc_index = load_from_file(\"rfc_index.dat\")\n        self.owner_file = load_from_file(\"owner_file.dat\")\n        self.count_done_client = load_from_file(\"count_done_client.dat\")",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "Listener",
+        "kind": 6,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "class Listener(BaseHTTPRequestHandler):\n    try:\n        def do_GET(self):\n            if self.path.find(\"/announce\") == -1:\n                raise \"Error URL\"\n            path = self.path[9:]\n            print(path)\n            if path == \"/hello\":\n                self.send_response(200)\n                self.send_header(\"Content-type\", \"text/plain\")",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "save_to_file",
+        "kind": 2,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "def save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):\n    \"\"\"Load a list or dictionary from a JSON-formatted file.\"\"\"\n    if not os.path.exists(filename):\n        # Create the file with an empty list as default data\n        with open(filename, \"w\") as file:",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "load_from_file",
+        "kind": 2,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "def load_from_file(filename):\n    \"\"\"Load a list or dictionary from a JSON-formatted file.\"\"\"\n    if not os.path.exists(filename):\n        # Create the file with an empty list as default data\n        with open(filename, \"w\") as file:\n            json.dump({}, file)\n        print(f\"{filename} did not exist and has been created with an empty list.\")\n        return {}\n    with open(filename, \"r\") as file:\n        data = json.load(file)",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "start_server",
+        "kind": 2,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "def start_server():\n    global httpd\n    server_class = HTTPServer\n    server_address = (\"\", SERVER_PORT)\n    handler_class = Listener\n    httpd = server_class(server_address, handler_class)\n    print(f\"Server on port: {SERVER_PORT}...\")\n    httpd.serve_forever()\nserver_thread = threading.Thread(target=start_server)\nserver_thread.start()",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "def main():\n    # print('Server waiting for connections...')\n    while True:\n        command = input(\"Enter 'shutdown' to stop the server: \")\n        command = command.strip()\n        params = command.split()\n        command = command.lower()\n        if command == \"shutdown\":\n            print(\"Shutting down server...\")\n            httpd.shutdown()",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "SERVER_PORT",
+        "kind": 5,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "SERVER_PORT = 8080\nSERVER_IP = \"localhost\"\nRECEIVE_SIZE = 1024\nCODE = \"utf-8\"\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "SERVER_IP",
+        "kind": 5,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "SERVER_IP = \"localhost\"\nRECEIVE_SIZE = 1024\nCODE = \"utf-8\"\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):\n    \"\"\"Load a list or dictionary from a JSON-formatted file.\"\"\"",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "RECEIVE_SIZE",
+        "kind": 5,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "RECEIVE_SIZE = 1024\nCODE = \"utf-8\"\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):\n    \"\"\"Load a list or dictionary from a JSON-formatted file.\"\"\"\n    if not os.path.exists(filename):",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "CODE",
+        "kind": 5,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "CODE = \"utf-8\"\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):\n    \"\"\"Load a list or dictionary from a JSON-formatted file.\"\"\"\n    if not os.path.exists(filename):\n        # Create the file with an empty list as default data",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "tracker_server",
+        "kind": 5,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "tracker_server = Server()\nclass Listener(BaseHTTPRequestHandler):\n    try:\n        def do_GET(self):\n            if self.path.find(\"/announce\") == -1:\n                raise \"Error URL\"\n            path = self.path[9:]\n            print(path)\n            if path == \"/hello\":\n                self.send_response(200)",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "server_thread",
+        "kind": 5,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "server_thread = threading.Thread(target=start_server)\nserver_thread.start()\ndef main():\n    # print('Server waiting for connections...')\n    while True:\n        command = input(\"Enter 'shutdown' to stop the server: \")\n        command = command.strip()\n        params = command.split()\n        command = command.lower()\n        if command == \"shutdown\":",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    }
+]
