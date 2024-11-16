@@ -4,6 +4,8 @@ import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
 import json
+import pickle
+
 
 # Define parameter
 SERVER_PORT = 8080
@@ -44,17 +46,47 @@ class Server:
         self.active_client = load_from_file("active_client.dat")
         self.rfc_index = load_from_file("rfc_index.dat")
         self.owner_file = load_from_file("owner_file.dat")
+        self.count_done_client = load_from_file("count_done_client.dat")
+        # self.count_have_client = load_from_file("count_have_client.dat")
         self.lock = Lock()
 
     def clean(self):
         self.active_client = {}
         self.rfc_index = {}
         self.owner_file = {}
+        self.count_done_client = {}
+        # self.count_have_client = {}
         
         save_to_file(self.owner_file, "owner_file.dat")
         save_to_file(self.rfc_index, "rfc_index.dat")
         save_to_file(self.active_client, "active_client.dat")
+        save_to_file(self.count_done_client, "count_done_client.dat")
+        # save_to_file(self.count_have_client, "count_have_client.dat")
 
+    def count_done_file(self, torrent_hash, peerid):
+        # update done_file
+        if torrent_hash in self.count_done_client:
+            print(self.count_done_client[torrent_hash])
+            print(peerid not in self.count_done_client[torrent_hash])
+            if peerid not in self.count_done_client[torrent_hash]:
+                self.count_done_client[torrent_hash].append(peerid)
+        else:
+            self.count_done_client[torrent_hash] = [peerid]
+        
+        save_to_file(self.count_done_client, "count_done_client.dat")
+        
+        # update owner_file
+        if peerid in self.owner_file:
+            self.owner_file[peerid].append(torrent_hash)
+        else:
+            self.owner_file[peerid] = [torrent_hash]
+        save_to_file(self.owner_file, "owner_file.dat")
+        
+    def get_count_file(self, torrent_hash, file):
+        if (file == "count_done_client.dat"):
+            return len(self.count_done_client[torrent_hash])
+        else: return len(self.owner_file[torrent_hash])
+    
     def client_join(self, peerid, port, ip):
         # Thêm client vào danh sách active_client
         with self.lock:  # Bảo vệ truy cập đến active_client
@@ -81,7 +113,6 @@ class Server:
     def have_add_repo_client(self, torhash, peerid):
         # update rfc_index
         if torhash in self.rfc_index:
-            print("HEHEHEHE")
             print(self.rfc_index[torhash])
             print(peerid not in self.rfc_index[torhash])
             if peerid not in self.rfc_index[torhash]:
@@ -154,6 +185,31 @@ class Listener(BaseHTTPRequestHandler):
                 self.send_header("Content-type", "text/plain")
                 self.end_headers()
                 self.wfile.write(b"OK!")
+            elif path.startswith("/done"):
+                self.send_response(200)
+                parse_url = urlparse(path)
+                query_params = parse_qs(parse_url.query)
+                tracker_server.count_done_file(
+                    query_params.get("torrent_hash", [None])[0],
+                    query_params.get("peerid", [None])[0],
+                    )
+                self.send_header("Content-type", "text/plain")
+                self.end_headers()
+                self.wfile.write(b"OK!")
+            elif path.startswith("/scrape"):
+                self.send_response(200)
+                parse_url = urlparse(path)
+                query_params = parse_qs(parse_url.query)
+                seeder_count = tracker_server.get_count_file(self, query_params.get("torrent_hash", [None])[0], "count_done_client.dat")
+                leecher_count = tracker_server.get_count_file(self, query_params.get("torrent_hash", [None])[0], "owner_file.dat") - seeder_count
+
+                # Gửi phản hồi cho client với thông tin seeder và leecher
+                self.send_header("Content-type", "text/plain")
+                self.end_headers()
+
+                # Nội dung trả về
+                response_message = f"File này có {seeder_count} seeder và {leecher_count} leecher."
+                self.wfile.write(response_message.encode())
             elif path.startswith("/down"):
                 self.send_response(200)
                 parse_url = urlparse(path)
