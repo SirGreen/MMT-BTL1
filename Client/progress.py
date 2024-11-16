@@ -1,13 +1,43 @@
 import json
 import config
+import os
 
 # The file where data will be stored
 DATA_FILE = f'program_{config.prog_num}/downloads/'+"file_data.txt"
 
-def update_data_file():
+def update_data_file_dir():
     global DATA_FILE
     DATA_FILE = f'program_{config.prog_num}/downloads/'+"file_data.txt"
+    
+def update_data_file(file_name, n):
+    if file_name not in get_all_files():
+        if file_exists(file_name):
+            add_file(file_name, [1] * n)
+        else:
+            add_file(file_name, [0] * n)
+    
+    if not file_exists(file_name):
+        if file_name in get_all_files():
+            update_array(file_name,[0]*n)
 
+def file_downloaded(filename):
+    array = get_array(filename)
+    i = 0
+    for x in array:
+        i = x + i
+    if i==len(array):
+        return 1
+    elif i==0:
+        return 0
+    else:
+        return 2
+
+def file_exists(file_path):
+    # Construct the full path
+    full_path = f'program_{config.prog_num}/downloads/' + file_path
+    
+    # Check if the file exists
+    return os.path.isfile(full_path)
 
 # Function to load data from the text file
 def load_data():
@@ -15,6 +45,10 @@ def load_data():
         with open(DATA_FILE, 'r') as file:
             return json.load(file)
     except FileNotFoundError:
+        print("Create new file_data.txt")
+        return {}
+    except ValueError:
+        print("File empty")
         return {}
 
 # Function to save data to the text file
@@ -30,7 +64,7 @@ def add_file(file_name, bool_array):
         return
     data[file_name] = bool_array
     save_data(data)
-    print(f"File '{file_name}' added with array {bool_array}.")
+    print(f"File '{file_name}' added to file data.")
 
 # Function to update the array for an existing file
 def update_array(file_name, new_array):
@@ -40,7 +74,25 @@ def update_array(file_name, new_array):
         return
     data[file_name] = new_array
     save_data(data)
-    print(f"File '{file_name}' updated with new array {new_array}.")
+    # print(f"File '{file_name}' updated with new array.")
+    
+def change_element(file_name, index, new_value):
+    data = load_data()
+    
+    # Check if the file exists
+    if file_name not in data:
+        print(f"File '{file_name}' does not exist.")
+        return
+
+    # Check if the index is within bounds
+    if index < 0 or index >= len(data[file_name]):
+        print(f"Index {index} is out of bounds for the array in '{file_name}'.")
+        return
+    
+    # Update the element in the array
+    data[file_name][index] = new_value
+    save_data(data)
+    # print(f"Updated element at index {index} in '{file_name}' to {new_value}.")
 
 # Function to get a list of all files
 def get_all_files():

@@ -113,6 +113,8 @@ def preview_torrent(torrent_file_path):
     """
     Parses and displays the contents of a .torrent file in a human-readable format.
     """
+    torrent_file_path = f'program_{config.prog_num}/torrents/'+torrent_file_path
+    
     if not os.path.exists(torrent_file_path):
         print(f"Error: The torrent file '{torrent_file_path}' does not exist.")
         return
@@ -123,7 +125,7 @@ def preview_torrent(torrent_file_path):
             torrent_data = bencodepy.decode(f.read())
 
         # Display the torrent contents in a readable format
-        print("\n=== Torrent File Contents ===")
+        print("\n==== Torrent File Contents ====")
         for key, value in torrent_data.items():
             if isinstance(
                 value, dict
@@ -273,6 +275,19 @@ def get_file_name(torrent_file_path):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return None
+
+def get_piece_length_from_torrent(torrent_file_name):
+    with open(torrent_file_name, "rb") as file:
+        # Decode the torrent file
+        torrent_data = bencodepy.decode(file.read())
+        
+        # Extract file length from single or multiple files
+        if b'info' in torrent_data:
+            info = torrent_data[b'info']
+            if b'piece length' in info:  # Single-file torrent
+                return info[b'piece length']
+        else:
+            raise ValueError("Invalid torrent file: 'info' section missing")
 
 def get_file_length(torrent_file_path):
     with open(torrent_file_path, "rb") as file:
