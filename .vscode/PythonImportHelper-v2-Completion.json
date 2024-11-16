@@ -285,6 +285,14 @@
         "documentation": {}
     },
     {
+        "label": "send_get",
+        "importPath": "Client.trComController",
+        "description": "Client.trComController",
+        "isExtraImport": true,
+        "detail": "Client.trComController",
+        "documentation": {}
+    },
+    {
         "label": "send_torrent_tracker",
         "kind": 2,
         "importPath": "Client.client",
@@ -299,6 +307,24 @@
         "importPath": "Client.client",
         "description": "Client.client",
         "peekOfCode": "def have(file_path, tracker_url=None):\n    full_path = \"\"\n    if os.path.isdir(file_path):\n        # Walk through the directory and its subdirectories\n        for root, dirs, files in os.walk(file_path):\n            for file in files:\n                # If the file ends with .torrent, process it\n                if file.endswith(\".torrent\"):\n                    full_path = os.path.join(root, file)\n                    full_path = full_path.replace(\"/\", \"\\\\\")",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "send_scrape",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def send_scrape(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    tracker = trCtrl.get_trackers(torrent_file_path)[0]\n    config.peer_repo.append({\"filename\": file_name, \"reponame\": torrent_hash})\n    print(file_name)\n    params = {}\n    params[\"torrent_hash\"] = torrent_hash\n    params[\"peerid\"] = config.peer_id\n    trCom.send_tracker(\"scrape\", params, tracker)",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "scrape",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def scrape(file_path, tracker_url=None):\n    full_path = \"\"\n    if os.path.isdir(file_path):\n        # Walk through the directory and its subdirectories\n        for root, dirs, files in os.walk(file_path):\n            for file in files:\n                # If the file ends with .torrent, process it\n                if file.endswith(\".torrent\"):\n                    full_path = os.path.join(root, file)\n                    full_path = full_path.replace(\"/\", \"\\\\\")",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -793,7 +819,7 @@
         "kind": 2,
         "importPath": "Client.trComController",
         "description": "Client.trComController",
-        "peekOfCode": "def send_get(url, params=None):\n    try:\n        # Send the GET request\n        response = requests.get(url, params=params)\n        # Check if the request was successful\n        response.raise_for_status()  # Raise an error for bad responses (4xx or 5xx)\n        # Process the response\n        # print(\"Response Status Code:\", response.status_code)\n        # print(\"Response Text:\", response.text)  # or response.json() for JSON responses\n        return response",
+        "peekOfCode": "def send_get(url, params=None):\n    try:\n        # Send the GET request\n        response = requests.get(url, params=params)\n        # Check if the request was successful\n        response.raise_for_status()  # Raise an error for bad responses (4xx or 5xx)\n        # Process the response\n        # print(\"Response Status Code:\", response.status_code)\n        # print(\"Response Text:\", response.text)  # or response.json() for JSON responses\n        print(\"Response Text:\", response.text)",
         "detail": "Client.trComController",
         "documentation": {}
     },

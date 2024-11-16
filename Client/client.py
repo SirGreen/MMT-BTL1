@@ -43,7 +43,9 @@ def send_torrent_tracker(torrent_file_path, tracker):
     params = {}
     params["torrent_hash"] = torrent_hash
     params["peerid"] = config.peer_id
-    trCom.send_tracker("have", params, tracker)
+    if (fdt.file_exists(file_name)):
+        trCom.send_tracker("done", params, tracker)
+    else: trCom.send_tracker("have", params, tracker)
 
 
 def have(file_path, tracker_url=None):
@@ -67,6 +69,40 @@ def have(file_path, tracker_url=None):
 
 # endregion
 
+#region Scrape
+
+def send_scrape(torrent_file_path, tracker):    
+    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)
+    file_name = trCtrl.get_file_name(torrent_file_path)
+    
+    tracker = trCtrl.get_trackers(torrent_file_path)[0]
+    config.peer_repo.append({"filename": file_name, "reponame": torrent_hash})
+    print(file_name)
+    params = {}
+    params["torrent_hash"] = torrent_hash
+    params["peerid"] = config.peer_id
+    trCom.send_tracker("scrape", params, tracker)
+    # url = tracker + "/announce/scrape"
+    # trCom.send_get(url, params)
+
+def scrape(file_path, tracker_url=None):
+    full_path = ""
+    if os.path.isdir(file_path):
+        # Walk through the directory and its subdirectories
+        for root, dirs, files in os.walk(file_path):
+            for file in files:
+                # If the file ends with .torrent, process it
+                if file.endswith(".torrent"):
+                    full_path = os.path.join(root, file)
+                    full_path = full_path.replace("/", "\\")
+                    send_scrape(full_path, tracker_url)
+    elif file_path.endswith(".torrent"):
+        # If it's a single .torrent file, process it directly
+        file_path = f"program_{config.prog_num}/torrents/" + file_path
+        send_scrape(file_path, tracker_url)
+    else:
+        print(f"No .torrent file found at: {file_path}")
+#endregion
 
 # region Upload
 def peer_connect(client_socket):
@@ -408,6 +444,8 @@ def download(torrent_file_name, progress, tracker=None):
         if max(array) == 1:
             # have(torrent_file_name)
             # Now the task is complete, start the 30-second delay
+            trCom.send_tracker("done", params, tracker)
+            
             for remaining_time in range(10, 0, -1):
                 progress.update(task, description=f"Moving {file_name} to completed in {remaining_time}s")
                 time.sleep(1)
@@ -535,6 +573,11 @@ def input_listener(show_progress, live):
                     have(command_split[1], command_split[2])
                 else:
                     have(command_split[1])
+            elif user_input.startswith("scrape"):
+                if len(command_split) > 2:
+                    scrape(command_split[1], command_split[2])
+                else:
+                    scrape(command_split[1])
             elif user_input.startswith("test-get_piece_hash "):
                 # test-get_piece_hash <file torrent> <coi hash của piece số mấy>
                 print(

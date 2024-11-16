@@ -2,9 +2,11 @@ import threading
 from threading import Lock
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import trComController
 from urllib.parse import urlparse, parse_qs
 import json
 import pickle
+from Client.trComController import send_get
 
 
 # Define parameter
@@ -85,7 +87,7 @@ class Server:
     def get_count_file(self, torrent_hash, file):
         if (file == "count_done_client.dat"):
             return len(self.count_done_client[torrent_hash])
-        else: return len(self.owner_file[torrent_hash])
+        else: return len(self.rfc_index[torrent_hash])
     
     def client_join(self, peerid, port, ip):
         # Thêm client vào danh sách active_client
@@ -200,16 +202,23 @@ class Listener(BaseHTTPRequestHandler):
                 self.send_response(200)
                 parse_url = urlparse(path)
                 query_params = parse_qs(parse_url.query)
-                seeder_count = tracker_server.get_count_file(self, query_params.get("torrent_hash", [None])[0], "count_done_client.dat")
-                leecher_count = tracker_server.get_count_file(self, query_params.get("torrent_hash", [None])[0], "owner_file.dat") - seeder_count
+                try:
+                    seeder_count = tracker_server.get_count_file(query_params.get("torrent_hash", [None])[0], "count_done_client.dat")
+                    # print(f"đoạn hash{query_params.get("torrent_hash", [None])[0]}")
+                    leecher_count = tracker_server.get_count_file(query_params.get("torrent_hash", [None])[0], "rfc_index.dat")
+                    response_message = f"Seeder: {seeder_count}, Leecher: {leecher_count}"
+                    # Gửi phản hồi cho client với thông tin seeder và leecher
+                    self.send_header("Content-type", "text/plain")
+                    self.end_headers()
 
-                # Gửi phản hồi cho client với thông tin seeder và leecher
-                self.send_header("Content-type", "text/plain")
-                self.end_headers()
-
-                # Nội dung trả về
-                response_message = f"File này có {seeder_count} seeder và {leecher_count} leecher."
-                self.wfile.write(response_message.encode())
+                    # Nội dung trả về
+                    self.wfile.write(response_message.encode('utf-8'))
+                    trComController.send_get(url, params)
+                except Exception as e:
+                    print(f"Lỗi xảy ra: {e}")
+                    self.send_response(500)
+                    self.end_headers()
+                
             elif path.startswith("/down"):
                 self.send_response(200)
                 parse_url = urlparse(path)
