@@ -12,7 +12,6 @@ def send_get(url, params=None):
         # Process the response
         # print("Response Status Code:", response.status_code)
         # print("Response Text:", response.text)  # or response.json() for JSON responses
-        print("Response Text:", response.text)
         return response
 
     except requests.exceptions.HTTPError as http_err:

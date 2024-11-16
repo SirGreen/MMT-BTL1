@@ -2,11 +2,8 @@ import threading
 from threading import Lock
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import trComController
 from urllib.parse import urlparse, parse_qs
 import json
-import pickle
-from Client.trComController import send_get
 
 
 # Define parameter
@@ -76,18 +73,13 @@ class Server:
             self.count_done_client[torrent_hash] = [peerid]
         
         save_to_file(self.count_done_client, "count_done_client.dat")
-        
-        # update owner_file
-        if peerid in self.owner_file:
-            self.owner_file[peerid].append(torrent_hash)
-        else:
-            self.owner_file[peerid] = [torrent_hash]
-        save_to_file(self.owner_file, "owner_file.dat")
+        self.have_add_repo_client(torrent_hash,peerid)
         
     def get_count_file(self, torrent_hash, file):
         if (file == "count_done_client.dat"):
             return len(self.count_done_client[torrent_hash])
-        else: return len(self.rfc_index[torrent_hash])
+        else: 
+            return len(self.rfc_index[torrent_hash])
     
     def client_join(self, peerid, port, ip):
         # Thêm client vào danh sách active_client
@@ -213,7 +205,6 @@ class Listener(BaseHTTPRequestHandler):
 
                     # Nội dung trả về
                     self.wfile.write(response_message.encode('utf-8'))
-                    trComController.send_get(url, params)
                 except Exception as e:
                     print(f"Lỗi xảy ra: {e}")
                     self.send_response(500)

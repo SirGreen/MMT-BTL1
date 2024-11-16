@@ -365,6 +365,7 @@ def download(torrent_file_name, progress, tracker=None):
     params["torrent_hash"] = trCtrl.get_torrent_hash(torrent_file_name)
     params["peerid"] = config.peer_id
     port_list = trCom.send_get(url, params).json()
+    # print(port_list)
     #####
 
     # port1 = int(input("Input peer port from list above: "))
