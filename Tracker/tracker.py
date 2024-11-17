@@ -48,6 +48,7 @@ class Server:
         self.rfc_index = load_from_file("rfc_index.dat")
         self.owner_file = load_from_file("owner_file.dat")
         self.last_activity = load_from_file("last_activity.dat")
+        self.count_done_client = load_from_file("count_done_client.dat")
         self.lock = Lock()
 
         # Start the timeout checker thread
@@ -81,16 +82,37 @@ class Server:
         self.rfc_index = {}
         self.owner_file = {}
         self.last_activity = {}
+        self.count_done_client = {}
         
         save_to_file(self.owner_file, "owner_file.dat")
         save_to_file(self.rfc_index, "rfc_index.dat")
         save_to_file(self.active_client, "active_client.dat")
         save_to_file(self.last_activity, "last_activity.dat")
+        save_to_file(self.count_done_client, "count_done_client.dat")
 
     def update_last_activity(self, peerid):
         with self.lock:
             self.last_activity[peerid] = time.time()
             save_to_file(self.last_activity, "last_activity.dat")
+    
+    def count_done_file(self, torrent_hash, peerid):
+        # update done_file
+        if torrent_hash in self.count_done_client:
+            print(self.count_done_client[torrent_hash])
+            print(peerid not in self.count_done_client[torrent_hash])
+            if peerid not in self.count_done_client[torrent_hash]:
+                self.count_done_client[torrent_hash].append(peerid)
+        else:
+            self.count_done_client[torrent_hash] = [peerid]
+        
+        save_to_file(self.count_done_client, "count_done_client.dat")
+        self.have_add_repo_client(torrent_hash,peerid)
+
+    def get_count_file(self, torrent_hash, file):
+        if (file == "count_done_client.dat"):
+            return len(self.count_done_client[torrent_hash])
+        else: 
+            return len(self.rfc_index[torrent_hash])
 
     def client_join(self, peerid, port, ip):
     # Thêm client vào danh sách active_client
@@ -146,7 +168,7 @@ class Server:
     def client_exit(self, peer_id):
         with self.lock:  # Use lock to protect access to shared resources
             # Remove the client from active_client
-            print("ủa")
+            # print("ủa")
             self.active_client.pop(peer_id, None)
 
             # Remove files associated with the client in owner_file and rfc_index
@@ -169,7 +191,7 @@ class Server:
                 print(f"No files found for client {peer_id}.")
 
             # Remove the client from last_activity
-            print("ở đây hong có gì")
+            # print("ở đây hong có gì")
             self.last_activity.pop(peer_id, None)
 
         # Save the updated data to files
@@ -198,22 +220,22 @@ class Listener(BaseHTTPRequestHandler):
 
     def do_GET(self):
         try:
-            # Kiểm tra URL bắt đầu bằng `/announce`
+            # Verify URL starts with `/announce`
             if not self.path.startswith("/announce"):
                 raise ValueError("Error: Invalid URL")
 
-            # Lấy phần còn lại của đường dẫn sau `/announce`
+            # Parse path and query parameters
             path = self.path[9:]
             parse_url = urlparse(path)
             query_params = parse_qs(parse_url.query)
             peerid = query_params.get("peerid", [None])[0]
 
-            # Đường dẫn `/hello` - phản hồi đơn giản
+            # Simple `/hello` path - respond with "Hello, World!"
             if path == "/hello":
                 self._send_response(200, "text/plain", b"Hello, World!")
                 return
 
-            # Xử lý `/join` - Kiểm tra và tham gia client
+            # Handle `/join` - Check if client is joining
             elif path.startswith("/join"):
                 if tracker_server.online_check(peerid):
                     self._send_response(409, "text/plain", b"Error: Client has already joined the system.")
@@ -224,20 +246,42 @@ class Listener(BaseHTTPRequestHandler):
                 tracker_server.update_last_activity(peerid)
                 return
 
-            # Kiểm tra client có hợp lệ không cho các yêu cầu khác
+            # Check if the client is online for all other requests
             elif not tracker_server.online_check(peerid):
                 self._send_response(403, "text/plain", b"Error: Client did not join the system.")
                 return
 
-            # Xử lý `/have` - Thêm dữ liệu torrent của client
+            # Handle `/have` - Add client's torrent data
             elif path.startswith("/have"):
                 torrent_hash = query_params.get("torrent_hash", [None])[0]
                 tracker_server.have_add_repo_client(torrent_hash, peerid)
                 self._send_response(200, "text/plain", b"OK!")
                 tracker_server.update_last_activity(peerid)
                 return
+            
+             # Handle `/done` - Update done status for a file
+            elif path.startswith("/done"):
+                torrent_hash = query_params.get("torrent_hash", [None])[0]
+                tracker_server.count_done_file(torrent_hash, peerid)
+                self._send_response(200, "text/plain", b"OK!")
+                tracker_server.update_last_activity(peerid)
+                return
+            
+            # Handle `/scrape` - Return seeder and leecher counts
+            elif path.startswith("/scrape"):
+                torrent_hash = query_params.get("torrent_hash", [None])[0]
+                try:
+                    seeder_count = tracker_server.get_count_file(torrent_hash, "count_done_client.dat")
+                    leecher_count = tracker_server.get_count_file(torrent_hash, "rfc_index.dat")
+                    response_message = f"Seeder: {seeder_count}, Leecher: {leecher_count}"
+                    self._send_response(200, "text/plain", response_message.encode('utf-8'))
+                except Exception as e:
+                    print(f"Error occurred during /scrape: {e}")
+                    self._send_response(500, "text/plain", b"Internal server error")
+                tracker_server.update_last_activity(peerid)
+                return
 
-            # Xử lý `/down` - Tìm các peer cho torrent
+            # Handle `/down` - Find peers for a torrent
             elif path.startswith("/down"):
                 torrent_hash = query_params.get("torrent_hash", [None])[0]
                 peers = tracker_server.down_find_peer(torrent_hash, peerid)
@@ -246,13 +290,19 @@ class Listener(BaseHTTPRequestHandler):
                 tracker_server.update_last_activity(peerid)
                 return
 
-            # Xử lý `/exit` - Xóa client khỏi hệ thống
+            # Handle `/ping` - Simple ping to check client status
+            elif path.startswith("/ping"):
+                self._send_response(200, "text/plain", b"OK!")
+                tracker_server.update_last_activity(peerid)
+                return
+
+            # Handle `/exit` - Remove client from system
             elif path.startswith("/exit"):
                 tracker_server.client_exit(peerid)
                 self._send_response(200, "text/plain", b"OK!")
                 return
 
-            # Đường dẫn không hợp lệ
+            # Invalid path
             else:
                 self._send_response(404, "text/plain", b"Error: Path not found.")
 
@@ -287,6 +337,7 @@ def main():
         if command == "shutdown":
             print("Shutting down server...")
             httpd.shutdown()
+            # tracker_server.timeout_checker_thread.join()
             server_thread.join()  # Wait for the server thread to finish
             print("Server has been shut down.")
             break
