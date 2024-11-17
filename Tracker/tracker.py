@@ -1,16 +1,19 @@
 import threading
 from threading import Lock
+import time
 import os
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 import json
+
 
 # Define parameter
 SERVER_PORT = 8080
 SERVER_IP = "localhost"
 RECEIVE_SIZE = 1024
 CODE = "utf-8"
-
+MIN_TIMEOUT = 1800
+CHECK_INTERVAL = 1800
 
 def save_to_file(data, filename):
     """Save a list or dictionary to a file in JSON format."""
@@ -44,24 +47,66 @@ class Server:
         self.active_client = load_from_file("active_client.dat")
         self.rfc_index = load_from_file("rfc_index.dat")
         self.owner_file = load_from_file("owner_file.dat")
+        self.last_activity = load_from_file("last_activity.dat")
         self.lock = Lock()
+
+        # Start the timeout checker thread
+        self.timeout_checker_thread = threading.Thread(target=self.timeout_check, daemon=True)
+        self.timeout_checker_thread.start()
+
+    def timeout_check(self):
+        timeout_event = threading.Event()
+        while not timeout_event.wait(CHECK_INTERVAL):  # Chờ 30 phút
+            try:
+                current_time = time.time()
+                cutoff_time = current_time - MIN_TIMEOUT
+
+                with self.lock:
+                    # Gather clients that are inactive and need to be removed
+                    timeout_clients = [
+                        peer_id for peer_id, last_time in self.last_activity.items() if last_time < cutoff_time
+                    ]
+
+                    # Xóa các client hết thời gian chờ
+                for peer_id in timeout_clients:
+                    print(f"Client {peer_id} timed out.")
+                    self.client_exit(peer_id)
+
+                    print(f"Client {peer_id} removed due to inactivity.")
+            except Exception as e:
+                print(f"Exception in timeout_check: {e}")
 
     def clean(self):
         self.active_client = {}
         self.rfc_index = {}
         self.owner_file = {}
+        self.last_activity = {}
         
         save_to_file(self.owner_file, "owner_file.dat")
         save_to_file(self.rfc_index, "rfc_index.dat")
         save_to_file(self.active_client, "active_client.dat")
+        save_to_file(self.last_activity, "last_activity.dat")
+
+    def update_last_activity(self, peerid):
+        with self.lock:
+            self.last_activity[peerid] = time.time()
+            save_to_file(self.last_activity, "last_activity.dat")
 
     def client_join(self, peerid, port, ip):
-        # Thêm client vào danh sách active_client
+    # Thêm client vào danh sách active_client
         with self.lock:  # Bảo vệ truy cập đến active_client
             self.active_client[peerid] = [ip, port]
+            self.last_activity[peerid] = time.time()  # Cập nhật thời gian hoạt động cuối cùng của client
         save_to_file(self.active_client, "active_client.dat")
+        save_to_file(self.last_activity, "last_activity.dat")  # Lưu last_activity vào file
         print(f"Welcome client: {peerid}")
         print(self.active_client)
+
+
+    def online_check(self, peerid):
+    # Kiểm tra xem client có đang online không
+        with self.lock:
+            return peerid in self.active_client
 
     def down_find_peer(self, torrent_hash, peerid):
         # Initialize the list to store ports
@@ -81,7 +126,6 @@ class Server:
     def have_add_repo_client(self, torhash, peerid):
         # update rfc_index
         if torhash in self.rfc_index:
-            print("HEHEHEHE")
             print(self.rfc_index[torhash])
             print(peerid not in self.rfc_index[torhash])
             if peerid not in self.rfc_index[torhash]:
@@ -100,107 +144,128 @@ class Server:
         print(self.owner_file)
 
     def client_exit(self, peer_id):
-        with self.lock:  # Sử dụng lock để bảo vệ truy cập
-            self.active_client.pop(peer_id)
+        with self.lock:  # Use lock to protect access to shared resources
+            # Remove the client from active_client
+            print("ủa")
+            self.active_client.pop(peer_id, None)
+
+            # Remove files associated with the client in owner_file and rfc_index
             if peer_id in self.owner_file:
                 files_to_remove = self.owner_file[peer_id]
                 for filename in files_to_remove:
                     if filename in self.rfc_index:
+                        # Remove the peer_id from the list of clients associated with each file
                         self.rfc_index[filename] = [
-                            entry
-                            for entry in self.rfc_index[filename]
-                            if entry != peer_id
+                            entry for entry in self.rfc_index[filename] if entry != peer_id
                         ]
+                        # Delete the file entry if no clients are associated with it anymore
                         if not self.rfc_index[filename]:
                             del self.rfc_index[filename]
 
+                # Delete the owner's file entries
                 del self.owner_file[peer_id]
-
                 print(f"Client {peer_id} exited and files removed.")
             else:
                 print(f"No files found for client {peer_id}.")
 
+            # Remove the client from last_activity
+            print("ở đây hong có gì")
+            self.last_activity.pop(peer_id, None)
+
+        # Save the updated data to files
         save_to_file(self.owner_file, "owner_file.dat")
         save_to_file(self.rfc_index, "rfc_index.dat")
         save_to_file(self.active_client, "active_client.dat")
-        print(self.rfc_index)
-        print(self.owner_file)
+        save_to_file(self.last_activity, "last_activity.dat")
+        
+        # For debugging: print the current state of the data structures
+        print("Current rfc_index:", self.rfc_index)
+        print("Current owner_file:", self.owner_file)
+        print("Current last_activity:", self.last_activity)
 
 
 tracker_server = Server()
 
 
 class Listener(BaseHTTPRequestHandler):
-    try:
 
-        def do_GET(self):
-            if self.path.find("/announce") == -1:
-                raise "Error URL"
+    # Hàm tiện ích để gửi phản hồi HTTP
+    def _send_response(self, code, content_type, message):
+        self.send_response(code)
+        self.send_header("Content-type", content_type)
+        self.end_headers()
+        self.wfile.write(message)
+
+    def do_GET(self):
+        try:
+            # Kiểm tra URL bắt đầu bằng `/announce`
+            if not self.path.startswith("/announce"):
+                raise ValueError("Error: Invalid URL")
+
+            # Lấy phần còn lại của đường dẫn sau `/announce`
             path = self.path[9:]
-            print(path)
-            if path == "/hello":
-                self.send_response(200)
-                self.send_header("Content-type", "text/plain")
-                self.end_headers()
-                self.wfile.write(b"Hello, World!")
-            elif path.startswith("/have"):
-                self.send_response(200)
-                parse_url = urlparse(path)
-                query_params = parse_qs(parse_url.query)
-                tracker_server.have_add_repo_client(
-                    query_params.get("torrent_hash", [None])[0],
-                    query_params.get("peerid", [None])[0],
-                )
-                self.send_header("Content-type", "text/plain")
-                self.end_headers()
-                self.wfile.write(b"OK!")
-            elif path.startswith("/down"):
-                self.send_response(200)
-                parse_url = urlparse(path)
-                query_params = parse_qs(parse_url.query)
-                peers = tracker_server.down_find_peer(
-                    query_params.get("torrent_hash", [None])[0],
-                    query_params.get("peerid", [None])[0],
-                )
-                response_data = json.dumps(peers)  # Convert list to JSON format
+            parse_url = urlparse(path)
+            query_params = parse_qs(parse_url.query)
+            peerid = query_params.get("peerid", [None])[0]
 
-                self.send_header(
-                    "Content-type", "application/json"
-                )  # Set content type to JSON
-                self.end_headers()
-                self.wfile.write(response_data.encode("utf-8"))
+            # Đường dẫn `/hello` - phản hồi đơn giản
+            if path == "/hello":
+                self._send_response(200, "text/plain", b"Hello, World!")
+                return
+
+            # Xử lý `/join` - Kiểm tra và tham gia client
             elif path.startswith("/join"):
-                self.send_response(200)
-                parse_url = urlparse(path)
-                query_params = parse_qs(parse_url.query)
-                print(query_params)
-                tracker_server.client_join(
-                    query_params.get("peerid", [None])[0],
-                    query_params.get("port", [None])[0],
-                    self.client_address[0],
-                )
-                self.send_header("Content-type", "text/plain")
-                self.end_headers()
-                self.wfile.write(b"OK!")
+                if tracker_server.online_check(peerid):
+                    self._send_response(409, "text/plain", b"Error: Client has already joined the system.")
+                else:
+                    port = query_params.get("port", [None])[0]
+                    tracker_server.client_join(peerid, port, self.client_address[0])
+                    self._send_response(200, "text/plain", b"OK!")
+                tracker_server.update_last_activity(peerid)
+                return
+
+            # Kiểm tra client có hợp lệ không cho các yêu cầu khác
+            elif not tracker_server.online_check(peerid):
+                self._send_response(403, "text/plain", b"Error: Client did not join the system.")
+                return
+
+            # Xử lý `/have` - Thêm dữ liệu torrent của client
+            elif path.startswith("/have"):
+                torrent_hash = query_params.get("torrent_hash", [None])[0]
+                tracker_server.have_add_repo_client(torrent_hash, peerid)
+                self._send_response(200, "text/plain", b"OK!")
+                tracker_server.update_last_activity(peerid)
+                return
+
+            # Xử lý `/down` - Tìm các peer cho torrent
+            elif path.startswith("/down"):
+                torrent_hash = query_params.get("torrent_hash", [None])[0]
+                peers = tracker_server.down_find_peer(torrent_hash, peerid)
+                response_data = json.dumps(peers)
+                self._send_response(200, "application/json", response_data.encode("utf-8"))
+                tracker_server.update_last_activity(peerid)
+                return
+
+            # Xử lý `/exit` - Xóa client khỏi hệ thống
             elif path.startswith("/exit"):
-                self.send_response(200)
-                parse_url = urlparse(path)
-                query_params = parse_qs(parse_url.query)
-                print(query_params)
-                tracker_server.client_exit(query_params.get("peerid", [None])[0])
-                self.send_header("Content-type", "text/plain")
-                self.end_headers()
-                self.wfile.write(b"OK!")
+                tracker_server.client_exit(peerid)
+                self._send_response(200, "text/plain", b"OK!")
+                return
+
+            # Đường dẫn không hợp lệ
             else:
-                self.send_response(404)
-                self.end_headers()
-    except Exception as e:
-        print(e)
+                self._send_response(404, "text/plain", b"Error: Path not found.")
+
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            self._send_response(500, "text/plain", b"Internal server error")
+ 
+
 
 
 def start_server():
     global httpd
-    server_class = HTTPServer
+    server_class = ThreadingHTTPServer
     server_address = ("", SERVER_PORT)
     handler_class = Listener
     httpd = server_class(server_address, handler_class)
