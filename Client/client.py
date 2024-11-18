@@ -425,8 +425,9 @@ def download(torrent_file_name, progress, tracker=None):
         torrent_file_name
     )
     os.makedirs(os.path.dirname(file_resu), exist_ok=True)
-    with open(file_resu, "wb") as f:
-        f.write(b"\x00" * total_size)
+    if all(x == 0 for x in chunk_array):
+        with open(file_resu, "wb") as f:
+            f.write(b"\x00" * total_size)
 
     offset = 0
     port_index = 0
