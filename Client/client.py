@@ -94,7 +94,8 @@ def send_scrape(torrent_file_path, tracker):
     params = {}
     params["torrent_hash"] = torrent_hash
     params["peerid"] = config.peer_id
-    trCom.send_tracker("scrape", params, tracker)
+    response = trCom.send_tracker("scrape", params, tracker)
+    print(response.text)
     # url = tracker + "/announce/scrape"
     # trCom.send_get(url, params)
 
@@ -119,53 +120,56 @@ def scrape(file_path, tracker_url=None):
 
 # region Upload
 def peer_connect(client_socket):
-    reponame = client_socket.recv(1024)
-    filename = ""
-    for repo in config.peer_repo:
-        if repo["reponame"] == reponame:
-            filename = repo["filename"]
-    filename = f"program_{config.prog_num}/downloads/" + filename
-    file_size = os.path.getsize(filename)
-    piece_length = 0
-    client_socket.send(("recievied_" + filename).encode())
-    # client_socket.send(str(file_size).encode())
-    print(filename)
-    first = True
-    with client_socket.makefile("wb") as wfile:
-        with open(filename, "rb") as f1:
-            mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
-            while 1:
-                torrent_file_name = client_socket.recv(1024).decode()
-                if not torrent_file_name:
-                    f1.close()
-                    wfile.close()
-                    client_socket.close()
-                    return
-                elif first:
-                    first = False                    
-                    piece_length = trCtrl.get_piece_length_from_torrent(torrent_file_name)
-                    print(f"Piece length: {piece_length}")
-                # print("recieved file name:")
-                # print(trCtrl.get_file_name(torrent_file_name))
+    try:
+        reponame = client_socket.recv(1024)
+        filename = ""
+        for repo in config.peer_repo:
+            if repo["reponame"] == reponame:
+                filename = repo["filename"]
+        filename = f"program_{config.prog_num}/downloads/" + filename
+        file_size = os.path.getsize(filename)
+        piece_length = 0
+        client_socket.send(("recievied_" + filename).encode())
+        # client_socket.send(str(file_size).encode())
+        print(filename)
+        first = True
+        with client_socket.makefile("wb") as wfile:
+            with open(filename, "rb") as f1:
+                mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
+                while 1:
+                    torrent_file_name = client_socket.recv(1024).decode()
+                    if not torrent_file_name:
+                        f1.close()
+                        wfile.close()
+                        client_socket.close()
+                        return
+                    elif first:
+                        first = False                    
+                        piece_length = trCtrl.get_piece_length_from_torrent(torrent_file_name)
+                        # print(f"Piece length: {piece_length}")
+                    # print("recieved file name:")
+                    # print(trCtrl.get_file_name(torrent_file_name))
 
-                # send DownloadedChunkBit Array
-                fdt.update_data_file_dir()
-                data = json.dumps(
-                    fdt.get_array(trCtrl.get_file_name(torrent_file_name))
-                )
-                client_socket.send(data.encode("utf-8"))
+                    # send DownloadedChunkBit Array
+                    fdt.update_data_file_dir()
+                    data = json.dumps(
+                        fdt.get_array(trCtrl.get_file_name(torrent_file_name))
+                    )
+                    client_socket.send(data.encode("utf-8"))
 
-                a = client_socket.recv(4)
-                offset = int.from_bytes(a, "big")
-                mm.seek(offset * piece_length)
-                data = mm.read(piece_length)
-                byte_data = len(data).to_bytes(4, "big")
-                client_socket.send(byte_data)
+                    a = client_socket.recv(4)
+                    offset = int.from_bytes(a, "big")
+                    mm.seek(offset * piece_length)
+                    data = mm.read(piece_length)
+                    byte_data = len(data).to_bytes(4, "big")
+                    client_socket.send(byte_data)
 
-                wfile.write(data)
-        f1.close()
-    wfile.close()
-    client_socket.close()
+                    wfile.write(data)
+            f1.close()
+        wfile.close()
+        client_socket.close()
+    except Exception as e:
+        print(e)
 
 
 def upload():
@@ -174,10 +178,13 @@ def upload():
     upload_socket.bind((upload_host, port))
     upload_socket.listen(5)
     while not config.Flag:
-        (client_socket, client_addr) = upload_socket.accept()
-        print("Got connection from", client_addr)
-        new_thread = Thread(target=peer_connect, args=(client_socket,))
-        new_thread.start()
+        try:
+            (client_socket, client_addr) = upload_socket.accept()
+            print("Got connection from", client_addr)
+            new_thread = Thread(target=peer_connect, args=(client_socket,))
+            new_thread.start()
+        except Exception as e:
+            print(e)
 
     upload_socket.close()
 
@@ -198,159 +205,164 @@ def download_chunk(
     total_size,
     offset_in_download_array,
     torrent_file_name,
+    client_ip
 ):
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    upload_host1 = socket.gethostbyname(socket.gethostname())
-    client.connect((upload_host1, port))
-    client.send(reponame)  # reponame la torrent hash
-    file_name = client.recv(1024).decode()
-    # file_size = client.recv(1024).decode()
+    try:
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # upload_host1 = socket.gethostbyname(socket.gethostname())
+        # print(f'Debug connect: {upload_host1}, {port}')
+        client.connect((client_ip, port))
+        client.send(reponame)  # reponame la torrent hash
+        file_name = client.recv(1024).decode()
+        # file_size = client.recv(1024).decode()
 
-    with client.makefile("rb") as rfile:
-        with open(file_resu, "r+b") as f:
-            mm = mmap.mmap(f.fileno(), 0)
-
-            while 1:
-                client.send(torrent_file_name.encode())
-                trCtrl.get_file_name(torrent_file_name)
-                # chunk_array=client.recv(1024).decode()
-                data = client.recv(32768)  # DownloadedChunkBit Array
-                chunk_array = json.loads(data.decode("utf-8"))
-                # print(chunk_array)
-                with write_lock:
-                    # Check whether have full file
-                    array = config.downloadArray[offset_in_download_array][
-                        math.ceil(total_size / piece_length) : math.ceil(
-                            total_size / piece_length
-                        )
-                        * 2
-                    ]
-                    if min(array) == 1:
-                        if max(array) == 1:
-                            client.close()
-                            return
-
-                    # update number of clients having each chunk
-                    index = 0
-                    while index < math.ceil(total_size / piece_length):
-                        config.downloadArray[offset_in_download_array][index] += (
-                            chunk_array[index]
-                        )
-                        index += 1
+        with client.makefile("rb") as rfile:
+            with open(file_resu, "r+b") as f:
+                mm = mmap.mmap(f.fileno(), 0)
 
                 while 1:
-                    # Check whether have full file
-                    array = config.downloadArray[offset_in_download_array][
-                        math.ceil(total_size / piece_length) : math.ceil(
-                            total_size / piece_length
-                        )
-                        * 2
-                    ]
-                    if min(array) == 1:
-                        if max(array) == 1:
-                            client.close()
-                            return
-
-                    # Find rarest chunk
+                    client.send(torrent_file_name.encode())
+                    trCtrl.get_file_name(torrent_file_name)
+                    # chunk_array=client.recv(1024).decode()
+                    data = client.recv(32768)  # DownloadedChunkBit Array
+                    chunk_array = json.loads(data.decode("utf-8"))
+                    # print(chunk_array)
                     with write_lock:
-                        min_value = min(
-                            config.downloadArray[offset_in_download_array][
-                                0 : math.ceil(total_size / piece_length)
-                            ]
-                        )
-                        value_chunk_of_downloader = config.downloadArray[
-                            offset_in_download_array
-                        ][
-                            config.downloadArray[offset_in_download_array].index(
-                                min_value
+                        # Check whether have full file
+                        array = config.downloadArray[offset_in_download_array][
+                            math.ceil(total_size / piece_length) : math.ceil(
+                                total_size / piece_length
                             )
-                            + math.ceil(total_size / piece_length)
+                            * 2
                         ]
-                        if value_chunk_of_downloader == 0:
-                            if (
-                                chunk_array[
-                                    config.downloadArray[
-                                        offset_in_download_array
-                                    ].index(min_value)
-                                ]
-                                == 1
-                            ):
+                        if min(array) == 1:
+                            if max(array) == 1:
+                                client.close()
+                                return
+
+                        # update number of clients having each chunk
+                        index = 0
+                        while index < math.ceil(total_size / piece_length):
+                            config.downloadArray[offset_in_download_array][index] += (
+                                chunk_array[index]
+                            )
+                            index += 1
+
+                    while 1:
+                        # Check whether have full file
+                        array = config.downloadArray[offset_in_download_array][
+                            math.ceil(total_size / piece_length) : math.ceil(
+                                total_size / piece_length
+                            )
+                            * 2
+                        ]
+                        if min(array) == 1:
+                            if max(array) == 1:
+                                client.close()
+                                return
+
+                        # Find rarest chunk
+                        with write_lock:
+                            min_value = min(
                                 config.downloadArray[offset_in_download_array][
-                                    config.downloadArray[
-                                        offset_in_download_array
-                                    ].index(min_value)
-                                    + math.ceil(total_size / piece_length)
-                                ] = 2  # dang tai
-                                offset = int(
-                                    config.downloadArray[
-                                        offset_in_download_array
-                                    ].index(min_value)
-                                )
-                                break
-                        if value_chunk_of_downloader == 1:
-                            config.downloadArray[offset_in_download_array][
+                                    0 : math.ceil(total_size / piece_length)
+                                ]
+                            )
+                            value_chunk_of_downloader = config.downloadArray[
+                                offset_in_download_array
+                            ][
                                 config.downloadArray[offset_in_download_array].index(
                                     min_value
                                 )
-                            ] = 1000000
+                                + math.ceil(total_size / piece_length)
+                            ]
+                            if value_chunk_of_downloader == 0:
+                                if (
+                                    chunk_array[
+                                        config.downloadArray[
+                                            offset_in_download_array
+                                        ].index(min_value)
+                                    ]
+                                    == 1
+                                ):
+                                    config.downloadArray[offset_in_download_array][
+                                        config.downloadArray[
+                                            offset_in_download_array
+                                        ].index(min_value)
+                                        + math.ceil(total_size / piece_length)
+                                    ] = 2  # dang tai
+                                    offset = int(
+                                        config.downloadArray[
+                                            offset_in_download_array
+                                        ].index(min_value)
+                                    )
+                                    break
+                            if value_chunk_of_downloader == 1:
+                                config.downloadArray[offset_in_download_array][
+                                    config.downloadArray[offset_in_download_array].index(
+                                        min_value
+                                    )
+                                ] = 1000000
 
-                # send offset chunk
-                byte_data = offset.to_bytes(4, "big")
-                client.send(byte_data)
-                # print(f"{file_name} - Chunk: {offset}")
+                    # send offset chunk
+                    byte_data = offset.to_bytes(4, "big")
+                    client.send(byte_data)
+                    # print(f"{file_name} - Chunk: {offset}")
 
-                # receive required piece's length
-                a = client.recv(4)
-                byteDownload = int.from_bytes(a, "big")
+                    # receive required piece's length
+                    a = client.recv(4)
+                    byteDownload = int.from_bytes(a, "big")
 
-                # receive data chunk
-                data = rfile.read(byteDownload)
-                ressu = hashlib.sha1(data).digest()
-                # print(f"So byte doc: {len(data)}")
-                # print(f'Data hex: {data.hex()}')
-                # print(f"Hash Data ra: {ressu.hex()}")
-                # print(f'Hash trong torrent: {key_value[offset].hex()}\n')
+                    # receive data chunk
+                    data = rfile.read(byteDownload)
+                    ressu = hashlib.sha1(data).digest()
+                    # print(f"So byte doc: {len(data)}")
+                    # print(f'Data hex: {data.hex()}')
+                    # print(f"Hash Data ra: {ressu.hex()}")
+                    # print(f'Hash trong torrent: {key_value[offset].hex()}\n')
 
-                # Check data with hash key
-                if ressu == key_value[offset]:
+                    # Check data with hash key
+                    if ressu == key_value[offset]:
+                        with write_lock:
+                            mm[offset * piece_length : (offset + 1) * piece_length] = data
+                            config.bytesDownload[offset_in_download_array] += piece_length/(1024*1024)
+                            progress.update(task, advance=piece_length)
+
+                            # console.print(
+                            #     f"[yellow]Speed: {config.bytesDownload[offset_in_download_array]/(time.time()-config.timeStartDownload[offset_in_download_array]):.2f} MB/s[/yellow]",
+                            #     end="\r",
+                            # )
+                            config.downloadArray[offset_in_download_array][
+                                offset + math.ceil(total_size / piece_length)
+                            ] = 1  # tai xong
+                            fdt.update_data_file_dir()
+                            fdt.change_element(
+                                trCtrl.get_file_name(torrent_file_name), offset, 1
+                            )
+                    else:
+                        # print("Received data does not match hash key\n")
+                        with write_lock:
+                            config.downloadArray[offset_in_download_array][
+                                offset + math.ceil(total_size / piece_length)
+                            ] = 0  # tai fail
+
                     with write_lock:
-                        mm[offset * piece_length : (offset + 1) * piece_length] = data
-                        config.bytesDownload[offset_in_download_array] += piece_length/(1024*1024)
-                        progress.update(task, advance=piece_length)
-
-                        # console.print(
-                        #     f"[yellow]Speed: {config.bytesDownload[offset_in_download_array]/(time.time()-config.timeStartDownload[offset_in_download_array]):.2f} MB/s[/yellow]",
-                        #     end="\r",
-                        # )
-                        config.downloadArray[offset_in_download_array][
-                            offset + math.ceil(total_size / piece_length)
-                        ] = 1  # tai xong
-                        fdt.update_data_file_dir()
-                        fdt.change_element(
-                            trCtrl.get_file_name(torrent_file_name), offset, 1
-                        )
-                else:
-                    # print("Received data does not match hash key\n")
-                    with write_lock:
-                        config.downloadArray[offset_in_download_array][
-                            offset + math.ceil(total_size / piece_length)
-                        ] = 0  # tai fail
-
-                with write_lock:
-                    # Check whether have full file
-                    array = config.downloadArray[offset_in_download_array][
-                        math.ceil(total_size / piece_length) : (
-                            math.ceil(total_size / piece_length)
-                            + math.ceil(total_size / piece_length)
-                        )
-                    ]
-                    if min(array) == 1:
-                        if max(array) == 1:
-                            break
-            mm.close()
-            f.close()
-    rfile.close()
-    client.close()
+                        # Check whether have full file
+                        array = config.downloadArray[offset_in_download_array][
+                            math.ceil(total_size / piece_length) : (
+                                math.ceil(total_size / piece_length)
+                                + math.ceil(total_size / piece_length)
+                            )
+                        ]
+                        if min(array) == 1:
+                            if max(array) == 1:
+                                break
+                mm.close()
+                f.close()
+        rfile.close()
+        client.close()
+    except Exception as e:
+        print(e)
 
 
 def download(torrent_file_name, progress, tracker=None):
@@ -404,8 +416,9 @@ def download(torrent_file_name, progress, tracker=None):
         if x == 0:
             num_of_piece_left = num_of_piece_left + 1
     task = progress.add_task(
-        f"Download {file_name}", total=num_of_piece_left * piece_length
+        f"Download {file_name}", total=num_of_piece * piece_length
     )
+    progress.update(task,advance=(num_of_piece-num_of_piece_left)*piece_length)
     downloads.append((file_name, task))
 
     index = 0
@@ -435,8 +448,8 @@ def download(torrent_file_name, progress, tracker=None):
     # print(port_list)
 
     while port_index < len(port_list) and port_index < 5:
-        client_port = port_list[port_index]
-
+        client_port = port_list[port_index][1]
+        client_ip = port_list[port_index][0]
         if int(client_port) == int(port):
             port_index += 1
             continue
@@ -454,6 +467,7 @@ def download(torrent_file_name, progress, tracker=None):
                 total_size,
                 offset_in_download_array,
                 torrent_file_name,
+                client_ip
             ),
         )
         thread.daemon = True
@@ -558,6 +572,7 @@ def join(tracker=None):
     params = {}
     params["peerid"] = config.peer_id
     params["port"] = port
+    params["IP"] = socket.gethostbyname(socket.gethostname())
     trCom.send_get(url, params)
 
 
@@ -584,10 +599,13 @@ def ping_tracker(tracker=None):
         # trCom.send_get(url, params)
         print("Ping sent to tracker")
         rep = trCom.send_get(url, params)
-        if (rep is None): print("No tracker connected.")
+        if (rep is None): 
+            print("No tracker connected.")
         else:   
-            if (rep.text != "OK!"): print("Tracker offline!!!")
-            else: print("Tracker say hi!")
+            if (rep.text != "OK!"): 
+                print("Tracker offline!!!")
+            # else: 
+            #     print("Tracker say hi!")
 
         # print(f"{type(trCom.send_get(url, params))}")
         time.sleep(1798) #30p 1798

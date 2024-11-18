@@ -96,7 +96,7 @@ class Server:
         if torrent_hash in self.rfc_index:
             # For each client that has the file, add the port to port_list
             for client_info in self.rfc_index[torrent_hash]:
-                port_list.append(self.active_client[client_info][1])  # Extract the port
+                port_list.append([self.active_client[client_info][0],self.active_client[client_info][1]])  # Extract the port
         else:
             # If the file doesn't exist, port_list remains empty
             port_list = []
@@ -233,7 +233,7 @@ class Listener(BaseHTTPRequestHandler):
                 tracker_server.client_join(
                     query_params.get("peerid", [None])[0],
                     query_params.get("port", [None])[0],
-                    self.client_address[0],
+                    query_params.get("IP", [None])[0],
                 )
                 self.send_header("Content-type", "text/plain")
                 self.end_headers()
