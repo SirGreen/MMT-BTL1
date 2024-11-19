@@ -5,9 +5,32 @@ import os
 # The file where data will be stored
 DATA_FILE = f'program_{config.prog_num}/downloads/'+"file_data.txt"
 
-def update_data_file():
+def update_data_file_dir():
     global DATA_FILE
     DATA_FILE = f'program_{config.prog_num}/downloads/'+"file_data.txt"
+    
+def update_data_file(file_name, n):
+    if file_name not in get_all_files():
+        if file_exists(file_name):
+            add_file(file_name, [1] * n)
+        else:
+            add_file(file_name, [0] * n)
+    
+    if not file_exists(file_name):
+        if file_name in get_all_files():
+            update_array(file_name,[0]*n)
+
+def file_downloaded(filename):
+    array = get_array(filename)
+    i = 0
+    for x in array:
+        i = x + i
+    if i==len(array):
+        return 1
+    elif i==0:
+        return 0
+    else:
+        return 2
 
 def file_exists(file_path):
     # Construct the full path
@@ -51,7 +74,7 @@ def update_array(file_name, new_array):
         return
     data[file_name] = new_array
     save_data(data)
-    print(f"File '{file_name}' updated with new array {new_array}.")
+    # print(f"File '{file_name}' updated with new array.")
     
 def change_element(file_name, index, new_value):
     data = load_data()

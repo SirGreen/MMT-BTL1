@@ -276,6 +276,19 @@ def get_file_name(torrent_file_path):
         print(f"An unexpected error occurred: {e}")
         return None
 
+def get_piece_length_from_torrent(torrent_file_name):
+    with open(torrent_file_name, "rb") as file:
+        # Decode the torrent file
+        torrent_data = bencodepy.decode(file.read())
+        
+        # Extract file length from single or multiple files
+        if b'info' in torrent_data:
+            info = torrent_data[b'info']
+            if b'piece length' in info:  # Single-file torrent
+                return info[b'piece length']
+        else:
+            raise ValueError("Invalid torrent file: 'info' section missing")
+
 def get_file_length(torrent_file_path):
     with open(torrent_file_path, "rb") as file:
         # Decode the torrent file

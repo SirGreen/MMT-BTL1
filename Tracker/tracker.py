@@ -83,6 +83,7 @@ class Server:
         self.owner_file = {}
         self.last_activity = {}
         self.count_done_client = {}
+
         
         save_to_file(self.owner_file, "owner_file.dat")
         save_to_file(self.rfc_index, "rfc_index.dat")
@@ -95,6 +96,7 @@ class Server:
             self.last_activity[peerid] = time.time()
             save_to_file(self.last_activity, "last_activity.dat")
     
+
     def count_done_file(self, torrent_hash, peerid):
         # update done_file
         if torrent_hash in self.count_done_client:
@@ -137,7 +139,7 @@ class Server:
         if torrent_hash in self.rfc_index:
             # For each client that has the file, add the port to port_list
             for client_info in self.rfc_index[torrent_hash]:
-                port_list.append(self.active_client[client_info][1])  # Extract the port
+                port_list.append([self.active_client[client_info][0],self.active_client[client_info][1]])  # Extract the port
         else:
             # If the file doesn't exist, port_list remains empty
             port_list = []
@@ -237,12 +239,18 @@ class Listener(BaseHTTPRequestHandler):
 
             # Handle `/join` - Check if client is joining
             elif path.startswith("/join"):
-                if tracker_server.online_check(peerid):
-                    self._send_response(409, "text/plain", b"Error: Client has already joined the system.")
-                else:
-                    port = query_params.get("port", [None])[0]
-                    tracker_server.client_join(peerid, port, self.client_address[0])
-                    self._send_response(200, "text/plain", b"OK!")
+                  self.send_response(200)
+                  parse_url = urlparse(path)
+                  query_params = parse_qs(parse_url.query)
+                  print(query_params)
+                  tracker_server.client_join(
+                      query_params.get("peerid", [None])[0],
+                      query_params.get("port", [None])[0],
+                      query_params.get("IP", [None])[0],
+                  )
+                  self.send_header("Content-type", "text/plain")
+                  self.end_headers()
+                  self.wfile.write(b"OK!")
                 tracker_server.update_last_activity(peerid)
                 return
 

@@ -12,6 +12,8 @@ def display_help_overview():
     + Have [FTor]: Send torrent file(s) to a tracker of the torrent file.
     + Down [FTor]: Download a file using the torrent, communicates with tracker of the torrent file.
     + Preview [FTor]: View the contents of a torrent file in a human-readable format.
+    + Progress
+    + Status
     + Exit: Exit the program
     """
     print(help_overview)
