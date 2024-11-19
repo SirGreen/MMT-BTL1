@@ -125,7 +125,7 @@ def peer_connect(client_socket):
         if repo["reponame"] == reponame:
             filename = repo["filename"]
     filename = f"program_{config.prog_num}/downloads/" + filename
-    file_size = os.path.getsize(filename)
+    # file_size = os.path.getsize(filename)
     piece_length = 0
     client_socket.send(("recievied_" + filename).encode())
     # client_socket.send(str(file_size).encode())
