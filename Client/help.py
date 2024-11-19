@@ -1,7 +1,7 @@
 
 # region Help
 def welcome():
-    print("Welcome to a BitTorrent program by ***, press Help to see how to use")
+    print("Welcome to a BitTorrent program by DDTorrent, press Help to see how to use")
 
 
 def display_help_overview():
