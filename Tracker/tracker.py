@@ -48,7 +48,8 @@ class Server:
         self.rfc_index = load_from_file("rfc_index.dat")
         self.owner_file = load_from_file("owner_file.dat")
         self.last_activity = load_from_file("last_activity.dat")
-        self.count_done_client = load_from_file("count_done_client.dat")
+        self.done_client = load_from_file("done_client.dat")
+        self.not_done_client = load_from_file("not_done_client.dat")
         self.lock = Lock()
 
         # Start the timeout checker thread
@@ -82,14 +83,16 @@ class Server:
         self.rfc_index = {}
         self.owner_file = {}
         self.last_activity = {}
-        self.count_done_client = {}
+        self.done_client = {}
+        self.not_done_client = {}
 
         
         save_to_file(self.owner_file, "owner_file.dat")
         save_to_file(self.rfc_index, "rfc_index.dat")
         save_to_file(self.active_client, "active_client.dat")
         save_to_file(self.last_activity, "last_activity.dat")
-        save_to_file(self.count_done_client, "count_done_client.dat")
+        save_to_file(self.done_client, "done_client.dat")
+        save_to_file(self.not_done_client, "not_done_client.dat")
 
     def update_last_activity(self, peerid):
         with self.lock:
@@ -98,37 +101,29 @@ class Server:
     
 
     def done_client_file(self, torrent_hash, peerid):
+        
+        self.have_add_repo_client(torrent_hash,peerid)
         # update done_file
-        if torrent_hash in self.count_done_client:
-            print(self.count_done_client[torrent_hash])
-            print(peerid not in self.count_done_client[torrent_hash])
-            if peerid not in self.count_done_client[torrent_hash]:
-                self.count_done_client[torrent_hash].append(peerid)
+        if torrent_hash in self.done_client:
+            print(self.done_client[torrent_hash])
+            print(peerid not in self.done_client[torrent_hash])
+            if peerid not in self.done_client[torrent_hash]:
+                self.done_client[torrent_hash].append(peerid)
         else:
-            self.count_done_client[torrent_hash] = [peerid]
+            self.done_client[torrent_hash] = [peerid]
             
-        save_to_file(self.count_done_client, "count_done_client.dat")
-            
-        # update owner_file
-        if peerid in self.owner_file:
-            self.owner_file[peerid].append(torrent_hash)
-        else:
-            self.owner_file[peerid] = [torrent_hash]
-            
-        save_to_file(self.owner_file, "owner_file.dat")
+        save_to_file(self.done_client, "done_client.dat")
         
-        # update rfc_file
-        if peerid in self.rfc_index[torrent_hash]:
-            self.rfc_index[torrent_hash].remove(peerid)
-            save_to_file(self.rfc_index, "rfc_index.dat")
-        
-        # self.have_add_repo_client(torrent_hash,peerid) #?????
+        # update not_done_client
+        if peerid in self.not_done_client[torrent_hash]:
+            self.not_done_client[torrent_hash].remove(peerid)
+            save_to_file(self.not_done_client, "not_done_client.dat")
 
-    def get_count_file(self, torrent_hash, file):
-        if (file == "count_done_client.dat"):
-            return len(self.count_done_client[torrent_hash])
+    def get_scrape(self, torrent_hash, file):
+        if (file == "done_client.dat"):
+            return len(self.done_client[torrent_hash])
         else: 
-            return len(self.rfc_index[torrent_hash])
+            return len(self.not_done_client[torrent_hash])
 
     def client_join(self, peerid, port, ip):
     # Thêm client vào danh sách active_client
@@ -161,7 +156,16 @@ class Server:
         self.have_add_repo_client(torrent_hash, peerid)
         return port_list
 
+        
+    
     def have_add_repo_client(self, torhash, peerid):
+        # update not_done_client
+        if torhash in self.not_done_client:
+            if peerid not in self.not_done_client[torhash]:
+                self.not_done_client[torhash].append(peerid)
+        else:
+            self.not_done_client[torhash] = [peerid]
+        
         # update rfc_index
         if torhash in self.rfc_index:
             print(self.rfc_index[torhash])
@@ -176,6 +180,8 @@ class Server:
             self.owner_file[peerid].append(torhash)
         else:
             self.owner_file[peerid] = [torhash]
+        
+        save_to_file(self.not_done_client, "not_done_client.dat")
         save_to_file(self.owner_file, "owner_file.dat")
         save_to_file(self.rfc_index, "rfc_index.dat")
         print(self.rfc_index)
@@ -277,6 +283,7 @@ class Listener(BaseHTTPRequestHandler):
             elif path.startswith("/have"):
                 torrent_hash = query_params.get("torrent_hash", [None])[0]
                 tracker_server.have_add_repo_client(torrent_hash, peerid)
+                tracker_server.not_done_add(torrent_hash, peerid)
                 self._send_response(200, "text/plain", b"OK!")
                 tracker_server.update_last_activity(peerid)
                 return
@@ -293,8 +300,8 @@ class Listener(BaseHTTPRequestHandler):
             elif path.startswith("/scrape"):
                 torrent_hash = query_params.get("torrent_hash", [None])[0]
                 try:
-                    seeder_count = tracker_server.get_count_file(torrent_hash, "count_done_client.dat")
-                    leecher_count = tracker_server.get_count_file(torrent_hash, "rfc_index.dat")
+                    seeder_count = tracker_server.get_scrape(torrent_hash, "done_client.dat")
+                    leecher_count = tracker_server.get_scrape(torrent_hash, "rfc_index.dat")
                     response_message = f"Seeder: {seeder_count}, Leecher: {leecher_count}"
                     self._send_response(200, "text/plain", response_message.encode('utf-8'))
                 except Exception as e:
