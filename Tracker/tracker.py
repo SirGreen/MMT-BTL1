@@ -97,7 +97,7 @@ class Server:
             save_to_file(self.last_activity, "last_activity.dat")
     
 
-    def count_done_file(self, torrent_hash, peerid):
+    def done_client_file(self, torrent_hash, peerid):
         # update done_file
         if torrent_hash in self.count_done_client:
             print(self.count_done_client[torrent_hash])
@@ -106,9 +106,23 @@ class Server:
                 self.count_done_client[torrent_hash].append(peerid)
         else:
             self.count_done_client[torrent_hash] = [peerid]
-        
+            
         save_to_file(self.count_done_client, "count_done_client.dat")
-        self.have_add_repo_client(torrent_hash,peerid)
+            
+        # update owner_file
+        if peerid in self.owner_file:
+            self.owner_file[peerid].append(torrent_hash)
+        else:
+            self.owner_file[peerid] = [torrent_hash]
+            
+        save_to_file(self.owner_file, "owner_file.dat")
+        
+        # update rfc_file
+        if peerid in self.rfc_index[torrent_hash]:
+            self.rfc_index[torrent_hash].remove(peerid)
+            save_to_file(self.rfc_index, "rfc_index.dat")
+        
+        # self.have_add_repo_client(torrent_hash,peerid) #?????
 
     def get_count_file(self, torrent_hash, file):
         if (file == "count_done_client.dat"):
@@ -270,7 +284,7 @@ class Listener(BaseHTTPRequestHandler):
              # Handle `/done` - Update done status for a file
             elif path.startswith("/done"):
                 torrent_hash = query_params.get("torrent_hash", [None])[0]
-                tracker_server.count_done_file(torrent_hash, peerid)
+                tracker_server.done_client_file(torrent_hash, peerid)
                 self._send_response(200, "text/plain", b"OK!")
                 tracker_server.update_last_activity(peerid)
                 return
