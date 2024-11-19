@@ -637,7 +637,7 @@ def ping_tracker(tracker=None):
 def input_listener(show_progress, live):
     hostname = config.DEFAULT_TRACKER
     join(hostname)
-    print(f"Welcome user to ***'s bittorrent network,\nPeer ID: {config.peer_id} (OwO)")
+    print(f"Welcome user to DDTorrent's bittorrent network,\nPeer ID: {config.peer_id} (OwO)")
     fdt.update_data_file_dir()
 
     ping_thread = Thread(target=ping_tracker, args=(hostname,))

@@ -283,7 +283,6 @@ class Listener(BaseHTTPRequestHandler):
             elif path.startswith("/have"):
                 torrent_hash = query_params.get("torrent_hash", [None])[0]
                 tracker_server.have_add_repo_client(torrent_hash, peerid)
-                tracker_server.not_done_add(torrent_hash, peerid)
                 self._send_response(200, "text/plain", b"OK!")
                 tracker_server.update_last_activity(peerid)
                 return
