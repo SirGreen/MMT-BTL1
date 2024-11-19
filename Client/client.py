@@ -17,6 +17,7 @@ import time
 import queue
 import sys
 from rich.console import Console
+import re
 
 from rich.live import Live
 from rich.progress import (
@@ -57,7 +58,7 @@ def send_torrent_tracker(torrent_file_path, tracker):
     params = {}
     params["torrent_hash"] = torrent_hash
     params["peerid"] = config.peer_id
-    if fdt.file_exists(file_name):
+    if fdt.file_downloaded(file_name):
         trCom.send_tracker("done", params, tracker)
     else:
         trCom.send_tracker("have", params, tracker)
@@ -127,6 +128,29 @@ def scrape(file_path, tracker_url=None):
 
 # region Upload
 def peer_connect(client_socket):
+    downType = client_socket.recv(1024).decode()
+    if downType == "Torrent file":
+        client_socket.send(("Downloading torrent...").encode())
+        reponame = client_socket.recv(1024) 
+        filename = ""
+        for repo in config.peer_repo:
+            if repo["reponame"] == reponame:
+                filename = repo["filename"]
+        filename = os.path.splitext(filename)[0]+".torrent"
+        client_socket.send(filename.encode())
+        filename = f"program_{config.prog_num}/torrents/" + filename
+        try:
+            # Open the .torrent file and send its contents
+            with open(filename, 'rb') as file:
+                while chunk := file.read(1024):
+                    client_socket.sendall(chunk)
+            print("File sent successfully.")
+            client_socket.sendall(b'')
+        except FileNotFoundError:
+            print("File not found. Ensure the .torrent file exists.")
+        return
+    
+    client_socket.send(("OK!").encode())
     reponame = client_socket.recv(1024)
     filename = ""
     for repo in config.peer_repo:
@@ -223,6 +247,8 @@ def download_chunk(
         # upload_host1 = socket.gethostbyname(socket.gethostname())
         # print(f'Debug connect: {upload_host1}, {port}')
         client.connect((client_ip, port))
+        client.send("Chunk".encode())
+        client.recv(1024)
         client.send(reponame)  # reponame la torrent hash
         file_name = client.recv(1024).decode()
         # file_size = client.recv(1024).decode()
@@ -630,9 +656,7 @@ def ping_tracker(tracker=None):
 # endregion
 
 
-# endregion
-
-
+#region Main Helper
 # Function to listen to user input commands and manage display
 def input_listener(show_progress, live):
     hostname = config.DEFAULT_TRACKER
@@ -741,6 +765,12 @@ def input_listener(show_progress, live):
                         print(f"Not downloaded {file}")
                     else:
                         print(f"Downloading {file}")
+            elif user_input.startswith("genmagnet "):
+                parts = user_input.split()
+                magnetGen(parts[1])
+            elif user_input.startswith("usemagnet "):
+                parts = user_input.split()
+                sendMagenet(parts[1])
             elif user_input.lower() == "exit":
                 client_exit(hostname)
                 global running
@@ -785,7 +815,51 @@ else:
             return sys.stdin.read(1)
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+#endregion
 
+#region magnet
+def magnetGen(torrent_file_name):
+    torrent_file_name = f'program_{config.prog_num}/torrents/'+torrent_file_name
+    print("magnet:?xt=urn:btih:"+trCtrl.get_torrent_hash(torrent_file_name).hex())
+    
+def extract_info_hash(magnet_link):
+    """Extracts the info hash from a magnet link."""
+    # Regular expression to find the info hash
+    match = re.search(r'xt=urn:btih:([a-fA-F0-9]{40}|[a-fA-F0-9]{64})', magnet_link)
+    if match:
+        return bytes.fromhex(match.group(1)) # The info hash
+    else:
+        return None  # No valid info hash found
+
+def sendMagenet(magnet):
+    url = config.DEFAULT_TRACKER + "/announce/down"
+    params = {}
+    torrent_hash =  extract_info_hash(magnet)
+    params["torrent_hash"] = torrent_hash
+    params["peerid"] = config.peer_id
+    port_list = trCom.send_get(url, params).json()
+    for ip, c_port in port_list:
+        c_port = int(c_port)
+        if (c_port != int(port)):
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client.connect((ip, c_port))
+            client.send(("Torrent file").encode())
+            print(client.recv(1024).decode()) 
+            client.send(torrent_hash)
+            filename = client.recv(1024).decode()
+            print(filename)
+            filename = f"program_{config.prog_num}/torrents/" + filename
+            client.settimeout(2)
+            try:
+                with open(filename, 'wb') as file:
+                    while chunk := client.recv(1024):
+                        # print(len(chunk))
+                        file.write(chunk)
+            except TimeoutError:
+                print("Downloaded torrent file")
+            client.close()
+            return
+#endregion
 
 def main():
     help.welcome()  # Display the welcome message

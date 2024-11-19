@@ -159,7 +159,8 @@ class Server:
 
         # update owner_file
         if peerid in self.owner_file:
-            self.owner_file[peerid].append(torhash)
+            if torhash not in self.owner_file[peerid]:
+                self.owner_file[peerid].append(torhash)
         else:
             self.owner_file[peerid] = [torhash]
         save_to_file(self.owner_file, "owner_file.dat")
