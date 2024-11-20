@@ -92,7 +92,7 @@ def send_scrape(torrent_file_path, tracker):
     torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)
     file_name = trCtrl.get_file_name(torrent_file_path)
 
-    tracker = trCtrl.get_trackers(torrent_file_path)[0]
+    tracker = config.DEFAULT_TRACKER
     config.peer_repo.append({"filename": file_name, "reponame": torrent_hash})
     print(file_name)
     params = {}
