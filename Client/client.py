@@ -92,7 +92,7 @@ def send_scrape(torrent_file_path, tracker):
     torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)
     file_name = trCtrl.get_file_name(torrent_file_path)
 
-    tracker = trCtrl.get_trackers(torrent_file_path)[0]
+    tracker = config.DEFAULT_TRACKER
     config.peer_repo.append({"filename": file_name, "reponame": torrent_hash})
     print(file_name)
     params = {}
@@ -145,7 +145,6 @@ def peer_connect(client_socket):
                 while chunk := file.read(1024):
                     client_socket.sendall(chunk)
             print("File sent successfully.")
-            client_socket.sendall(b'')
         except FileNotFoundError:
             print("File not found. Ensure the .torrent file exists.")
         return
@@ -168,6 +167,10 @@ def peer_connect(client_socket):
             mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
             while 1:
                 torrent_file_name = client_socket.recv(1024).decode()
+                torrent_file_name = os.path.basename(torrent_file_name)
+                torrent_file_name = (
+                    f"program_{config.prog_num}/torrents/" + torrent_file_name
+                )
                 if not torrent_file_name:
                     f1.close()
                     wfile.close()
@@ -175,10 +178,6 @@ def peer_connect(client_socket):
                     return
                 elif first:
                     first = False
-                    torrent_file_name = os.path.basename(torrent_file_name)
-                    torrent_file_name = (
-                        f"program_{config.prog_num}/torrents/" + torrent_file_name
-                    )
 
                     piece_length = trCtrl.get_piece_length_from_torrent(
                         torrent_file_name
@@ -257,14 +256,43 @@ def download_chunk(
         with client.makefile("rb") as rfile:
             with open(file_resu, "r+b") as f:
                 mm = mmap.mmap(f.fileno(), 0)
-
+                chunk_array = []
                 while 1:
                     start_index=0
                     client.send(torrent_file_name.encode())
                     trCtrl.get_file_name(torrent_file_name)
                     # chunk_array=client.recv(1024).decode()
                     data = client.recv(32768)  # DownloadedChunkBit Array
-                    chunk_array = json.loads(data.decode("utf-8"))
+                    try:
+                        json_buffer = json.loads(data.decode("utf-8"))
+                        chunk_array = json_buffer
+                    except Exception as e:
+                        client.close()
+                        download_chunk(progress,
+                            task,
+                            reponame,
+                            port,
+                            offset,
+                            piece_length,
+                            file_resu,
+                            key_value,
+                            total_size,
+                            offset_in_download_array,
+                            torrent_file_name,
+                            client_ip)
+                    chunk_array = chunk_array
+                    with write_lock:
+                        # Check whether have full file
+                        array = config.downloadArray[offset_in_download_array][
+                            math.ceil(total_size / piece_length) : math.ceil(
+                                total_size / piece_length
+                            )
+                            * 2
+                        ]
+                        if min(array) == 1:
+                            if max(array) == 1:
+                                client.close()
+                                return
                     num_of_piece=math.ceil(total_size / piece_length)
                     # print(chunk_array)
                     
@@ -455,9 +483,17 @@ def download(torrent_file_name, progress, tracker=None):
     for x in chunk_array:
         if x == 0:
             num_of_piece_left = num_of_piece_left + 1
+    
     task = progress.add_task(f"Download {file_name}", total=num_of_piece * piece_length)
     progress.update(task, advance=(num_of_piece - num_of_piece_left) * piece_length)
+    
+    for fn, ts in downloads:
+        print(fn)
+        if fn==file_name and ts!=task:
+            downloads.remove((fn,ts))
+            progress.remove_task(ts)
     downloads.append((file_name, task))
+    
 
     index = 0
     # print(offset_in_download_array)
@@ -529,17 +565,17 @@ def download(torrent_file_name, progress, tracker=None):
             # have(torrent_file_name)
             # Now the task is complete, start the 30-second delay
             trCom.send_tracker("done", params, tracker)
+            
+        for remaining_time in range(10, 0, -1):
+            progress.update(
+                task,
+                description=f"Moving {file_name} to completed in {remaining_time}s",
+            )
+            time.sleep(1)
 
-            for remaining_time in range(10, 0, -1):
-                progress.update(
-                    task,
-                    description=f"Moving {file_name} to completed in {remaining_time}s",
-                )
-                time.sleep(1)
-
-            # After the 10 seconds, remove the task from the progress bar and add it to completed list
-            progress.remove_task(task)
-            downloads.remove((file_name, task))
+        # After the 10 seconds, remove the task from the progress bar and add it to completed list
+        progress.remove_task(task)
+        downloads.remove((file_name, task))
 
 
 # endregion

@@ -193,6 +193,15 @@
         "documentation": {}
     },
     {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
         "label": "Live",
         "importPath": "rich.live",
         "description": "rich.live",
@@ -348,7 +357,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def peer_connect(client_socket):\n    reponame = client_socket.recv(1024)\n    filename = \"\"\n    for repo in config.peer_repo:\n        if repo[\"reponame\"] == reponame:\n            filename = repo[\"filename\"]\n    filename = f\"program_{config.prog_num}/downloads/\" + filename\n    file_size = os.path.getsize(filename)\n    piece_length = 0\n    client_socket.send((\"recievied_\" + filename).encode())",
+        "peekOfCode": "def peer_connect(client_socket):\n    downType = client_socket.recv(1024).decode()\n    if downType == \"Torrent file\":\n        client_socket.send((\"Downloading torrent...\").encode())\n        reponame = client_socket.recv(1024) \n        filename = \"\"\n        for repo in config.peer_repo:\n            if repo[\"reponame\"] == reponame:\n                filename = repo[\"filename\"]\n        filename = os.path.splitext(filename)[0]+\".torrent\"",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -438,7 +447,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def input_listener(show_progress, live):\n    hostname = config.DEFAULT_TRACKER\n    join(hostname)\n    print(f\"Welcome user to ***'s bittorrent network,\\nPeer ID: {config.peer_id} (OwO)\")\n    fdt.update_data_file_dir()\n    ping_thread = Thread(target=ping_tracker, args=(hostname,))\n    ping_thread.daemon = True\n    ping_thread.start()\n    have(f\"program_{config.prog_num}/torrents\")\n    while True:",
+        "peekOfCode": "def input_listener(show_progress, live):\n    hostname = config.DEFAULT_TRACKER\n    join(hostname)\n    print(f\"Welcome user to DDTorrent's bittorrent network,\\nPeer ID: {config.peer_id} (OwO)\")\n    fdt.update_data_file_dir()\n    ping_thread = Thread(target=ping_tracker, args=(hostname,))\n    ping_thread.daemon = True\n    ping_thread.start()\n    have(f\"program_{config.prog_num}/torrents\")\n    while True:",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -448,6 +457,33 @@
         "importPath": "Client.client",
         "description": "Client.client",
         "peekOfCode": "def download_manager(progress):\n    while True:\n        # Check for new download requests\n        if not download_queue.empty():\n            torName = download_queue.get()\n            threading.Thread(\n                target=download, args=(torName, progress), daemon=True\n            ).start()\n        time.sleep(0.1)\n# Check the platform to use appropriate key press detection",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "magnetGen",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def magnetGen(torrent_file_name):\n    torrent_file_name = f'program_{config.prog_num}/torrents/'+torrent_file_name\n    print(\"magnet:?xt=urn:btih:\"+trCtrl.get_torrent_hash(torrent_file_name).hex())\ndef extract_info_hash(magnet_link):\n    \"\"\"Extracts the info hash from a magnet link.\"\"\"\n    # Regular expression to find the info hash\n    match = re.search(r'xt=urn:btih:([a-fA-F0-9]{40}|[a-fA-F0-9]{64})', magnet_link)\n    if match:\n        return bytes.fromhex(match.group(1)) # The info hash\n    else:",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "extract_info_hash",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def extract_info_hash(magnet_link):\n    \"\"\"Extracts the info hash from a magnet link.\"\"\"\n    # Regular expression to find the info hash\n    match = re.search(r'xt=urn:btih:([a-fA-F0-9]{40}|[a-fA-F0-9]{64})', magnet_link)\n    if match:\n        return bytes.fromhex(match.group(1)) # The info hash\n    else:\n        return None  # No valid info hash found\ndef sendMagenet(magnet):\n    url = config.DEFAULT_TRACKER + \"/announce/down\"",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "sendMagenet",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def sendMagenet(magnet):\n    url = config.DEFAULT_TRACKER + \"/announce/down\"\n    params = {}\n    torrent_hash =  extract_info_hash(magnet)\n    params[\"torrent_hash\"] = torrent_hash\n    params[\"peerid\"] = config.peer_id\n    port_list = trCom.send_get(url, params).json()\n    for ip, c_port in port_list:\n        c_port = int(c_port)\n        if (c_port != int(port)):",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -519,7 +555,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "Flag = False\npeer_repo = []\nSERVER_PORT = 8080\nSERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0",
+        "peekOfCode": "Flag = False\npeer_repo = []\nSERVER_PORT = 8080\nSERVER_HOST = \"192.168.137.1\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -528,7 +564,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "peer_repo = []\nSERVER_PORT = 8080\nSERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min",
+        "peekOfCode": "peer_repo = []\nSERVER_PORT = 8080\nSERVER_HOST = \"192.168.137.1\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -537,7 +573,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "SERVER_PORT = 8080\nSERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0",
+        "peekOfCode": "SERVER_PORT = 8080\nSERVER_HOST = \"192.168.137.1\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -546,7 +582,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "SERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0\n# rows, cols = 5, 10",
+        "peekOfCode": "SERVER_HOST = \"192.168.137.1\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0\n# rows, cols = 5, 10",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -645,7 +681,7 @@
         "kind": 2,
         "importPath": "Client.help",
         "description": "Client.help",
-        "peekOfCode": "def welcome():\n    print(\"Welcome to a BitTorrent program by ***, press Help to see how to use\")\ndef display_help_overview():\n    help_overview = \"\"\"\n    Available commands:\n    + Help (Command name): View detailed explanation of a command\n    + MakeTor [F] (IPT): Create a torrent file from the input file for the specified IP, uses default if IP not provided.\n    + Have [FTor]: Send torrent file(s) to a tracker of the torrent file.\n    + Down [FTor]: Download a file using the torrent, communicates with tracker of the torrent file.\n    + Preview [FTor]: View the contents of a torrent file in a human-readable format.",
+        "peekOfCode": "def welcome():\n    print(\"Welcome to a BitTorrent program by DDTorrent, press Help to see how to use\")\ndef display_help_overview():\n    help_overview = \"\"\"\n    Available commands:\n    + Help (Command name): View detailed explanation of a command\n    + MakeTor [F] (IPT): Create a torrent file from the input file for the specified IP, uses default if IP not provided.\n    + Have [FTor]: Send torrent file(s) to a tracker of the torrent file.\n    + Down [FTor]: Download a file using the torrent, communicates with tracker of the torrent file.\n    + Preview [FTor]: View the contents of a torrent file in a human-readable format.",
         "detail": "Client.help",
         "documentation": {}
     },
