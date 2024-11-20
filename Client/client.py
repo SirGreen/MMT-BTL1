@@ -256,7 +256,7 @@ def download_chunk(
         with client.makefile("rb") as rfile:
             with open(file_resu, "r+b") as f:
                 mm = mmap.mmap(f.fileno(), 0)
-
+                chunk_array = []
                 while 1:
                     start_index=0
                     client.send(torrent_file_name.encode())
@@ -266,10 +266,21 @@ def download_chunk(
                     try:
                         json_buffer = json.loads(data.decode("utf-8"))
                         chunk_array = json_buffer
-                    except Exception:
-                        print("Exception at json")
-                        chunk_array = chunk_array
-                    # print(chunk_array)
+                    except Exception as e:
+                        client.close()
+                        download_chunk(progress,
+                            task,
+                            reponame,
+                            port,
+                            offset,
+                            piece_length,
+                            file_resu,
+                            key_value,
+                            total_size,
+                            offset_in_download_array,
+                            torrent_file_name,
+                            client_ip)
+                    chunk_array = chunk_array
                     with write_lock:
                         # Check whether have full file
                         array = config.downloadArray[offset_in_download_array][
@@ -465,9 +476,17 @@ def download(torrent_file_name, progress, tracker=None):
     for x in chunk_array:
         if x == 0:
             num_of_piece_left = num_of_piece_left + 1
+    
     task = progress.add_task(f"Download {file_name}", total=num_of_piece * piece_length)
     progress.update(task, advance=(num_of_piece - num_of_piece_left) * piece_length)
+    
+    for fn, ts in downloads:
+        print(fn)
+        if fn==file_name and ts!=task:
+            downloads.remove((fn,ts))
+            progress.remove_task(ts)
     downloads.append((file_name, task))
+    
 
     index = 0
     # print(offset_in_download_array)
