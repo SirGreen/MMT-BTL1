@@ -229,87 +229,80 @@ def download_chunk(
                     # chunk_array=client.recv(1024).decode()
                     data = client.recv(32768)  # DownloadedChunkBit Array
                     chunk_array = json.loads(data.decode("utf-8"))
+                    num_of_piece=math.ceil(total_size / piece_length)
                     # print(chunk_array)
-                    with write_lock:
-                        # Check whether have full file
-                        array = config.downloadArray[offset_in_download_array][
-                            math.ceil(total_size / piece_length) : math.ceil(
-                                total_size / piece_length
-                            )
-                            * 2
-                        ]
-                        if min(array) == 1:
-                            if max(array) == 1:
-                                client.close()
-                                return
+                    
+                    # with write_lock:
+                    #     # Check whether have full file
+                    #     array = config.downloadArray[offset_in_download_array][
+                    #         math.ceil(total_size / piece_length) : math.ceil(
+                    #             total_size / piece_length
+                    #         )
+                    #         * 2
+                    #     ]
+                    # if all(chunk == 1 for chunk in array):
+                    #         # if max(array) == 1:
+                    #             client.close()
+                    #             return
 
                         # update number of clients having each chunk
+                    with write_lock:
                         index = 0
-                        while index < math.ceil(total_size / piece_length):
+                        while index < num_of_piece:
                             config.downloadArray[offset_in_download_array][index] += (
                                 chunk_array[index]
                             )
                             index += 1
 
                     while 1:
+                        array_at_offset=config.downloadArray[offset_in_download_array]
                         # Check whether have full file
-                        array = config.downloadArray[offset_in_download_array][
-                            math.ceil(total_size / piece_length) : math.ceil(
-                                total_size / piece_length
-                            )
-                            * 2
+                        array = array_at_offset[
+                            num_of_piece : num_of_piece* 2
                         ]
-                        if min(array) == 1:
-                            if max(array) == 1:
+                        if all(chunk == 1 for chunk in array):
+                            # if max(array) == 1:
                                 client.close()
                                 return
 
                         # Find rarest chunk
-                        with write_lock:
-                            min_value = min(
-                                config.downloadArray[offset_in_download_array][
-                                    start_index : math.ceil(total_size / piece_length)
+                        min_value = min(
+                                array_at_offset[
+                                    start_index : num_of_piece
                                 ]
-                            )
-                            value_chunk_of_downloader = config.downloadArray[
-                                offset_in_download_array
-                            ][
-                                config.downloadArray[offset_in_download_array].index(
-                                    min_value
-                                )
-                                + math.ceil(total_size / piece_length)
-                            ]
-                            start_index=config.downloadArray[offset_in_download_array].index(
-                                    min_value
-                            ) + 1 
-                            if start_index >= math.ceil(total_size / piece_length):
-                                start_index=0
+                        )
+                        
+                        index_of_min_value= array_at_offset.index(
+                                min_value
+                        )
+                           
+                        start_index=index_of_min_value + 1 
+                        if start_index >= num_of_piece:
+                            start_index=0
+                                
+                        with write_lock:  
+                            value_chunk_of_downloader = config.downloadArray[offset_in_download_array][
+                                index_of_min_value
+                                + num_of_piece
+                            ]  
                             if value_chunk_of_downloader == 0:
                                 if (
                                     chunk_array[
-                                        config.downloadArray[
-                                            offset_in_download_array
-                                        ].index(min_value)
+                                        index_of_min_value
                                     ]
                                     == 1
                                 ):
                                     config.downloadArray[offset_in_download_array][
-                                        config.downloadArray[
-                                            offset_in_download_array
-                                        ].index(min_value)
-                                        + math.ceil(total_size / piece_length)
+                                        index_of_min_value
+                                        + num_of_piece
                                     ] = 2  # dang tai
                                     offset = int(
-                                        config.downloadArray[
-                                            offset_in_download_array
-                                        ].index(min_value)
+                                        index_of_min_value
                                     )
                                     break
                             if value_chunk_of_downloader == 1:
                                 config.downloadArray[offset_in_download_array][
-                                    config.downloadArray[offset_in_download_array].index(
-                                        min_value
-                                    )
+                                    index_of_min_value
                                 ] = 1000000
 
                     # send offset chunk
@@ -357,13 +350,12 @@ def download_chunk(
                     with write_lock:
                         # Check whether have full file
                         array = config.downloadArray[offset_in_download_array][
-                            math.ceil(total_size / piece_length) : (
-                                math.ceil(total_size / piece_length)
-                                + math.ceil(total_size / piece_length)
+                            num_of_piece : (
+                                num_of_piece*2
                             )
                         ]
-                        if min(array) == 1:
-                            if max(array) == 1:
+                    if all(chunk == 1 for chunk in array):
+                            # if max(array) == 1:
                                 break
                 mm.close()
                 f.close()
@@ -494,8 +486,8 @@ def download(torrent_file_name, progress, tracker=None):
     array = config.downloadArray[offset_in_download_array][
         math.ceil(total_size / piece_length) : math.ceil(total_size / piece_length) * 2
     ]
-    if min(array) == 1:
-        if max(array) == 1:
+    if all(chunk == 1 for chunk in array):
+        # if max(array) == 1:
             # have(torrent_file_name)
             # Now the task is complete, start the 30-second delay
             trCom.send_tracker("done", params, tracker)
