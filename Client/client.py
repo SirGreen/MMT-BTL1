@@ -145,7 +145,6 @@ def peer_connect(client_socket):
                 while chunk := file.read(1024):
                     client_socket.sendall(chunk)
             print("File sent successfully.")
-            client_socket.sendall(b'')
         except FileNotFoundError:
             print("File not found. Ensure the .torrent file exists.")
         return
@@ -168,6 +167,10 @@ def peer_connect(client_socket):
             mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
             while 1:
                 torrent_file_name = client_socket.recv(1024).decode()
+                torrent_file_name = os.path.basename(torrent_file_name)
+                torrent_file_name = (
+                    f"program_{config.prog_num}/torrents/" + torrent_file_name
+                )
                 if not torrent_file_name:
                     f1.close()
                     wfile.close()
@@ -175,10 +178,6 @@ def peer_connect(client_socket):
                     return
                 elif first:
                     first = False
-                    torrent_file_name = os.path.basename(torrent_file_name)
-                    torrent_file_name = (
-                        f"program_{config.prog_num}/torrents/" + torrent_file_name
-                    )
 
                     piece_length = trCtrl.get_piece_length_from_torrent(
                         torrent_file_name
