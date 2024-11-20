@@ -242,7 +242,6 @@ def download_chunk(
     torrent_file_name,
     client_ip,
 ):
-    try:
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # upload_host1 = socket.gethostbyname(socket.gethostname())
         # print(f'Debug connect: {upload_host1}, {port}')
@@ -264,7 +263,12 @@ def download_chunk(
                     trCtrl.get_file_name(torrent_file_name)
                     # chunk_array=client.recv(1024).decode()
                     data = client.recv(32768)  # DownloadedChunkBit Array
-                    chunk_array = json.loads(data.decode("utf-8"))
+                    try:
+                        json_buffer = json.loads(data.decode("utf-8"))
+                        chunk_array = json_buffer
+                    except Exception:
+                        print("Exception at json")
+                        chunk_array = chunk_array
                     # print(chunk_array)
                     with write_lock:
                         # Check whether have full file
@@ -409,8 +413,6 @@ def download_chunk(
                 f.close()
         rfile.close()
         client.close()
-    except Exception as e:
-        print(e)
 
 
 def download(torrent_file_name, progress, tracker=None):
@@ -678,7 +680,7 @@ def input_listener(show_progress, live):
     have(f"program_{config.prog_num}/torrents")
 
     while True:
-        try:
+        # try:
             user_input = input("Enter a command: ").strip().lower()
             command_split = user_input.split()
             if user_input.startswith("down"):
@@ -788,8 +790,8 @@ def input_listener(show_progress, live):
                 print(
                     "Unknown command. Type 'Help' to see the list of available commands."
                 )
-        except Exception as e:
-            print("Error: ", e)
+        # except Exception as e:
+        #     print("Error: ", e)
 
 
 # Function to manage and launch downloads
