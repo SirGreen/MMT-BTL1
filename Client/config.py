@@ -1,7 +1,7 @@
 Flag = False
 peer_repo = []
 SERVER_PORT = 8080
-SERVER_HOST = "localhost"
+SERVER_HOST = "192.168.43.10"
 DEFAULT_TRACKER = "http://" + SERVER_HOST + ":" + str(SERVER_PORT)
 BLOCK_SZ = 512
 BLOCK = 128 << 10  # 128KB
