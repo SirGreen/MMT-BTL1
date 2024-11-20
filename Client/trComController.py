@@ -3,6 +3,8 @@ from config import DEFAULT_TRACKER
 
 def send_get(url, params=None):
     try:
+        # print(url)
+        
         # Send the GET request
         response = requests.get(url, params=params)
 
