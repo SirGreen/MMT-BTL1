@@ -252,12 +252,14 @@ def download_chunk(
         client.send(reponame)  # reponame la torrent hash
         file_name = client.recv(1024).decode()
         # file_size = client.recv(1024).decode()
+        
 
         with client.makefile("rb") as rfile:
             with open(file_resu, "r+b") as f:
                 mm = mmap.mmap(f.fileno(), 0)
 
                 while 1:
+                    start_index=0
                     client.send(torrent_file_name.encode())
                     trCtrl.get_file_name(torrent_file_name)
                     # chunk_array=client.recv(1024).decode()
@@ -302,7 +304,7 @@ def download_chunk(
                         with write_lock:
                             min_value = min(
                                 config.downloadArray[offset_in_download_array][
-                                    0 : math.ceil(total_size / piece_length)
+                                    start_index : math.ceil(total_size / piece_length)
                                 ]
                             )
                             value_chunk_of_downloader = config.downloadArray[
@@ -313,6 +315,11 @@ def download_chunk(
                                 )
                                 + math.ceil(total_size / piece_length)
                             ]
+                            start_index=config.downloadArray[offset_in_download_array].index(
+                                    min_value
+                            ) + 1 
+                            if start_index >= math.ceil(total_size / piece_length):
+                                start_index=0
                             if value_chunk_of_downloader == 0:
                                 if (
                                     chunk_array[
