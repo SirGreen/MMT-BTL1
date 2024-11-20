@@ -566,16 +566,16 @@ def download(torrent_file_name, progress, tracker=None):
             # Now the task is complete, start the 30-second delay
             trCom.send_tracker("done", params, tracker)
             
-        for remaining_time in range(10, 0, -1):
-            progress.update(
-                task,
-                description=f"Moving {file_name} to completed in {remaining_time}s",
-            )
-            time.sleep(1)
+    for remaining_time in range(10, 0, -1):
+        progress.update(
+            task,
+            description=f"Moving {file_name} to completed in {remaining_time}s",
+        )
+        time.sleep(1)
 
-        # After the 10 seconds, remove the task from the progress bar and add it to completed list
-        progress.remove_task(task)
-        downloads.remove((file_name, task))
+    # After the 10 seconds, remove the task from the progress bar and add it to completed list
+    progress.remove_task(task)
+    downloads.remove((file_name, task))
 
 
 # endregion
