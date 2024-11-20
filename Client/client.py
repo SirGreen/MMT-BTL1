@@ -162,6 +162,8 @@ def peer_connect(client_socket):
     # client_socket.send(str(file_size).encode())
     print(filename)
     first = True
+    while not os.path.exists(filename):
+        time.sleep(1)
     with client_socket.makefile("wb") as wfile:
         with open(filename, "rb") as f1:
             mm = mmap.mmap(f1.fileno(), 0, access=mmap.ACCESS_READ)
