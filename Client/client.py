@@ -242,6 +242,7 @@ def download_chunk(
     torrent_file_name,
     client_ip,
 ):
+    try:
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # upload_host1 = socket.gethostbyname(socket.gethostname())
         # print(f'Debug connect: {upload_host1}, {port}')
@@ -424,6 +425,8 @@ def download_chunk(
                 f.close()
         rfile.close()
         client.close()
+    except Exception as e:
+        print(e)
 
 
 def download(torrent_file_name, progress, tracker=None):
