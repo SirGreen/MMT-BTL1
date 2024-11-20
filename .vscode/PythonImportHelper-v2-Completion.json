@@ -69,15 +69,6 @@
         "documentation": {}
     },
     {
-        "label": "tqdm",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "tqdm",
-        "description": "tqdm",
-        "detail": "tqdm",
-        "documentation": {}
-    },
-    {
         "label": "help",
         "kind": 6,
         "isExtraImport": true,
@@ -194,6 +185,14 @@
         "documentation": {}
     },
     {
+        "label": "Console",
+        "importPath": "rich.console",
+        "description": "rich.console",
+        "isExtraImport": true,
+        "detail": "rich.console",
+        "documentation": {}
+    },
+    {
         "label": "Live",
         "importPath": "rich.live",
         "description": "rich.live",
@@ -219,6 +218,30 @@
     },
     {
         "label": "TextColumn",
+        "importPath": "rich.progress",
+        "description": "rich.progress",
+        "isExtraImport": true,
+        "detail": "rich.progress",
+        "documentation": {}
+    },
+    {
+        "label": "TimeRemainingColumn",
+        "importPath": "rich.progress",
+        "description": "rich.progress",
+        "isExtraImport": true,
+        "detail": "rich.progress",
+        "documentation": {}
+    },
+    {
+        "label": "DownloadColumn",
+        "importPath": "rich.progress",
+        "description": "rich.progress",
+        "isExtraImport": true,
+        "detail": "rich.progress",
+        "documentation": {}
+    },
+    {
+        "label": "TaskProgressColumn",
         "importPath": "rich.progress",
         "description": "rich.progress",
         "isExtraImport": true,
@@ -252,7 +275,7 @@
         "documentation": {}
     },
     {
-        "label": "HTTPServer",
+        "label": "ThreadingHTTPServer",
         "importPath": "http.server",
         "description": "http.server",
         "isExtraImport": true,
@@ -276,20 +299,12 @@
         "documentation": {}
     },
     {
-        "label": "pickle",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "pickle",
-        "description": "pickle",
-        "detail": "pickle",
-        "documentation": {}
-    },
-    {
-        "label": "send_get",
-        "importPath": "Client.trComController",
-        "description": "Client.trComController",
-        "isExtraImport": true,
-        "detail": "Client.trComController",
+        "label": "printAnnounce",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def printAnnounce(msg):\n    print(msg + \"\\nEnter a command: \")\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(f\"Sending tracker: {torrent_file_path}\")\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))\n    fdt.update_data_file(file_name, n)\n    # tracker = trCtrl.get_trackers(torrent_file_path)[0]",
+        "detail": "Client.client",
         "documentation": {}
     },
     {
@@ -297,7 +312,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))\n    fdt.update_data_file(file_name,n)\n    tracker = trCtrl.get_trackers(torrent_file_path)[0]\n    config.peer_repo.append({\"filename\": file_name, \"reponame\": torrent_hash})\n    print(file_name)\n    params = {}",
+        "peekOfCode": "def send_torrent_tracker(torrent_file_path, tracker):\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(f\"Sending tracker: {torrent_file_path}\")\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))\n    fdt.update_data_file(file_name, n)\n    # tracker = trCtrl.get_trackers(torrent_file_path)[0]\n    tracker = config.DEFAULT_TRACKER\n    config.peer_repo.append({\"filename\": file_name, \"reponame\": torrent_hash})\n    # print(file_name)",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -315,7 +330,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def send_scrape(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    tracker = trCtrl.get_trackers(torrent_file_path)[0]\n    config.peer_repo.append({\"filename\": file_name, \"reponame\": torrent_hash})\n    print(file_name)\n    params = {}\n    params[\"torrent_hash\"] = torrent_hash\n    params[\"peerid\"] = config.peer_id\n    trCom.send_tracker(\"scrape\", params, tracker)",
+        "peekOfCode": "def send_scrape(torrent_file_path, tracker):\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    tracker = trCtrl.get_trackers(torrent_file_path)[0]\n    config.peer_repo.append({\"filename\": file_name, \"reponame\": torrent_hash})\n    print(file_name)\n    params = {}\n    params[\"torrent_hash\"] = torrent_hash\n    params[\"peerid\"] = config.peer_id\n    response = trCom.send_tracker(\"scrape\", params, tracker)",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -333,7 +348,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def peer_connect(client_socket):\n    reponame = client_socket.recv(1024)\n    filename = \"\"\n    for repo in config.peer_repo:\n        if repo[\"reponame\"] == reponame:\n            filename = repo[\"filename\"]\n    filename = f'program_{config.prog_num}/downloads/' + filename\n    file_size = os.path.getsize(filename)\n    piece_length = trCtrl.get_piece_length(file_size)\n    print(f\"Piece length: {piece_length}\")",
+        "peekOfCode": "def peer_connect(client_socket):\n    reponame = client_socket.recv(1024)\n    filename = \"\"\n    for repo in config.peer_repo:\n        if repo[\"reponame\"] == reponame:\n            filename = repo[\"filename\"]\n    filename = f\"program_{config.prog_num}/downloads/\" + filename\n    file_size = os.path.getsize(filename)\n    piece_length = 0\n    client_socket.send((\"recievied_\" + filename).encode())",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -342,7 +357,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def upload():\n    upload_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    upload_host = socket.gethostbyname(socket.gethostname())\n    upload_socket.bind((upload_host, port))\n    upload_socket.listen(5)\n    while not config.Flag:\n        (client_socket, client_addr) = upload_socket.accept()\n        print(\"Got connection from\", client_addr)\n        new_thread = Thread(target=peer_connect, args=(client_socket,))\n        new_thread.start()",
+        "peekOfCode": "def upload():\n    upload_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    upload_host = socket.gethostbyname(socket.gethostname())\n    upload_socket.bind((upload_host, port))\n    upload_socket.listen(5)\n    while not config.Flag:\n        try:\n            (client_socket, client_addr) = upload_socket.accept()\n            print(\"Got connection from\", client_addr)\n            new_thread = Thread(target=peer_connect, args=(client_socket,))",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -360,7 +375,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def download(torrent_file_name, progress, tracker=None):\n    # torrent = torrent_file_name\n    torrent_file_name=f'program_{config.prog_num}/torrents/'+torrent_file_name\n    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_name)\n    if tracker is None:\n        tracker = config.DEFAULT_TRACKER\n    url = tracker + \"/announce/down\"\n    params = {}\n    params[\"torrent_hash\"] = trCtrl.get_torrent_hash(torrent_file_name)",
+        "peekOfCode": "def download(torrent_file_name, progress, tracker=None):\n    # torrent = torrent_file_name\n    torrent_file_name = f\"program_{config.prog_num}/torrents/\" + torrent_file_name\n    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_name)\n    if tracker is None:\n        tracker = config.DEFAULT_TRACKER\n    url = tracker + \"/announce/down\"\n    params = {}\n    params[\"torrent_hash\"] = trCtrl.get_torrent_hash(torrent_file_name)",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -396,7 +411,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def join(tracker=None):\n    config.prog_num = setup_program_folder()\n    config.peer_id = config.peer_id + str(config.prog_num)\n    if tracker is None:\n        tracker = config.DEFAULT_TRACKER\n    url = tracker + \"/announce/join\"\n    params = {}\n    params[\"peerid\"] = config.peer_id\n    params[\"port\"] = port\n    trCom.send_get(url, params)",
+        "peekOfCode": "def join(tracker=None):\n    config.prog_num = setup_program_folder()\n    config.peer_id = config.peer_id + str(config.prog_num)\n    if tracker is None:\n        tracker = config.DEFAULT_TRACKER\n    url = tracker + \"/announce/join\"\n    params = {}\n    params[\"peerid\"] = config.peer_id\n    params[\"port\"] = port\n    params[\"IP\"] = socket.gethostbyname(socket.gethostname())",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -405,7 +420,16 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def client_exit(tracker=None):\n    if tracker is None:\n        tracker = config.DEFAULT_TRACKER\n    url = tracker + \"/announce/exit\"\n    params = {}\n    params[\"peerid\"] = config.peer_id\n    print(config.peer_id)\n    trCom.send_get(url, params)\n# endregion\n# Function to listen to user input commands and manage display",
+        "peekOfCode": "def client_exit(tracker=None):\n    if tracker is None:\n        tracker = config.DEFAULT_TRACKER\n    url = tracker + \"/announce/exit\"\n    params = {}\n    params[\"peerid\"] = config.peer_id\n    print(config.peer_id)\n    trCom.send_get(url, params)\n# endregion\n# region ping",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "ping_tracker",
+        "kind": 2,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "def ping_tracker(tracker=None):\n    if tracker is None:\n        tracker = config.DEFAULT_TRACKER\n    url = tracker + \"/announce/ping\"\n    params = {}\n    params[\"peerid\"] = config.peer_id\n    while not config.Flag:\n        # trCom.send_get(url, params)\n        print(\"Ping sent to tracker\")\n        rep = trCom.send_get(url, params)",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -414,7 +438,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def input_listener(show_progress, live):\n    hostname = config.DEFAULT_TRACKER\n    join(hostname)\n    print(f\"Welcome user to ***'s bittorrent network,\\nPeer ID: {config.peer_id} (OwO)\")\n    fdt.update_data_file_dir()\n    have(f\"program_{config.prog_num}/torrents\")\n    while True:\n        try:\n            user_input = input(\"Enter a command: \").strip().lower()\n            command_split = user_input.split()",
+        "peekOfCode": "def input_listener(show_progress, live):\n    hostname = config.DEFAULT_TRACKER\n    join(hostname)\n    print(f\"Welcome user to ***'s bittorrent network,\\nPeer ID: {config.peer_id} (OwO)\")\n    fdt.update_data_file_dir()\n    ping_thread = Thread(target=ping_tracker, args=(hostname,))\n    ping_thread.daemon = True\n    ping_thread.start()\n    have(f\"program_{config.prog_num}/torrents\")\n    while True:",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -423,7 +447,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def download_manager(progress):\n    while True:\n        # Check for new download requests\n        if not download_queue.empty():\n            torName = download_queue.get()\n            threading.Thread(target=download, args=(torName, progress), daemon=True).start()\n        time.sleep(0.1)\n# Check the platform to use appropriate key press detection\nif sys.platform == \"win32\":\n    import msvcrt",
+        "peekOfCode": "def download_manager(progress):\n    while True:\n        # Check for new download requests\n        if not download_queue.empty():\n            torName = download_queue.get()\n            threading.Thread(\n                target=download, args=(torName, progress), daemon=True\n            ).start()\n        time.sleep(0.1)\n# Check the platform to use appropriate key press detection",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -432,7 +456,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def main():\n    help.welcome()  # Display the welcome message\n    # Initialize Progress and Live objects\n    show_progress = [False]\n    progress = Progress(\n        TextColumn(\"[progress.description]{task.description}\"),\n        BarColumn(),\n        TextColumn(\"[progress.percentage]{task.percentage:>3.0f}%\")\n    )\n    live = Live(progress, refresh_per_second=4, transient=True)",
+        "peekOfCode": "def main():\n    help.welcome()  # Display the welcome message\n    # Initialize Progress and Live objects\n    show_progress = [False]\n    progress = Progress(\n        TextColumn(\"[progress.description]{task.description}\"),\n        BarColumn(bar_width=40),\n        TaskProgressColumn(),\n        DownloadColumn(),\n        TimeRemainingColumn(),",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -441,7 +465,7 @@
         "kind": 5,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "write_lock = Lock()\ndebugLock = Lock()\ndownload_queue = queue.Queue()\ndownloads = []\nrunning = True\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)",
+        "peekOfCode": "write_lock = Lock()\ndebugLock = Lock()\ndownload_queue = queue.Queue()\ndownloads = []\nrunning = True\nconsole = Console()\ndef printAnnounce(msg):\n    print(msg + \"\\nEnter a command: \")\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -450,7 +474,7 @@
         "kind": 5,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "debugLock = Lock()\ndownload_queue = queue.Queue()\ndownloads = []\nrunning = True\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))",
+        "peekOfCode": "debugLock = Lock()\ndownload_queue = queue.Queue()\ndownloads = []\nrunning = True\nconsole = Console()\ndef printAnnounce(msg):\n    print(msg + \"\\nEnter a command: \")\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -459,7 +483,7 @@
         "kind": 5,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "download_queue = queue.Queue()\ndownloads = []\nrunning = True\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))\n    fdt.update_data_file(file_name,n)",
+        "peekOfCode": "download_queue = queue.Queue()\ndownloads = []\nrunning = True\nconsole = Console()\ndef printAnnounce(msg):\n    print(msg + \"\\nEnter a command: \")\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -468,7 +492,7 @@
         "kind": 5,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "downloads = []\nrunning = True\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))\n    fdt.update_data_file(file_name,n)\n    tracker = trCtrl.get_trackers(torrent_file_path)[0]",
+        "peekOfCode": "downloads = []\nrunning = True\nconsole = Console()\ndef printAnnounce(msg):\n    print(msg + \"\\nEnter a command: \")\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(f\"Sending tracker: {torrent_file_path}\")",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -477,7 +501,16 @@
         "kind": 5,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "running = True\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):    \n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(torrent_file_path)\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))\n    fdt.update_data_file(file_name,n)\n    tracker = trCtrl.get_trackers(torrent_file_path)[0]\n    config.peer_repo.append({\"filename\": file_name, \"reponame\": torrent_hash})",
+        "peekOfCode": "running = True\nconsole = Console()\ndef printAnnounce(msg):\n    print(msg + \"\\nEnter a command: \")\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(f\"Sending tracker: {torrent_file_path}\")\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))",
+        "detail": "Client.client",
+        "documentation": {}
+    },
+    {
+        "label": "console",
+        "kind": 5,
+        "importPath": "Client.client",
+        "description": "Client.client",
+        "peekOfCode": "console = Console()\ndef printAnnounce(msg):\n    print(msg + \"\\nEnter a command: \")\n# region Have\ndef send_torrent_tracker(torrent_file_path, tracker):\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    print(f\"Sending tracker: {torrent_file_path}\")\n    n = len(trCtrl.get_piece_hashes(torrent_file_path))\n    fdt.update_data_file(file_name, n)",
         "detail": "Client.client",
         "documentation": {}
     },
@@ -495,7 +528,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "peer_repo = []\nSERVER_PORT = 8080\nSERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0",
+        "peekOfCode": "peer_repo = []\nSERVER_PORT = 8080\nSERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -504,7 +537,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "SERVER_PORT = 8080\nSERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10",
+        "peekOfCode": "SERVER_PORT = 8080\nSERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -513,7 +546,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "SERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]",
+        "peekOfCode": "SERVER_HOST = \"localhost\"\nDEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0\n# rows, cols = 5, 10",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -522,7 +555,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "DEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "peekOfCode": "DEFAULT_TRACKER = \"http://\" + SERVER_HOST + \":\" + str(SERVER_PORT)\nBLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -531,7 +564,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "BLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "peekOfCode": "BLOCK_SZ = 512\nBLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -540,7 +573,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "BLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "peekOfCode": "BLOCK = 128 << 10  # 128KB\nBLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []\nbytesDownload = []",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -549,7 +582,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "BLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "peekOfCode": "BLOCK1 = 1 << 20  # 1024KB\npeer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []\nbytesDownload = []\ntimeStartDownload = []",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -558,7 +591,7 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "peer_id = \"BKU-Torrent-\" \nprog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "peekOfCode": "peer_id = \"BKU-Torrent-\" \nprog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []\nbytesDownload = []\ntimeStartDownload = []",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -567,7 +600,16 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "prog_num = 0\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []",
+        "peekOfCode": "prog_num = 0\nping_time = 298 # 5min\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []\nbytesDownload = []\ntimeStartDownload = []",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "ping_time",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "ping_time = 298 # 5min\noffsetDownloader=0\n# rows, cols = 5, 10\n# downloadArray = [[0 for _ in range(cols)] for _ in range(rows)]\ndownloadArray = []\nbytesDownload = []\ntimeStartDownload = []",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -576,7 +618,25 @@
         "kind": 5,
         "importPath": "Client.config",
         "description": "Client.config",
-        "peekOfCode": "downloadArray = []",
+        "peekOfCode": "downloadArray = []\nbytesDownload = []\ntimeStartDownload = []",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "bytesDownload",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "bytesDownload = []\ntimeStartDownload = []",
+        "detail": "Client.config",
+        "documentation": {}
+    },
+    {
+        "label": "timeStartDownload",
+        "kind": 5,
+        "importPath": "Client.config",
+        "description": "Client.config",
+        "peekOfCode": "timeStartDownload = []",
         "detail": "Client.config",
         "documentation": {}
     },
@@ -594,7 +654,7 @@
         "kind": 2,
         "importPath": "Client.help",
         "description": "Client.help",
-        "peekOfCode": "def display_help_overview():\n    help_overview = \"\"\"\n    Available commands:\n    + Help (Command name): View detailed explanation of a command\n    + MakeTor [F] (IPT): Create a torrent file from the input file for the specified IP, uses default if IP not provided.\n    + Have [FTor]: Send torrent file(s) to a tracker of the torrent file.\n    + Down [FTor]: Download a file using the torrent, communicates with tracker of the torrent file.\n    + Preview [FTor]: View the contents of a torrent file in a human-readable format.\n    + Exit: Exit the program\n    \"\"\"",
+        "peekOfCode": "def display_help_overview():\n    help_overview = \"\"\"\n    Available commands:\n    + Help (Command name): View detailed explanation of a command\n    + MakeTor [F] (IPT): Create a torrent file from the input file for the specified IP, uses default if IP not provided.\n    + Have [FTor]: Send torrent file(s) to a tracker of the torrent file.\n    + Down [FTor]: Download a file using the torrent, communicates with tracker of the torrent file.\n    + Preview [FTor]: View the contents of a torrent file in a human-readable format.\n    + Progress\n    + Status",
         "detail": "Client.help",
         "documentation": {}
     },
@@ -630,7 +690,7 @@
         "kind": 2,
         "importPath": "Client.progress",
         "description": "Client.progress",
-        "peekOfCode": "def file_downloaded(filename):\n    array = get_array(filename)\n    i = 0\n    for _ in array:\n        i = i + 1\n    if i==len(array):\n        return True\n    else:\n        return False\ndef file_exists(file_path):",
+        "peekOfCode": "def file_downloaded(filename):\n    array = get_array(filename)\n    i = 0\n    for x in array:\n        i = x + i\n    if i==len(array):\n        return 1\n    elif i==0:\n        return 0\n    else:",
         "detail": "Client.progress",
         "documentation": {}
     },
@@ -675,7 +735,7 @@
         "kind": 2,
         "importPath": "Client.progress",
         "description": "Client.progress",
-        "peekOfCode": "def update_array(file_name, new_array):\n    data = load_data()\n    if file_name not in data:\n        print(f\"File '{file_name}' does not exist.\")\n        return\n    data[file_name] = new_array\n    save_data(data)\n    print(f\"File '{file_name}' updated with new array.\")\ndef change_element(file_name, index, new_value):\n    data = load_data()",
+        "peekOfCode": "def update_array(file_name, new_array):\n    data = load_data()\n    if file_name not in data:\n        print(f\"File '{file_name}' does not exist.\")\n        return\n    data[file_name] = new_array\n    save_data(data)\n    # print(f\"File '{file_name}' updated with new array.\")\ndef change_element(file_name, index, new_value):\n    data = load_data()",
         "detail": "Client.progress",
         "documentation": {}
     },
@@ -797,6 +857,15 @@
         "documentation": {}
     },
     {
+        "label": "get_piece_length_from_torrent",
+        "kind": 2,
+        "importPath": "Client.torrentController",
+        "description": "Client.torrentController",
+        "peekOfCode": "def get_piece_length_from_torrent(torrent_file_name):\n    with open(torrent_file_name, \"rb\") as file:\n        # Decode the torrent file\n        torrent_data = bencodepy.decode(file.read())\n        # Extract file length from single or multiple files\n        if b'info' in torrent_data:\n            info = torrent_data[b'info']\n            if b'piece length' in info:  # Single-file torrent\n                return info[b'piece length']\n        else:",
+        "detail": "Client.torrentController",
+        "documentation": {}
+    },
+    {
         "label": "get_file_length",
         "kind": 2,
         "importPath": "Client.torrentController",
@@ -819,7 +888,7 @@
         "kind": 2,
         "importPath": "Client.trComController",
         "description": "Client.trComController",
-        "peekOfCode": "def send_get(url, params=None):\n    try:\n        # Send the GET request\n        response = requests.get(url, params=params)\n        # Check if the request was successful\n        response.raise_for_status()  # Raise an error for bad responses (4xx or 5xx)\n        # Process the response\n        # print(\"Response Status Code:\", response.status_code)\n        # print(\"Response Text:\", response.text)  # or response.json() for JSON responses\n        print(\"Response Text:\", response.text)",
+        "peekOfCode": "def send_get(url, params=None):\n    try:\n        # print(url)\n        # Send the GET request\n        response = requests.get(url, params=params)\n        # Check if the request was successful\n        response.raise_for_status()  # Raise an error for bad responses (4xx or 5xx)\n        # Process the response\n        # print(\"Response Status Code:\", response.status_code)\n        # print(\"Response Text:\", response.text)  # or response.json() for JSON responses",
         "detail": "Client.trComController",
         "documentation": {}
     },
@@ -837,7 +906,7 @@
         "kind": 6,
         "importPath": "Tracker.tracker",
         "description": "Tracker.tracker",
-        "peekOfCode": "class Server:\n    def __init__(self):\n        # server_info\n        self.port = SERVER_PORT\n        self.ip = SERVER_IP\n        # server_attributes\n        self.active_client = load_from_file(\"active_client.dat\")\n        self.rfc_index = load_from_file(\"rfc_index.dat\")\n        self.owner_file = load_from_file(\"owner_file.dat\")\n        self.count_done_client = load_from_file(\"count_done_client.dat\")",
+        "peekOfCode": "class Server:\n    def __init__(self):\n        # server_info\n        self.port = SERVER_PORT\n        self.ip = SERVER_IP\n        # server_attributes\n        self.active_client = load_from_file(\"active_client.dat\")\n        self.rfc_index = load_from_file(\"rfc_index.dat\")\n        self.owner_file = load_from_file(\"owner_file.dat\")\n        self.last_activity = load_from_file(\"last_activity.dat\")",
         "detail": "Tracker.tracker",
         "documentation": {}
     },
@@ -846,7 +915,7 @@
         "kind": 6,
         "importPath": "Tracker.tracker",
         "description": "Tracker.tracker",
-        "peekOfCode": "class Listener(BaseHTTPRequestHandler):\n    try:\n        def do_GET(self):\n            if self.path.find(\"/announce\") == -1:\n                raise \"Error URL\"\n            path = self.path[9:]\n            print(path)\n            if path == \"/hello\":\n                self.send_response(200)\n                self.send_header(\"Content-type\", \"text/plain\")",
+        "peekOfCode": "class Listener(BaseHTTPRequestHandler):\n    # Hàm tiện ích để gửi phản hồi HTTP\n    def _send_response(self, code, content_type, message):\n        self.send_response(code)\n        self.send_header(\"Content-type\", content_type)\n        self.end_headers()\n        self.wfile.write(message)\n    def do_GET(self):\n        try:\n            # Verify URL starts with `/announce`",
         "detail": "Tracker.tracker",
         "documentation": {}
     },
@@ -873,7 +942,7 @@
         "kind": 2,
         "importPath": "Tracker.tracker",
         "description": "Tracker.tracker",
-        "peekOfCode": "def start_server():\n    global httpd\n    server_class = HTTPServer\n    server_address = (\"\", SERVER_PORT)\n    handler_class = Listener\n    httpd = server_class(server_address, handler_class)\n    print(f\"Server on port: {SERVER_PORT}...\")\n    httpd.serve_forever()\nserver_thread = threading.Thread(target=start_server)\nserver_thread.start()",
+        "peekOfCode": "def start_server():\n    global httpd\n    server_class = ThreadingHTTPServer\n    server_address = (\"\", SERVER_PORT)\n    handler_class = Listener\n    httpd = server_class(server_address, handler_class)\n    print(f\"Server on port: {SERVER_PORT}...\")\n    httpd.serve_forever()\nserver_thread = threading.Thread(target=start_server)\nserver_thread.start()",
         "detail": "Tracker.tracker",
         "documentation": {}
     },
@@ -891,7 +960,7 @@
         "kind": 5,
         "importPath": "Tracker.tracker",
         "description": "Tracker.tracker",
-        "peekOfCode": "SERVER_PORT = 8080\nSERVER_IP = \"localhost\"\nRECEIVE_SIZE = 1024\nCODE = \"utf-8\"\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):",
+        "peekOfCode": "SERVER_PORT = 8080\nSERVER_IP = \"localhost\"\nRECEIVE_SIZE = 1024\nCODE = \"utf-8\"\nMIN_TIMEOUT = 1800\nCHECK_INTERVAL = 1800\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)",
         "detail": "Tracker.tracker",
         "documentation": {}
     },
@@ -900,7 +969,7 @@
         "kind": 5,
         "importPath": "Tracker.tracker",
         "description": "Tracker.tracker",
-        "peekOfCode": "SERVER_IP = \"localhost\"\nRECEIVE_SIZE = 1024\nCODE = \"utf-8\"\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):\n    \"\"\"Load a list or dictionary from a JSON-formatted file.\"\"\"",
+        "peekOfCode": "SERVER_IP = \"localhost\"\nRECEIVE_SIZE = 1024\nCODE = \"utf-8\"\nMIN_TIMEOUT = 1800\nCHECK_INTERVAL = 1800\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")",
         "detail": "Tracker.tracker",
         "documentation": {}
     },
@@ -909,7 +978,7 @@
         "kind": 5,
         "importPath": "Tracker.tracker",
         "description": "Tracker.tracker",
-        "peekOfCode": "RECEIVE_SIZE = 1024\nCODE = \"utf-8\"\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):\n    \"\"\"Load a list or dictionary from a JSON-formatted file.\"\"\"\n    if not os.path.exists(filename):",
+        "peekOfCode": "RECEIVE_SIZE = 1024\nCODE = \"utf-8\"\nMIN_TIMEOUT = 1800\nCHECK_INTERVAL = 1800\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):",
         "detail": "Tracker.tracker",
         "documentation": {}
     },
@@ -918,7 +987,25 @@
         "kind": 5,
         "importPath": "Tracker.tracker",
         "description": "Tracker.tracker",
-        "peekOfCode": "CODE = \"utf-8\"\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):\n    \"\"\"Load a list or dictionary from a JSON-formatted file.\"\"\"\n    if not os.path.exists(filename):\n        # Create the file with an empty list as default data",
+        "peekOfCode": "CODE = \"utf-8\"\nMIN_TIMEOUT = 1800\nCHECK_INTERVAL = 1800\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):\n    \"\"\"Load a list or dictionary from a JSON-formatted file.\"\"\"",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "MIN_TIMEOUT",
+        "kind": 5,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "MIN_TIMEOUT = 1800\nCHECK_INTERVAL = 1800\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):\n    \"\"\"Load a list or dictionary from a JSON-formatted file.\"\"\"\n    if not os.path.exists(filename):",
+        "detail": "Tracker.tracker",
+        "documentation": {}
+    },
+    {
+        "label": "CHECK_INTERVAL",
+        "kind": 5,
+        "importPath": "Tracker.tracker",
+        "description": "Tracker.tracker",
+        "peekOfCode": "CHECK_INTERVAL = 1800\ndef save_to_file(data, filename):\n    \"\"\"Save a list or dictionary to a file in JSON format.\"\"\"\n    with open(filename, \"w\") as file:\n        json.dump(data, file)\n    print(f\"Data saved to {filename}\")\ndef load_from_file(filename):\n    \"\"\"Load a list or dictionary from a JSON-formatted file.\"\"\"\n    if not os.path.exists(filename):\n        # Create the file with an empty list as default data",
         "detail": "Tracker.tracker",
         "documentation": {}
     },
@@ -927,7 +1014,7 @@
         "kind": 5,
         "importPath": "Tracker.tracker",
         "description": "Tracker.tracker",
-        "peekOfCode": "tracker_server = Server()\nclass Listener(BaseHTTPRequestHandler):\n    try:\n        def do_GET(self):\n            if self.path.find(\"/announce\") == -1:\n                raise \"Error URL\"\n            path = self.path[9:]\n            print(path)\n            if path == \"/hello\":\n                self.send_response(200)",
+        "peekOfCode": "tracker_server = Server()\nclass Listener(BaseHTTPRequestHandler):\n    # Hàm tiện ích để gửi phản hồi HTTP\n    def _send_response(self, code, content_type, message):\n        self.send_response(code)\n        self.send_header(\"Content-type\", content_type)\n        self.end_headers()\n        self.wfile.write(message)\n    def do_GET(self):\n        try:",
         "detail": "Tracker.tracker",
         "documentation": {}
     },
