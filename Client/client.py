@@ -539,17 +539,17 @@ def download(torrent_file_name, progress, tracker=None):
             # have(torrent_file_name)
             # Now the task is complete, start the 30-second delay
             trCom.send_tracker("done", params, tracker)
+            
+    for remaining_time in range(10, 0, -1):
+        progress.update(
+            task,
+            description=f"Moving {file_name} to completed in {remaining_time}s",
+        )
+        time.sleep(1)
 
-            for remaining_time in range(10, 0, -1):
-                progress.update(
-                    task,
-                    description=f"Moving {file_name} to completed in {remaining_time}s",
-                )
-                time.sleep(1)
-
-            # After the 10 seconds, remove the task from the progress bar and add it to completed list
-            progress.remove_task(task)
-            downloads.remove((file_name, task))
+    # After the 10 seconds, remove the task from the progress bar and add it to completed list
+    progress.remove_task(task)
+    downloads.remove((file_name, task))
 
 
 # endregion
@@ -680,7 +680,7 @@ def input_listener(show_progress, live):
     have(f"program_{config.prog_num}/torrents")
 
     while True:
-        # try:
+        try:
             user_input = input("Enter a command: ").strip().lower()
             command_split = user_input.split()
             if user_input.startswith("down"):
@@ -790,8 +790,8 @@ def input_listener(show_progress, live):
                 print(
                     "Unknown command. Type 'Help' to see the list of available commands."
                 )
-        # except Exception as e:
-        #     print("Error: ", e)
+        except Exception as e:
+            print("Error: ", e)
 
 
 # Function to manage and launch downloads
