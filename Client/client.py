@@ -480,7 +480,7 @@ def download(torrent_file_name, progress, tracker=None):
         # print(port_list)
         #####
         
-        config.peer_repo.append({"filename": trCtrl.get_file_name(torrent_hash), "reponame": torrent_hash})
+        config.peer_repo.append({"filename": trCtrl.get_file_name(torrent_file_name), "reponame": torrent_hash})
         
         # port1 = int(input("Input peer port from list above: "))
         key_value = trCtrl.get_piece_hashes(torrent_file_name)
