@@ -174,10 +174,10 @@ def peer_connect(client_socket):
                         torrent_file_name = client_socket.recv(1024).decode()
                     except Exception as e:
                         1
-                    # torrent_file_name = os.path.basename(torrent_file_name)
-                    # torrent_file_name = (
-                    #     f"program_{config.prog_num}/torrents/" + torrent_file_name
-                    # )
+                    torrent_file_name = os.path.basename(torrent_file_name)
+                    torrent_file_name = (
+                        f"program_{config.prog_num}/torrents/" + torrent_file_name
+                    )
                     if not torrent_file_name:
                         # f1.close()
                         # wfile.close()
