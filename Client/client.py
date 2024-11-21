@@ -174,19 +174,20 @@ def peer_connect(client_socket):
                         torrent_file_name = client_socket.recv(1024).decode()
                     except Exception as e:
                         1
-                    torrent_file_name = os.path.basename(torrent_file_name)
-                    torrent_file_name = (
-                        f"program_{config.prog_num}/torrents/" + torrent_file_name
-                    )
+                    
                     if not torrent_file_name:
                         # f1.close()
                         # wfile.close()
                         # client_socket.close()
                         # return
                         break
+                    
                     elif first:
                         first = False
-
+                        torrent_file_name = os.path.basename(torrent_file_name)
+                        torrent_file_name = (
+                            f"program_{config.prog_num}/torrents/" + torrent_file_name
+                        )
                         piece_length = trCtrl.get_piece_length_from_torrent(
                             torrent_file_name
                         )
@@ -480,6 +481,7 @@ def download(torrent_file_name, progress, tracker=None):
         #####
         
         config.peer_repo.append({"filename": trCtrl.get_file_name(torrent_hash), "reponame": torrent_hash})
+        
         # port1 = int(input("Input peer port from list above: "))
         key_value = trCtrl.get_piece_hashes(torrent_file_name)
         total_size = trCtrl.get_file_length(torrent_file_name)
