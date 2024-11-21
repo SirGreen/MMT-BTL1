@@ -227,7 +227,7 @@ def peer_connect(client_socket):
         wfile.close()
         client_socket.close()
     except Exception as e:
-        print(e)
+        1
 
 
 def upload():
@@ -242,7 +242,7 @@ def upload():
             new_thread = Thread(target=peer_connect, args=(client_socket,))
             new_thread.start()
         except Exception as e:
-            print(e)
+            1
 
     upload_socket.close()
 
@@ -459,7 +459,8 @@ def download_chunk(
         rfile.close()
         client.close()
     except Exception as e:
-        print(e)
+        # print(e)
+        1
 
 
 def download(torrent_file_name, progress, tracker=None):
@@ -477,7 +478,8 @@ def download(torrent_file_name, progress, tracker=None):
         port_list = trCom.send_get(url, params).json()
         # print(port_list)
         #####
-
+        
+        config.peer_repo.append({"filename": trCtrl.get_file_name(torrent_hash), "reponame": torrent_hash})
         # port1 = int(input("Input peer port from list above: "))
         key_value = trCtrl.get_piece_hashes(torrent_file_name)
         total_size = trCtrl.get_file_length(torrent_file_name)
@@ -607,7 +609,8 @@ def download(torrent_file_name, progress, tracker=None):
         progress.remove_task(task)
         downloads.remove((file_name, task))
     except Exception as e:
-        print(e)
+        # print(e)
+        1
 
 
 # endregion
