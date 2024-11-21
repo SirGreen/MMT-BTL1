@@ -172,7 +172,7 @@ def peer_connect(client_socket):
                     torrent_file_name = None
                     try:
                         torrent_file_name = client_socket.recv(1024).decode()
-                    except ConnectionAbortedError as e:
+                    except Exception as e:
                         1
                     # torrent_file_name = os.path.basename(torrent_file_name)
                     # torrent_file_name = (
@@ -207,7 +207,7 @@ def peer_connect(client_socket):
                     client_socket.send(data.encode("utf-8"))
                     try:
                         a = client_socket.recv(4)
-                    except ConnectionAbortedError as e:
+                    except Exception as e:
                         # print(f"Connection aborted: {e}")
                         1
                         
@@ -217,11 +217,11 @@ def peer_connect(client_socket):
                     byte_data = len(data).to_bytes(4, "big")
                     try:
                         client_socket.send(byte_data)
-                    except ConnectionAbortedError as e:
+                    except Exception as e:
                         1
                     try:
                         wfile.write(data)
-                    except ConnectionAbortedError as e:
+                    except Exception as e:
                         1
             f1.close()
         wfile.close()
