@@ -206,6 +206,24 @@ class Server:
                         # Delete the file entry if no clients are associated with it anymore
                         if not self.rfc_index[filename]:
                             del self.rfc_index[filename]
+                    
+                    if filename in self.done_client:
+                        # Remove the peer_id from the list of clients associated with each file
+                        self.done_client[filename] = [
+                            entry for entry in self.rfc_index[filename] if entry != peer_id
+                        ]
+                        # Delete the file entry if no clients are associated with it anymore
+                        if not self.done_client[filename]:
+                            del self.done_client[filename]
+                    
+                    if filename in self.not_done_client:
+                        # Remove the peer_id from the list of clients associated with each file
+                        self.not_done_client[filename] = [
+                            entry for entry in self.not_done_client[filename] if entry != peer_id
+                        ]
+                        # Delete the file entry if no clients are associated with it anymore
+                        if not self.not_done_client[filename]:
+                            del self.not_done_client[filename]
 
                 # Delete the owner's file entries
                 del self.owner_file[peer_id]
@@ -222,11 +240,15 @@ class Server:
         save_to_file(self.rfc_index, "rfc_index.dat")
         save_to_file(self.active_client, "active_client.dat")
         save_to_file(self.last_activity, "last_activity.dat")
+        save_to_file(self.done_client, "done_client.dat")
+        save_to_file(self.not_done_client, "not_done_client.dat")
         
         # For debugging: print the current state of the data structures
         print("Current rfc_index:", self.rfc_index)
         print("Current owner_file:", self.owner_file)
         print("Current last_activity:", self.last_activity)
+        print("Current done_client:", self.done_client)
+        print("Current not_done_client:", self.not_done_client)
 
 
 tracker_server = Server()
