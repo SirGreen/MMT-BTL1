@@ -339,7 +339,7 @@
         "kind": 2,
         "importPath": "Client.client",
         "description": "Client.client",
-        "peekOfCode": "def send_scrape(torrent_file_path, tracker):\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    tracker = trCtrl.get_trackers(torrent_file_path)[0]\n    config.peer_repo.append({\"filename\": file_name, \"reponame\": torrent_hash})\n    print(file_name)\n    params = {}\n    params[\"torrent_hash\"] = torrent_hash\n    params[\"peerid\"] = config.peer_id\n    response = trCom.send_tracker(\"scrape\", params, tracker)",
+        "peekOfCode": "def send_scrape(torrent_file_path, tracker):\n    torrent_hash = trCtrl.get_torrent_hash(torrent_file_path)\n    file_name = trCtrl.get_file_name(torrent_file_path)\n    tracker = config.DEFAULT_TRACKER\n    config.peer_repo.append({\"filename\": file_name, \"reponame\": torrent_hash})\n    print(file_name)\n    params = {}\n    params[\"torrent_hash\"] = torrent_hash\n    params[\"peerid\"] = config.peer_id\n    response = trCom.send_tracker(\"scrape\", params, tracker)",
         "detail": "Client.client",
         "documentation": {}
     },
