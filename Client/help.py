@@ -15,6 +15,8 @@ def display_help_overview():
     + Progress: View the download process of all the files
     + Status: View all torrent files, whether they are downloaded, downloading or not downloaded
     + Exit: Exit the program
+    + GenMagnet [FTor]: Create a magnet from a torrent file [FTor]
+    + UseMagnet [Magnet Text]
     """
     print(help_overview)
 

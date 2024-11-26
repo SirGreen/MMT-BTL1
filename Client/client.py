@@ -809,6 +809,8 @@ def input_listener(show_progress, live):
                     print(
                         "Download queue is empty. Waiting for a downloads to start or for a key press..."
                     )
+                else:
+                    print("Press any key to hide progress....")
 
                 while len(downloads) == 0 and not msvcrt.kbhit():
                     time.sleep(0.1)
