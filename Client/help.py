@@ -12,9 +12,11 @@ def display_help_overview():
     + Have [FTor]: Send torrent file(s) to a tracker of the torrent file.
     + Down [FTor]: Download a file using the torrent, communicates with tracker of the torrent file.
     + Preview [FTor]: View the contents of a torrent file in a human-readable format.
-    + Progress
-    + Status
+    + Progress: View the download process of all the files
+    + Status: View all torrent files, whether they are downloaded, downloading or not downloaded
     + Exit: Exit the program
+    + GenMagnet [FTor]: Create a magnet from a torrent file [FTor]
+    + UseMagnet [Magnet Text]
     """
     print(help_overview)
 
