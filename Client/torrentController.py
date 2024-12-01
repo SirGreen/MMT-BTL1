@@ -30,7 +30,7 @@ def get_piece_length(total_size):
         return 1 * 1024 * 1024  # 1 MB
 
 
-def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):
+def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER, reFileName = False):
     if tracker_url is None:
         tracker_url = DEFAULT_TRACKER
     """Creates a .torrent file from the given file or directory."""
@@ -106,7 +106,10 @@ def make_torrent(file_path, output_folder=None, tracker_url=DEFAULT_TRACKER):
 
     print(f"Torrent file created: {output_path}")
 
-    return output_path
+    if reFileName:
+        return torrent_name
+    else:
+        return output_path
 
 
 def preview_torrent(torrent_file_path):

@@ -617,42 +617,26 @@ def download(torrent_file_name, progress, tracker=None):
 
 # endregion
 
-
 # region join/exit
 def get_program_number():
     running_file = "running.txt"
-    program_numbers = set()
+    program_number = 0
 
     # Check if 'running.txt' exists and read the program numbers
     if os.path.exists(running_file):
         with open(running_file, "r") as f:
-            for line in f:
-                try:
-                    # Extract program numbers from each line
-                    program_numbers.add(int(line.strip()))
-                except ValueError:
-                    continue
-
-    # Find the next available program number
-    num = 1
-    while num in program_numbers:
-        num += 1
-    return num
-
-
-def cleanup(program_number):
-    # Remove the program number from 'running.txt' when exiting
-    running_file = "running.txt"
-    if os.path.exists(running_file):
-        with open(running_file, "r") as f:
-            lines = f.readlines()
-
-        # Rewrite 'running.txt' without the current program number
+            try:
+                program_number = int(f.read())
+            except ValueError:
+                program_number = random.randint(0, 999999999)
+                with open(running_file, "w") as f:
+                    f.write(str(program_number))
+    else:
+        program_number = random.randint(0, 999999999)
         with open(running_file, "w") as f:
-            for line in lines:
-                if line.strip() != str(program_number):
-                    f.write(line)
-
+            f.write(str(program_number))
+    
+    return program_number
 
 def setup_program_folder():
     # Get the designated program number
@@ -663,13 +647,6 @@ def setup_program_folder():
     if not os.path.exists(program_folder):
         os.makedirs(os.path.join(program_folder, "torrents"))
         os.makedirs(os.path.join(program_folder, "downloads"))
-
-    # Append the program number to the central 'running.txt' to signal it's running
-    with open("running.txt", "a") as f:
-        f.write(f"{program_number}\n")
-
-    # Register cleanup function to remove the program number on exit
-    atexit.register(cleanup, program_number)
 
     return program_number
 
@@ -726,7 +703,6 @@ def ping_tracker(tracker=None):
 
 
 # endregion
-
 
 #region Main Helper
 # Function to listen to user input commands and manage display
@@ -803,7 +779,7 @@ def input_listener(show_progress, live):
                 # Validate required parameters
                 if not file_path:
                     raise ValueError("File path is required.")
-                trCtrl.make_torrent(file_path, output_folder, tracker_url)
+                have(trCtrl.make_torrent(file_path, output_folder, tracker_url,True))                
             elif user_input.lower() == "progress":
                 if len(downloads) == 0:
                     print(
@@ -825,7 +801,7 @@ def input_listener(show_progress, live):
                     show_progress[0] = True
                     live.start()
                     get_keypress()  # Wait for any key press without Enter
-                    print("Press any key to hide progress...")
+                    print("Key pressed. Hiding progress...")
                     show_progress[0] = False
                     live.stop()
             elif user_input.lower() == "status":
