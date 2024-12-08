@@ -60,3 +60,5 @@ Run `client.py` on both the **seeder** and **leacher** machines.
 ---
 
 By following these steps, you can successfully transfer files between devices on the same LAN.
+
+Use help to view more commands
